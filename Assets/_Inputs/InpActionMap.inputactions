@@ -1,0 +1,54 @@
+{
+    "name": "InpActionMap",
+    "maps": [
+        {
+            "name": "InGameAP",
+            "id": "7d98ecf6-cf1c-4a4f-8f18-7d9374c0337d",
+            "actions": [
+                {
+                    "name": "select",
+                    "type": "Button",
+                    "id": "3f5fa191-29b2-4e66-9a82-b8b68b1c02ed",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "selectPos",
+                    "type": "Value",
+                    "id": "3403e26e-727a-45ed-bc11-6e5f33452e29",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "a72fabf9-14c5-4730-8466-aa4474a65f42",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "80441811-6a9f-49b7-824f-4708f14a6bde",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "selectPos",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
