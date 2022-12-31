@@ -2,41 +2,57 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Events;
+using System;
+
+[Serializable] public class InputSelectEvent : UnityEvent<bool> { }
+[Serializable] public class InputSelectPosEvent : UnityEvent<float, float> { }
+[Serializable] public class InputCamMoveEvent : UnityEvent<bool> { }
+[Serializable] public class InputCamRotateEvent : UnityEvent<bool> { }
 
 public class InputCon : MonoBehaviour
 {
-    private PlayerInput playerInput;
-    private Camera cam;
-
-    private InputAction touchPositionAction;
-    private InputAction touchPressAction;
+    /*
+    [SerializeField] private InpActionMap inputAM;
+    [Header("Input Events")]
+    [SerializeField] private InputSelectEvent inpSelectEv;
+    [SerializeField] private InputSelectPosEvent inpSelectPosEv;
+    [SerializeField] private InputCamMoveEvent inpCamMoveEv;
+    [SerializeField] private InputCamRotateEvent inpCamRotateEv;
 
     private void Awake()
     {
-        playerInput = GetComponent<PlayerInput>();
-        cam = Camera.main;
-        touchPositionAction = playerInput.actions["select"];
-        touchPositionAction = playerInput.actions["selectPos"];
+        inputAM = new InpActionMap(); 
     }
 
     private void OnEnable()
     {
-        touchPressAction.performed += Select;
+        inputAM.InGameAP.Enable();
+        inputAM.CameraAM.Enable();
+
+        inputAM.InGameAP.select.performed += OnSelect;
+        inputAM.InGameAP.selectPos.performed += OnSelectPos;
     }
 
     private void OnDisable()
     {
-        touchPressAction.performed -= Select;
-
+        inputAM.InGameAP.select.performed -= OnSelect;
+        inputAM.InGameAP.selectPos.performed -= OnSelectPos;
+        inputAM.InGameAP.Disable();
+        inputAM.CameraAM.Disable();
     }
-
-    private void Select(InputAction.CallbackContext context)
+    public void OnSelect(InputAction.CallbackContext context)
     {
-        Vector2 inputPos = touchPositionAction.ReadValue<Vector2>();
-        Vector3 position = cam.ScreenToWorldPoint(inputPos);
-            position.z = 0;
-
-        float input = context.ReadValue<float>();
+        bool inputAct = context.ReadValueAsButton();
+        inpSelectEv.Invoke(inputAct);
+        Debug.Log(inputAct);
 
     }
+    public void OnSelectPos(InputAction.CallbackContext context)
+    {
+        Vector2 inputPos = context.ReadValue<Vector2>();
+        inpSelectPosEv.Invoke(inputPos.x, inputPos.y);
+        Debug.Log(inputPos);
+    }
+    */
 }

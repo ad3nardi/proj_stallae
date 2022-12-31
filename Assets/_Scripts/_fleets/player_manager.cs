@@ -19,15 +19,19 @@ public class player_manager : MonoBehaviour
     {
         _cam = Camera.main;
         _camPos = _cam.transform;
+        unit = null;
+        _selectedUnit = null;
     }
 
-    public void SelectPos(Vector3 pos)
+    public void InputSelectPos(float x, float y)
     {
-        _selectPos = _cam.ScreenToViewportPoint(pos);
+        _selectPos = _cam.ScreenToViewportPoint(new Vector3(x, y, 0));
     }
 
-    public void Select(bool inp)
+    public void InputSelect(bool inp)
     {
+        Debug.Log("select");
+
         Deselect();
         RaycastHit hit;
         if(Physics.Raycast(_cam.ViewportPointToRay(_selectPos), out hit))
@@ -66,7 +70,13 @@ public class player_manager : MonoBehaviour
 
     public void Deselect()
     {
-        unit.UnitDeselected();
-        unit = null;
+        if (unit == null)
+            return;
+        else
+        {
+            unit.UnitDeselected();
+            unit = null;
+        }
+        
     }
 }

@@ -20,4 +20,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PHP_test/php-testGame.unity
     guid: 4dc67ec20e60a584cbc4c3b1672fc148
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: 4dcab396b035ba548ab8fbb7eda3bb82,
+      type: 2}
