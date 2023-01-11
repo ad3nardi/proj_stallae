@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: LayerSet
   m_EditorClassIdentifier: 
   layerDefault: 0
-  transparentFX: 1
+  layerTransparentFX: 1
   layerIgnoreRaycast: 2
-  layerPlayerUnit: 3
-  layerEnemyUnit: 4
+  layerStatic: 3
+  layerWater: 4
   layerUI: 5
-  layerStatic: 6
-  layerEnvionrment: 7
+  layerPlayerUnit: 6
+  layerEnemyUnit: 7
+  layerNavigation: 8
+  layerNavObstacles: 9

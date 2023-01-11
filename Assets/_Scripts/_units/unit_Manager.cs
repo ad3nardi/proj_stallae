@@ -20,6 +20,7 @@ public class unit_Manager : OptimizedBehaviour
     [Header("Unit Status")]
     [SerializeField] public bool _isSelected;
     [SerializeField] public Transform _target;
+    [SerializeField] public Vector3 _targetPosition;
 
 
     private void Awake()
@@ -32,10 +33,10 @@ public class unit_Manager : OptimizedBehaviour
         SetDefaults();
         UnitDeselected();
     }
-    private void SetDefaults()
+
+    private void Start()
     {
-        _isSelected = false;
-        _target = null;
+        SetMoveTarget(CachedTransform.position);
     }
 
     public void UnitSelected()
@@ -49,6 +50,24 @@ public class unit_Manager : OptimizedBehaviour
         _isSelected = false;
         _highlightGO.SetActive(false);
     }
+    public void SetMoveTarget(Vector3 target)
+    {
+        Debug.Log("UnitM - Set Move Target: " + target);
+        _movement.SetTarget(target);
+        _movement.RecalculatePath();
+    }
 
+    private void SetAttackTarget()
+    {
+
+    }
+
+
+    private void SetDefaults()
+    {
+        UnitDeselected();
+        _target = null;
+
+    }
 }
 

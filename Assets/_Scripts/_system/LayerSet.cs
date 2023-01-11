@@ -15,5 +15,6 @@ public class LayerSet : ScriptableObject
     public int layerPlayerUnit = 6;
     public int layerEnemyUnit = 7;
     public int layerNavigation = 8;
+    public int layerNavObstacles = 9;
 
 }

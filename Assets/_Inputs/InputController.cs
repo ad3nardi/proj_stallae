@@ -9,7 +9,6 @@ public class InputController : MonoBehaviour
     [Header("Plugins")]
     [SerializeField] private PlayerInput _playerInput;
     [SerializeField] private player_manager _playerManager;
-    [SerializeField] private camera_con _camManager;
     [Header("Input Actions")]
     [SerializeField] private InputAction inpSelect;
     [SerializeField] private InputAction inpSelectPos;
@@ -18,7 +17,6 @@ public class InputController : MonoBehaviour
     {
         _playerInput = GetComponent<PlayerInput>();
         _playerManager = GetComponent<player_manager>();
-        _camManager = GetComponent<camera_con>();
     }
 
     private void OnEnable()
