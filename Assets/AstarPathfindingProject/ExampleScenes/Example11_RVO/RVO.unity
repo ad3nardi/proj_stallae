@@ -2013,7 +2013,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c42c8ec55e7cf4e76b727f9cde90212d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agents: 200
+  agents: 5
   ringSize: 200
   mask:
     serializedVersion: 2
