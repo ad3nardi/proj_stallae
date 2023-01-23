@@ -1,9 +1,10 @@
+using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(unit_health))]
-[RequireComponent(typeof(unit_movement))]
+[RequireComponent(typeof(RichAI))]
 [RequireComponent(typeof(unit_combat))]
 public class unit_Manager : OptimizedBehaviour
 {
@@ -15,6 +16,7 @@ public class unit_Manager : OptimizedBehaviour
     [Header("Unit Plugins")]
     [SerializeField] public unit_health _health;
     [SerializeField] public unit_movement _movement;
+    [SerializeField] public RichAI _AImovement;
     [SerializeField] public unit_combat _combat;
 
     [Header("Unit Status")]
@@ -28,6 +30,7 @@ public class unit_Manager : OptimizedBehaviour
         //Cache
         _health = GetComponent<unit_health>();
         _movement = GetComponent<unit_movement>();
+        _AImovement = GetComponent<RichAI>();
         _combat = GetComponent<unit_combat>();
 
         SetDefaults();
@@ -49,12 +52,14 @@ public class unit_Manager : OptimizedBehaviour
     {
         _isSelected = false;
         _highlightGO.SetActive(false);
+        
     }
     public void SetMoveTarget(Vector3 target)
     {
         Debug.Log("UnitM - Set Move Target: " + target);
-        _movement.SetTarget(target);
-        _movement.RecalculatePath();
+        //_movement.SetTarget(target);
+        //_movement.RecalculatePath();
+        _AImovement.destination = target;
     }
 
     private void SetAttackTarget()
@@ -66,6 +71,7 @@ public class unit_Manager : OptimizedBehaviour
     private void SetDefaults()
     {
         UnitDeselected();
+        _movement.SetDefaults();
         _target = null;
 
     }

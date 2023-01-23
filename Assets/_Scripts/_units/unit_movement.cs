@@ -2,17 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
-using Pathfinding.RVO;
+using Pathfinding.Util;
+using Unity.VisualScripting;
 
+[RequireComponent(typeof(RichAI))]
+[RequireComponent(typeof(Seeker))]
 public class unit_movement : OptimizedBehaviour
 {   
     [Header("Plugins")]
     [SerializeField] private Seeker _seeker;
-    [SerializeField] private RVOController _rvoCon;
+    [SerializeField] private RichAI _aiCon;
     [Header("Unit Plugins")]
     [SerializeField] private unit_Manager _unitM;
-    [SerializeField] private float moveSpeed;
+	[SerializeField] private List<Transform> unitVis;
 
+	[Header("Settings")]
+	[SerializeField] private float _checkDistance;
+    //[SerializeField] private float moveSpeed;
+
+	/*
     [Header("Pathfinding")]
     [SerializeField] private Path _path;
     [SerializeField] private Vector3 targetPosition;
@@ -20,6 +28,7 @@ public class unit_movement : OptimizedBehaviour
     [SerializeField] private int currentWaypoint = 0;
     [SerializeField] private bool reachedEndofPath;
 
+	[Header("RVO Settings")]
 	[SerializeField] public float repathRate = 1;
 	[SerializeField] private float nextRepath = 0;
 
@@ -35,19 +44,52 @@ public class unit_movement : OptimizedBehaviour
 	[SerializeField] public float moveNextDist = 1;
 	[SerializeField] public float slowdownDistance = 1;
 	[SerializeField] public LayerMask groundMask;
+	*/
 
 	public void Awake()
 	{
+		_unitM = GetComponent<unit_Manager>();
 		_seeker = GetComponent<Seeker>();
-		_rvoCon = GetComponent<RVOController>();
-	}
-	public void Update()
-	{
-		CheckRepath();
-		UpdatePosition();
-		
+        _aiCon = GetComponent<RichAI>();
+		unitVis = new List<Transform>();
 	}
 
+    public void SetDefaults()
+	{
+		_aiCon.maxSpeed = _unitM.unit.unitMaxSpeed;
+		_aiCon.acceleration = _unitM.unit.unitAcceleration;
+		_aiCon.rotationSpeed = _unitM.unit.unitRotationSpeed;
+		_aiCon.slowdownTime = _unitM.unit.unitSlowdownTime;
+		_aiCon.wallForce = _unitM.unit.unitWallForce;
+		_aiCon.wallDist = _unitM.unit.unitWallDist;
+		_aiCon.endReachedDistance = _unitM.unit.unitEndReachedDistance;
+
+		_checkDistance = _unitM.unit.unitCheckDistance;
+	}
+
+
+    public void Update()
+	{
+		CheckCollision();
+	}
+
+	public void CheckCollision()
+	{
+		RaycastHit hit;
+
+		if (Physics.Raycast(CachedTransform.position, Vector3.forward, out hit))
+		{
+			for (int i = 0; i < unitVis.Count; i++)
+			{
+				//unitVis[i].position = new Vector3(unitVis[i].position.x, unitVis[i].position.y + 10f * Time.deltaTime, unitVis[i].position.x); 
+				Debug.Log("rising " + unitVis[i]);
+			}
+		}
+		
+
+	}
+
+    /*
 	/// <summary>Set the point to move to</summary>
 	public void SetTarget(Vector3 target)
 	{
@@ -106,7 +148,7 @@ public class unit_movement : OptimizedBehaviour
 	}
 
 
-    private void CheckRepath()
+    public void CheckRepath()
     {
 		if (Time.time >= nextRepath && canSearchAgain)
 		{
@@ -114,7 +156,7 @@ public class unit_movement : OptimizedBehaviour
 		}
 	}
 
-	private void UpdatePosition()
+	public void UpdatePosition()
     {
 		Vector3 pos = CachedTransform.position;
 
@@ -133,7 +175,7 @@ public class unit_movement : OptimizedBehaviour
 			var p2 = vectorPath[wp];
 
 			// Calculate the intersection with the circle. This involves some math.
-			var t = VectorMath.LineCircleIntersectionFactor(_rvoCon.To2D(CachedTransform.position), _rvoCon.To2D(p1), _rvoCon.To2D(p2), moveNextDist);
+			var t = VectorMath.LineCircleIntersectionFactor(_rvoCon.To2D(transform.position), _rvoCon.To2D(p1), _rvoCon.To2D(p2), moveNextDist);
 			// Clamp to a point on the segment
 			t = Mathf.Clamp01(t);
 			Vector3 waypoint = Vector3.Lerp(p1, p2, t);
@@ -188,5 +230,5 @@ public class unit_movement : OptimizedBehaviour
 
 		CachedTransform.position = pos;
 	}
-
+	*/
 }

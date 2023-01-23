@@ -10,24 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 77d85e003abd7e141bf9d7a64957905f, type: 3}
-  m_Name: 0101_ff_fighter
+  m_Name: 0307_ad_cruiser
   m_EditorClassIdentifier: 
-  id: 101
-  faction: 0
-  hasShields: 0
+  id: 307
+  faction: 2
+  hasShields: 1
   canAttack: 1
-  hasSubSystems: 0
+  hasSubSystems: 1
   unitPointCost: 1
   unitMaxHitPoints: 5
   untMaxShields: 0
   unitAttackRange: 3
   unitFireRate: 3.69
   unitSubSystems: []
-  unitMaxSpeed: 10
-  unitAcceleration: 5
-  unitRotationSpeed: 360
+  unitMaxSpeed: 5
+  unitAcceleration: 3
+  unitRotationSpeed: 10
   unitSlowdownTime: 0.2
   unitWallForce: 5
   unitWallDist: 0.2
   unitEndReachedDistance: 0.1
-  unitCheckDistance: 5
+  unitCheckDistance: 10

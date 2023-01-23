@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding.RVO;
+using Pathfinding;
 
 public class player_manager : MonoBehaviour
 {
@@ -74,10 +75,11 @@ public class player_manager : MonoBehaviour
 
     public void CommandMoveSelected(Vector3 hitPoint)
     {
+
         float radsum = 0;
         for (int i = 0; i < _selectedUnits.Count; i++)
         {
-            radsum += _selectedUnits[i].transform.GetComponent<RVOController>().radius;
+            radsum += _selectedUnits[i].transform.GetComponent<RichAI>().radius;
         }
 
         float radius = radsum / (Mathf.PI);
