@@ -30,7 +30,7 @@ public class unit_health : OptimizedBehaviour
         OnHealthAdded(this);
     }
 
-    public void ModifyHealth(int amount)
+    public void ModifyHealth(float amount)
     {
         curHP += amount;
         float currentHPpct = curHP / maxHP;

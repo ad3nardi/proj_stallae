@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class unit_combat : OptimizedBehaviour
 {
@@ -18,12 +19,14 @@ public class unit_combat : OptimizedBehaviour
     [Header("RangeFinder")]
     [SerializeField] private float _atkRange;
     [SerializeField] private Transform _bestTarget;
+    [SerializeField] private Transform _target;
     [SerializeField] private bool _useAutoTarget;
 
     [Header("Lists")]
-    [SerializeField] private List<Transform> targetsInRange;
-    [SerializeField] private List<Transform> weapons;
-    [SerializeField] private List<ParticleSystem> weaponsPS;
+    [SerializeField] public List<Transform> _targetsInRange;
+    [SerializeField] private List<wpn_settings> _weaponsSet;
+    [SerializeField] private List<Transform> _weaponsPos;
+    [SerializeField] private List<VisualEffect> _weaponsVis;
 
     private void Awake()
     {
@@ -37,33 +40,49 @@ public class unit_combat : OptimizedBehaviour
     {
         layerSet = _unitM.layerSet;
         _bestTarget = null;
-        targetsInRange = new List<Transform>();
-        weapons = new List<Transform>();
-        weaponsPS = new List<ParticleSystem>();
+        //Instantiate Lists
+        _targetsInRange = new List<Transform>();
+        _weaponsSet = new List<wpn_settings>();
+        _weaponsPos = new List<Transform>();
+        _weaponsVis = new List<VisualEffect>();
     }
-
     private void Update()
     {
         updateFireTimer();
         updateDamageDelayTimer();
         updateTargetsInRange();
         updateClosestTarget();
+        updateWeaponRot();
     }
+    public void Fire()
+    {
+        _curFireTime = 0f;
+        for (int i = 0; i < _weaponsSet.Count; i++)
+        {
+            _target.GetComponent<unit_health>().ModifyHealth(_weaponsSet[i].weapon_damage);
+        }
+        for (int i = 0; i < _weaponsVis.Count; i++)
+        {
+            _weaponsVis[i].Play();
+        }
+        
+    }
+
     private void TargetOverideMoveStop()
     {
 
     }
     public void TargetEnemy()
     {
-
+        
     }
-
-    public void Fire()
+    private void updateWeaponRot()
     {
-        _curFireTime = 0f;
-        //Damage Enemy Unit
+        for (int i = 0; i < _weaponsPos.Count; i++)
+        {
+            _weaponsPos[i].LookAt(_target);
+        }
     }
-
     private void updateFireTimer()
     {
         if (_fireRate > _curFireTime)
@@ -71,61 +90,52 @@ public class unit_combat : OptimizedBehaviour
         else
             return;
     }
-
-    public void OnDrawGizmos()
-    {
-        
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(CachedTransform.position, _atkRange);
-    }
     private void updateTargetsInRange()
     {
         Collider[] hitColliders = Physics.OverlapSphere(CachedTransform.position, _atkRange, targetLayer);
         Debug.Log("Hit Col Length: " + hitColliders.Length);
-        Debug.Log("Target Length: " + targetsInRange.Count);
+        Debug.Log("Target Length: " + _targetsInRange.Count);
         if (hitColliders.Length > 0)
         {
 
             for (int i = 0; i < hitColliders.Length; i++)
             {
-                if (targetsInRange.Contains(hitColliders[i].transform))
+                if (_targetsInRange.Contains(hitColliders[i].transform))
                     return;
                 else
-                 targetsInRange.Add(hitColliders[i].transform);
+                    _targetsInRange.Add(hitColliders[i].transform);
             }
 
         }
-        else if (hitColliders.Length != targetsInRange.Count)
+        else if (hitColliders.Length != _targetsInRange.Count)
         {
-            targetsInRange.Clear();
+            _targetsInRange.Clear();
         }
         else
         {
             return;
         }
     }
-
     private void updateClosestTarget()
     {
-        if (targetsInRange.Count != 0)
+        if (_targetsInRange.Count != 0)
         {
             float closestDistSqr = Mathf.Infinity;
             Vector3 currentPos = CachedTransform.position;
-            for (int i = 0; i < targetsInRange.Count; i++)
+            for (int i = 0; i < _targetsInRange.Count; i++)
             {
-                Vector3 distanceToTarget = targetsInRange[i].position - currentPos;
+                Vector3 distanceToTarget = _targetsInRange[i].position - currentPos;
                 float dSqrToTarget = distanceToTarget.sqrMagnitude;
                 if (dSqrToTarget < closestDistSqr)
                 {
                     closestDistSqr = dSqrToTarget;
-                    _bestTarget = targetsInRange[i].transform;
+                    _bestTarget = _targetsInRange[i].transform;
                 }
             }
         }
         else
             return;
     }
-
     private void updateDamageDelayTimer()
     {
         if (_isFiring)
@@ -135,5 +145,11 @@ public class unit_combat : OptimizedBehaviour
         }
         else
             return;
+    }
+    public void OnDrawGizmos()
+    {
+        
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(CachedTransform.position, _atkRange);
     }
 }

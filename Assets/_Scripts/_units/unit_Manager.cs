@@ -33,12 +33,12 @@ public class unit_Manager : OptimizedBehaviour
         _AImovement = GetComponent<RichAI>();
         _combat = GetComponent<unit_combat>();
 
-        SetDefaults();
         UnitDeselected();
     }
 
     private void Start()
     {
+        SetDefaults();
         SetMoveTarget(CachedTransform.position);
     }
 

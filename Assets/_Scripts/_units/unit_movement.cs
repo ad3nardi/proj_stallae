@@ -45,7 +45,6 @@ public class unit_movement : OptimizedBehaviour
 	[SerializeField] public float slowdownDistance = 1;
 	[SerializeField] public LayerMask groundMask;
 	*/
-
 	public void Awake()
 	{
 		_unitM = GetComponent<unit_Manager>();
@@ -53,7 +52,6 @@ public class unit_movement : OptimizedBehaviour
         _aiCon = GetComponent<RichAI>();
 		unitVis = new List<Transform>();
 	}
-
     public void SetDefaults()
 	{
 		_aiCon.maxSpeed = _unitM.unit.unitMaxSpeed;
@@ -66,13 +64,10 @@ public class unit_movement : OptimizedBehaviour
 
 		_checkDistance = _unitM.unit.unitCheckDistance;
 	}
-
-
     public void Update()
 	{
 		CheckCollision();
 	}
-
 	public void CheckCollision()
 	{
 		RaycastHit hit;
@@ -85,10 +80,7 @@ public class unit_movement : OptimizedBehaviour
 				Debug.Log("rising " + unitVis[i]);
 			}
 		}
-		
-
 	}
-
     /*
 	/// <summary>Set the point to move to</summary>
 	public void SetTarget(Vector3 target)
