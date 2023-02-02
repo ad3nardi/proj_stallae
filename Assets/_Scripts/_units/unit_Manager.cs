@@ -56,9 +56,6 @@ public class unit_Manager : OptimizedBehaviour
     }
     public void SetMoveTarget(Vector3 target)
     {
-        Debug.Log("UnitM - Set Move Target: " + target);
-        //_movement.SetTarget(target);
-        //_movement.RecalculatePath();
         _AImovement.destination = target;
     }
 

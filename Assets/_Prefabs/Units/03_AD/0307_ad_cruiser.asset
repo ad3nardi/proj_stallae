@@ -20,10 +20,10 @@ MonoBehaviour:
   unitPointCost: 1
   unitMaxHitPoints: 5
   untMaxShields: 0
-  unitAttackRange: 3
-  unitFireRate: 3.69
+  unitAttackRange: 50
+  unitFireRate: 3
   unitSubSystems: []
-  unitMaxSpeed: 5
+  unitMaxSpeed: 30
   unitAcceleration: 3
   unitRotationSpeed: 10
   unitSlowdownTime: 0.2

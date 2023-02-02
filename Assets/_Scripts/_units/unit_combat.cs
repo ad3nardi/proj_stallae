@@ -20,13 +20,13 @@ public class unit_combat : OptimizedBehaviour
     [SerializeField] private float _atkRange;
     [SerializeField] private Transform _bestTarget;
     [SerializeField] private Transform _target;
-    [SerializeField] private bool _useAutoTarget;
+    [SerializeField] public bool _useAutoTarget;
 
     [Header("Lists")]
     [SerializeField] public List<Transform> _targetsInRange;
-    [SerializeField] private List<wpn_settings> _weaponsSet;
-    [SerializeField] private List<Transform> _weaponsPos;
-    [SerializeField] private List<VisualEffect> _weaponsVis;
+    [SerializeField] private List<wpn_settings> _weaponsSet = new List<wpn_settings>();
+    [SerializeField] private List<Transform> _weaponsPos = new List<Transform>();
+    [SerializeField] private List<VisualEffect> _weaponVFX = new List<VisualEffect>();
 
     private void Awake()
     {
@@ -40,11 +40,8 @@ public class unit_combat : OptimizedBehaviour
     {
         layerSet = _unitM.layerSet;
         _bestTarget = null;
-        //Instantiate Lists
+
         _targetsInRange = new List<Transform>();
-        _weaponsSet = new List<wpn_settings>();
-        _weaponsPos = new List<Transform>();
-        _weaponsVis = new List<VisualEffect>();
     }
     private void Update()
     {
@@ -56,16 +53,18 @@ public class unit_combat : OptimizedBehaviour
     }
     public void Fire()
     {
+
         _curFireTime = 0f;
         for (int i = 0; i < _weaponsSet.Count; i++)
         {
             _target.GetComponent<unit_health>().ModifyHealth(_weaponsSet[i].weapon_damage);
+            Debug.Log("Damaging from weapon " + i);
         }
-        for (int i = 0; i < _weaponsVis.Count; i++)
+        for (int i = 0; i < _weaponVFX.Count; i++)
         {
-            _weaponsVis[i].Play();
+            Debug.Log("Playing VFX for " + i);
+            _weaponVFX[i].Play();
         }
-        
     }
 
     private void TargetOverideMoveStop()
@@ -87,14 +86,14 @@ public class unit_combat : OptimizedBehaviour
     {
         if (_fireRate > _curFireTime)
             _curFireTime += Time.deltaTime;
+        else if (_fireRate <= _curFireTime && _target != null)
+            Fire();
         else
             return;
     }
     private void updateTargetsInRange()
     {
         Collider[] hitColliders = Physics.OverlapSphere(CachedTransform.position, _atkRange, targetLayer);
-        Debug.Log("Hit Col Length: " + hitColliders.Length);
-        Debug.Log("Target Length: " + _targetsInRange.Count);
         if (hitColliders.Length > 0)
         {
 
@@ -130,6 +129,8 @@ public class unit_combat : OptimizedBehaviour
                 {
                     closestDistSqr = dSqrToTarget;
                     _bestTarget = _targetsInRange[i].transform;
+                    if (_useAutoTarget)
+                        _target = _bestTarget;
                 }
             }
         }
@@ -149,7 +150,7 @@ public class unit_combat : OptimizedBehaviour
     public void OnDrawGizmos()
     {
         
-        Gizmos.color = Color.green;
+        Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(CachedTransform.position, _atkRange);
     }
 }
