@@ -135,7 +135,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _albedo:
-        m_Texture: {fileID: 2800000, guid: d7bcfce4a73bdd74fb74ca95d1f43361, type: 3}
+        m_Texture: {fileID: 2800000, guid: b44d7de70c476bd4b829973d56bdbf67, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _texcoord:
@@ -156,6 +156,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AONoiseScale: 9.9
     - _AlphaBaseCutout: 1
     - _AlphaClip: 0
     - _AlphaCutoff: 0.5
@@ -315,13 +316,17 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
+    - _AORemapNew: {r: 0, g: 0.5, b: 0, a: 0}
+    - _AORemapOld: {r: 0, g: 1, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _CustomLightDirection: {r: 0, g: 0, b: 10, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FresnelSettings: {r: 0, g: 1, b: 3.18, a: 0}
     - _GlossColor: {r: 1, g: 1, b: 1, a: 1}
     - _Glow_Color: {r: 1, g: 1, b: 1, a: 1}
     - _HighlightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _LerpAmount: {r: 0.553, g: 0.553, b: 0.553, a: 0.54509807}
     - _MainColor: {r: 1, g: 1, b: 1, a: 1}
     - _OutlineColor: {r: 0, g: 1, b: 0.013520718, a: 1}
     - _OutlineOffset: {r: 0, g: 0, b: 0, a: 1}
@@ -335,4 +340,7 @@ Material:
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _XYZPosition: {r: 0, g: 0, b: 0, a: 0}
     - _albedoTint: {r: 1, g: 1, b: 1, a: 0}
+    - _smoothStepDark: {r: 0.98, g: 1, b: 0, a: 0}
+    - _smoothstepDark: {r: 0, g: 1, b: 0, a: 0}
+    - _smoothstepLight: {r: 0.95, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
