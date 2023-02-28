@@ -2,6 +2,7 @@ using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.XR.Haptics;
 
 [RequireComponent(typeof(unit_health))]
 [RequireComponent(typeof(RichAI))]
@@ -18,6 +19,7 @@ public class unit_Manager : OptimizedBehaviour
     [SerializeField] public unit_movement _movement;
     [SerializeField] public RichAI _AImovement;
     [SerializeField] public unit_combat _combat;
+    [SerializeField] public List<unit_subsytems> _subsytems = new List<unit_subsytems>();
 
     [Header("Unit Status")]
     [SerializeField] public bool _isSelected;
@@ -58,18 +60,69 @@ public class unit_Manager : OptimizedBehaviour
     {
         _AImovement.destination = target;
     }
-
-    private void SetAttackTarget()
-    {
-
-    }
-
-
     private void SetDefaults()
     {
         UnitDeselected();
         _movement.SetDefaults();
         _target = null;
+    }
+
+    public void mission_none()
+    {
+
+    }
+
+    public void mission_attack()
+    { 
+    
+    }
+
+    public void mission_move() 
+    {
+    
+    }
+    public void mission_retreat()
+    {
+
+    }
+    public void missoin_guard()
+    {
+
+    }
+    public void mission_sticky()
+    {
+
+    }
+    public void mission_enter()
+    {
+
+    }
+    public void mission_capture()
+    {
+
+    }
+    public void mission_guardArea()
+    {
+
+    }
+    public void mission_return()
+    {
+
+    }
+    public void mission_stop()
+    {
+
+    }
+    public void mission_ambush()
+    {
+
+    }
+    public void mission_hunt()
+    {
+
+    }
+    public void mission_timedHunt()
+    {
 
     }
 }
