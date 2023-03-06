@@ -491,7 +491,7 @@ Shader "anime_base"
 				float3 localAdditionalLightsFlat12x8_g1 = AdditionalLightsFlat12x( WorldPosition8_g1 );
 				float3 FlatResult29_g1 = localAdditionalLightsFlat12x8_g1;
 				float3 temp_output_13_0 = FlatResult29_g1;
-				Gradient gradient34 = NewGradient( 1, 3, 2, float4( 0.6221263, 0.4544322, 0.8679245, 0.1353018 ), float4( 0.8313726, 0.7236634, 0.2941176, 0.7676509 ), float4( 1, 1, 1, 1 ), 0, 0, 0, 0, 0, float2( 1, 0 ), float2( 1, 1 ), 0, 0, 0, 0, 0, 0 );
+				Gradient gradient34 = NewGradient( 1, 3, 2, float4( 0, 0, 0, 0.1176471 ), float4( 0.6221263, 0.4544322, 0.8679245, 0.5735256 ), float4( 1, 1, 1, 1 ), 0, 0, 0, 0, 0, float2( 1, 0 ), float2( 1, 1 ), 0, 0, 0, 0, 0, 0 );
 				float dotResult30 = dot( ase_worldNormal , _MainLightPosition.xyz );
 				float3 break23 = temp_output_13_0;
 				float ase_lightAtten = 0;
@@ -1903,7 +1903,7 @@ Node;AmplifyShaderEditor.SamplerNode;11;-2247.838,-451.2291;Inherit;True;Propert
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;36;-1884.145,-339.0267;Inherit;True;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.ColorNode;41;-2158.146,-256.0265;Inherit;False;Property;_albedoTint;albedoTint;1;0;Create;True;0;0;0;False;0;False;0,0,0,0;1,1,1,0.509804;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.GradientSampleNode;35;-1338.146,934.8333;Inherit;True;2;0;OBJECT;;False;1;FLOAT;0;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.GradientNode;34;-1596.146,763.8333;Inherit;False;1;3;2;0.6221263,0.4544322,0.8679245,0.1353018;0.8313726,0.7236634,0.2941176,0.7676509;1,1,1,1;1,0;1,1;0;1;OBJECT;0
+Node;AmplifyShaderEditor.GradientNode;34;-1596.146,763.8333;Inherit;False;1;3;2;0,0,0,0.1176471;0.6221263,0.4544322,0.8679245,0.5735256;1,1,1,1;1,0;1,1;0;1;OBJECT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;32;-1921.146,976.8329;Inherit;False;26;addLight;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;54;-289.3069,88.93881;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;ExtraPrePass;0;0;ExtraPrePass;5;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;3;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;0;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;37;-1670.703,-344.8152;Inherit;False;albedo;-1;True;1;0;COLOR;0,0,0,0;False;1;COLOR;0
@@ -2016,4 +2016,4 @@ WireConnection;55;2;87;0
 WireConnection;132;0;53;0
 WireConnection;132;1;117;0
 ASEEND*/
-//CHKSM=86261F106933A6B9CE4D33B745B0243924A79E1C
+//CHKSM=C3E00975A9392475F635C4766C6CA06B9FC61567

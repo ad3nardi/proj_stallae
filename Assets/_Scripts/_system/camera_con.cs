@@ -54,6 +54,7 @@ public class camera_con : OptimizedBehaviour
     [Header("- DNT - Where drag actoin started")]
     [SerializeField] private Vector3 _startDrag;
 
+    //Unity Functions
     private void Awake()
     {
         _cam = Camera.main;
@@ -65,7 +66,6 @@ public class camera_con : OptimizedBehaviour
     {
         _lastPosition = CachedTransform.position;
         //Attatch Input Actions
-
         camMovementAct      = _playerInput.actions["cameraMove"];
         camRotateAct        = _playerInput.actions["cameraRotate"];
         camRotateButtonAct  = _playerInput.actions["cameraRotateButton"];
@@ -110,13 +110,21 @@ public class camera_con : OptimizedBehaviour
         UpdateBasePosition();
     }
 
+    //UPDATE FUNCTONS
+    private void UpdateCameraPosition()
+    {
+        Vector3 zoomTarget = new Vector3(camTrans.localPosition.x, _zoomHeight, camTrans.localPosition.z);
+        zoomTarget -= _zoomSpeed * (_zoomHeight - camTrans.localPosition.y) * Vector3.forward;
+
+        camTrans.localPosition = Vector3.Lerp(camTrans.localPosition, zoomTarget, Time.deltaTime * _zoomDampening);
+        camTrans.LookAt(CachedTransform);
+    }
     private void UpdateVelocity()
     {
         _horizontalVelocity = (CachedTransform.position - _lastPosition) / Time.deltaTime;
         _horizontalVelocity.y = 0;
         _lastPosition = CachedTransform.position;
     }
-
     private void GetKeyboardMovement()
     {
         Vector3 inpVal = camMovementAct.ReadValue<Vector2>().x * GetCameraRight()
@@ -126,7 +134,6 @@ public class camera_con : OptimizedBehaviour
             _targetPos += inpVal;
 
     }
-
     private void UpdateBasePosition()
     {
         if (_targetPos.sqrMagnitude > 0.05f)
@@ -141,7 +148,6 @@ public class camera_con : OptimizedBehaviour
         }
         _targetPos = Vector3.zero;
     }
-
     private void CheckMouseAtScreenEdge()
     {
         Vector2 mousePos = camDragAct.ReadValue<Vector2>();
@@ -160,6 +166,7 @@ public class camera_con : OptimizedBehaviour
         _targetPos += moveDirection;
     }
 
+    //CAMERA ORIENTATION
     private Vector3 GetCameraRight()
     {
         Vector3 right = camTrans.right;
@@ -225,12 +232,4 @@ public class camera_con : OptimizedBehaviour
         }
     }
 
-    private void UpdateCameraPosition()
-    {
-        Vector3 zoomTarget = new Vector3(camTrans.localPosition.x, _zoomHeight, camTrans.localPosition.z);
-        zoomTarget -= _zoomSpeed * (_zoomHeight - camTrans.localPosition.y) * Vector3.forward;
-
-        camTrans.localPosition = Vector3.Lerp(camTrans.localPosition, zoomTarget, Time.deltaTime * _zoomDampening);
-        camTrans.LookAt(CachedTransform);
-    }
 }

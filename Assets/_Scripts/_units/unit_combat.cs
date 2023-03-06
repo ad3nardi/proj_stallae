@@ -28,6 +28,7 @@ public class unit_combat : OptimizedBehaviour
     [SerializeField] private List<Transform> _weaponsPos = new List<Transform>();
     [SerializeField] private List<VisualEffect> _weaponVFX = new List<VisualEffect>();
 
+    //UNITY FUNCTIONS
     private void Awake()
     {
         _unitM = GetComponent<unit_Manager>();
@@ -35,7 +36,6 @@ public class unit_combat : OptimizedBehaviour
         _atkRange = _unitM.unit.unitAttackRange;
         _useAutoTarget = false;
     }
-
     private void Start()
     {
         layerSet = _unitM.layerSet;
@@ -51,30 +51,14 @@ public class unit_combat : OptimizedBehaviour
         updateClosestTarget();
         updateWeaponRot();
     }
-    public void Fire()
-    {
-
-        _curFireTime = 0f;
-        for (int i = 0; i < _weaponsSet.Count; i++)
-        {
-            _target.GetComponent<unit_health>().ModifyHealth(_weaponsSet[i].weapon_damage);
-            Debug.Log("Damaging from weapon " + i);
-        }
-        for (int i = 0; i < _weaponVFX.Count; i++)
-        {
-            Debug.Log("Playing VFX for " + i);
-            _weaponVFX[i].Play();
-        }
-    }
-
-    private void TargetOverideMoveStop()
-    {
-
-    }
-    public void TargetEnemy()
+    public void OnDrawGizmos()
     {
         
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(CachedTransform.position, _atkRange);
     }
+
+    //UPDATE FUNCTIONS
     private void updateWeaponRot()
     {
         for (int i = 0; i < _weaponsPos.Count; i++)
@@ -147,10 +131,29 @@ public class unit_combat : OptimizedBehaviour
         else
             return;
     }
-    public void OnDrawGizmos()
+
+
+    public void Fire()
     {
-        
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(CachedTransform.position, _atkRange);
+
+        _curFireTime = 0f;
+        for (int i = 0; i < _weaponsSet.Count; i++)
+        {
+            _target.GetComponent<unit_health>().ModifyHealth(_weaponsSet[i].weapon_damage);
+            Debug.Log("Damaging from weapon " + i);
+        }
+        for (int i = 0; i < _weaponVFX.Count; i++)
+        {
+            Debug.Log("Playing VFX for " + i);
+            _weaponVFX[i].Play();
+        }
+    }
+    private void TargetOverideMoveStop()
+    {
+
+    }
+    public void TargetEnemy(Transform target)
+    {
+        _target = target;
     }
 }
