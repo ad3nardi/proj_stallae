@@ -57,7 +57,7 @@ public class camera_con : OptimizedBehaviour
     //Unity Functions
     private void Awake()
     {
-        _cam = Camera.main;
+        _cam = Helpers.Camera;
         camTrans = _cam.transform;
         _playerInput.GetComponent<PlayerInput>();
     }

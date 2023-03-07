@@ -32,13 +32,12 @@ public class player_manager : MonoBehaviour
     [Header("Units")]
     [SerializeField] public List<unit_Manager> _allyUnits;
     [SerializeField] public List<unit_Manager> _selectedUnits;
-    [SerializeField] public unit_Manager _targetUnitM;
     [SerializeField] public unit_subsytems _targetUnitSS;
 
     //UNITY FUNCTIONS
     private void Awake()
     {
-        _cam = Camera.main;
+        _cam = Helpers.Camera;
         _attackDragging = false;
         _boxSelectDragging = false;
     }
@@ -46,6 +45,7 @@ public class player_manager : MonoBehaviour
     {
         _selectedUnits = new List<unit_Manager>();
         _selectedUnits.Clear();
+        _targetUnitSS = null;
     }
     private void Update()
     {
@@ -155,7 +155,7 @@ public class player_manager : MonoBehaviour
                 {
                     _attackDragStartPos = Vector3.zero;
                     _attackUI.SetActive(true);
-                    _targetUnitM = hit.transform.GetComponent<unit_Manager>();
+                    command_autoTargetSubSystem(hit.transform);
 
                     _attackDragging = true;
                     return;
@@ -183,7 +183,6 @@ public class player_manager : MonoBehaviour
         _attackDragEndPos = _selectPos;
         _attackDragging = false;
 
-        command_autoTargetSubSystem();
         Debug.Log("End Pos " + _attackDragEndPos);
     }
     
@@ -234,41 +233,18 @@ public class player_manager : MonoBehaviour
             _selectedUnits[i].mission_move(p);
         }
 
-        manage_deselectAll();
-
-        /*
-        float angle = 60; // angular step
-        int countOnCircle = (int)(360 / angle); // max number in one round
-        int count = _selectedUnits.Count; // number of agents
-        float step = 1; // circle number
-        int i = 1; // agent serial number
-        float randomizeAngle = Random.Range(0, angle);
-        while (count > 1)
-        {
-            var vec = Vector3.forward;
-            vec = Quaternion.Euler(0, angle * (countOnCircle - 1) + randomizeAngle, 0) * vec;
-            _selectedUnits[i].missionMove(myAgent.destination + vec * (myAgent.radius + meshAgents[i].radius + 0.5f) * step);
-            countOnCircle--;
-            count--;
-            i++;
-            if (countOnCircle == 0)
-            {
-                if (step != 3 && step != 4 && step < 6 || step == 10) { angle /= 2f; }
-                countOnCircle = (int)(360 / angle);
-                step++;
-                randomizeAngle = Random.Range(0, angle);
-            }
-        }
-        */
+        manage_deselectAll();  
     }
-    private void command_autoTargetSubSystem()
+    private void command_autoTargetSubSystem(Transform targetUnitT)
     {
         //Choose random sub-system from target's list -ssi- if not designated
-        int ssi = Random.Range(0, _targetUnitM._subsytems.Count);
-        _targetUnitSS = _targetUnitM._subsytems[ssi];
+        
+        unit_Manager targetUnitM = targetUnitT.GetComponent<unit_Manager>();
+        int ssi = Random.Range(0, targetUnitM._subsytems.Count);
+        _targetUnitSS = targetUnitM._subsytems[ssi];
         for (int i = 0; i < _selectedUnits.Count; i++)
         {
-            _selectedUnits[i].mission_attack(_targetUnitSS);
+            _selectedUnits[i].mission_attack(targetUnitT, _targetUnitSS);
         }
     }
 }

@@ -13,7 +13,6 @@ public class unit_Manager : OptimizedBehaviour
     [SerializeField] public GameObject _highlightGO;
 
     [Header("Unit Plugins")]
-    [SerializeField] public unit_health _health;
     [SerializeField] public unit_movement _movement;
     [SerializeField] public unit_combat _combat;
     [SerializeField] public RichAI _AImovement;
@@ -64,9 +63,10 @@ public class unit_Manager : OptimizedBehaviour
     {
 
     }
-    public void mission_attack(unit_subsytems _AttackTargetSS)
-    { 
-        
+    public void mission_attack(Transform _AttackTarget, unit_subsytems _AttackTargetSS)
+    {
+        _target = _AttackTarget;
+        _targetUnitSS = _AttackTargetSS;
     }
     //Unit will move to passed in Vec3 coordinate
     public void mission_move(Vector3 target)
