@@ -18,7 +18,7 @@ MonoBehaviour:
   canAttack: 1
   hasSubSystems: 1
   unitPointCost: 1
-  unitMaxHitPoints: 5
+  unitMaxHitPoints: 15
   untMaxShields: 0
   unitAttackRange: 50
   unitFireRate: 3

@@ -1,21 +1,25 @@
-using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Pathfinding;
 
 [RequireComponent(typeof(RichAI))]
 [RequireComponent(typeof(unit_combat))]
+[RequireComponent(typeof(unit_movement))]
 public class unit_Manager : OptimizedBehaviour
 {
     [Header("Plugins")]
-    [SerializeField] public unit_settings unit;
     [SerializeField] public LayerSet layerSet;
-    [SerializeField] public GameObject _highlightGO;
+    [SerializeField] public unit_settings unit;
+    [SerializeField] public OptimizedBehaviour _highlightGO;
 
     [Header("Unit Plugins")]
-    [SerializeField] public unit_movement _movement;
-    [SerializeField] public unit_combat _combat;
-    [SerializeField] public RichAI _AImovement;
+    [SerializeField] private currentMission _cMission;
+    [Range (0 , 1)]
+    [SerializeField] private float _idleMultiplier;
+    [SerializeField] private unit_movement _movement;
+    [SerializeField] private unit_combat _combat;
+    [SerializeField] private RichAI _AImovement;
     [SerializeField] public List<unit_subsytems> _subsytems = new List<unit_subsytems>();
 
     [Header("Unit Status")]
@@ -34,44 +38,83 @@ public class unit_Manager : OptimizedBehaviour
     }
     private void Start()
     {
-        SetDefaults();
         UnitDeselected();
-        mission_move(CachedTransform.position);
-    }
-
-    private void SetDefaults()
-    {
-        UnitDeselected();
-        _movement.SetDefaults();
         _target = null;
+
+        //Set Unit to Idle on its spawn Position
+        _movement.SetDefaults();
+        mission_none();
+    }
+    private void LateUpdate()
+    {
+        switch (_cMission)
+        {
+            case currentMission.mNone:
+                mission_none();
+                break;
+            case currentMission.mAttack:
+                break;
+            case currentMission.mMove:
+                if(_AImovement.reachedDestination)
+                    mission_none();
+                break;
+            case currentMission.mRetreat:
+                break;
+            case currentMission.mGuard:
+                break;
+            case currentMission.mSticky:
+                break;
+            case currentMission.mEnter:
+                break;
+            case currentMission.mCapture:
+                break;
+            case currentMission.mGuardArea:
+                break;
+            case currentMission.mReturn:
+                break;
+            case currentMission.mStop:
+                break;
+            case currentMission.mAmbush:
+                break;
+            case currentMission.mHunt:
+                break;
+            case currentMission.mTimedHunt:
+                break;
+            default:
+                break;
+        }
     }
     //UNIT SELEcTION
     public void UnitSelected()
     {
         _isSelected = true;
-        _highlightGO.SetActive(true);
+        _highlightGO.CachedGameObject.SetActive(true);
     }
     public void UnitDeselected()
     {
         _isSelected = false;
-        _highlightGO.SetActive(false);
-        
+        _highlightGO.CachedGameObject.SetActive(false);
     }
 
     //UNIT MISSIONS
     public void mission_none()
     {
-
+        _cMission = currentMission.mNone;
+        CachedTransform.position += CachedTransform.forward * _idleMultiplier * Time.deltaTime;
+        //_AImovement.destination = CachedTransform.position + Vector3.forward * _idleMultiplier;
     }
     public void mission_attack(Transform _AttackTarget, unit_subsytems _AttackTargetSS)
     {
+        _cMission = currentMission.mAttack;
         _target = _AttackTarget;
         _targetUnitSS = _AttackTargetSS;
     }
     //Unit will move to passed in Vec3 coordinate
     public void mission_move(Vector3 target)
     {
+        _cMission = currentMission.mMove;
         _AImovement.destination = target;
+
         /*
         float angle = 60; // angular step
         int countOnCircle = (int)(360 / angle); // max number in one round
@@ -147,3 +190,21 @@ public class unit_Manager : OptimizedBehaviour
 
     }
 }
+
+public enum currentMission
+{
+    mNone,
+    mAttack,
+    mMove,
+    mRetreat,
+    mGuard,
+    mSticky,
+    mEnter,
+    mCapture,
+    mGuardArea,
+    mReturn,
+    mStop,
+    mAmbush,
+    mHunt,
+    mTimedHunt
+} 

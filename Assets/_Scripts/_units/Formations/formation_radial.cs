@@ -5,12 +5,12 @@ using UnityEngine;
 public class formation_radial : formation_base
 {
     [SerializeField] private int _amount = 10;
-    [SerializeField] private int _radius = 1;
-    [SerializeField] private int _radiusGrowthMultiplier = 0;
-    [SerializeField] private int _rotations = 1;
+    [SerializeField] private float _radius = 1;
+    [SerializeField] private float _radiusGrowthMultiplier = 0;
+    [SerializeField] private float _rotations = 1;
     [SerializeField] private int _rings = 1;
-    [SerializeField] private int _ringOffset = 1;
-    [SerializeField] private int _nthOffset = 0;
+    [SerializeField] private float _ringOffset = 1;
+    [SerializeField] private float _nthOffset = 0;
 
     public override IEnumerable<Vector3> EvaluatePoints()
     {
@@ -26,7 +26,9 @@ public class formation_radial : formation_base
                 float x = Mathf.Cos(angle) * radius;
                 float z = Mathf.Sin(angle) * radius;
 
-                Vector3 pos = new Vector3(x, 0, z);
+                float y = 0f;
+                
+                Vector3 pos = new Vector3(x, y, z);
                 pos += GetNoise(pos);
                 pos *= Spread;
 

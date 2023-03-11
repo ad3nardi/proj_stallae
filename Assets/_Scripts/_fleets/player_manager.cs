@@ -66,8 +66,8 @@ public class player_manager : MonoBehaviour
     //PLAYER INPUT FUNCTIONS
     public void InputSelect(bool inp)
     {
-        Input_SelectBoxStart();
         Input_AttackDragStart();
+        Input_SelectBoxStart();
     }
     public void InputRelease(bool inp)
     {
@@ -148,11 +148,13 @@ public class player_manager : MonoBehaviour
     {
         if (_selectedUnits.Count != 0)
         {
+            Debug.Log("Input Attack Sucess");
             RaycastHit hit;
             if (Physics.Raycast(_cam.ViewportPointToRay(_selectPos), out hit))
             {
                 if (hit.transform.gameObject.layer == _layerSet.layerEnemyUnit)
                 {
+                    Debug.Log("Attack: " + hit);
                     _attackDragStartPos = Vector3.zero;
                     _attackUI.SetActive(true);
                     command_autoTargetSubSystem(hit.transform);

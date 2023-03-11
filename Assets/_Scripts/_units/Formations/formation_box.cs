@@ -18,7 +18,9 @@ public class formation_box : formation_base
             for (int z = 0; z < _unitDepth; z++)
             {
                 if (_hollow && x != 0 && x != _unitWidth - 1 && z != 0 && z != _unitDepth - 1) continue;
-                Vector3 pos = new Vector3(x + (z % 2 == 0 ? 0 : _nthOffset), 0, z);
+
+                float y = 0f;
+                Vector3 pos = new Vector3(x, y, z + (x % 2 == 0 ? 0 : _nthOffset));
 
                 pos -= middleOffset;
                 pos += GetNoise(pos);

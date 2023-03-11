@@ -3,14 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class unit_subsytems : MonoBehaviour
+public class unit_subsytems : OptimizedBehaviour
 {
     [Header("Plugins")]
-    [SerializeField] private unit_Manager unitManager;
+    [SerializeField] private unit_Manager _unitManager;
+    public unit_Manager UnitManager
+    {
+        get
+        {
+            if (_unitManager == null) _unitManager = GetComponent<unit_Manager>();
+            return _unitManager;
+        }
+        set => _unitManager = value;
+    }
 
     [Header("Settings")]
     [SerializeField] public subsytemType _subsystem;
-    [SerializeField] public float maxHP;
+    [SerializeField] private float _maxHP;
+
     [SerializeField] public float curHP { get; private set; }
 
     public static event Action<unit_subsytems> OnHealthAdded = delegate { };
@@ -18,14 +28,13 @@ public class unit_subsytems : MonoBehaviour
     public event Action<float> OnHealthPctChanged = delegate { };
 
     //UNITY FUNCTIONS
-    private void Awake()
-    {
-        unitManager = GetComponent<unit_Manager>();
-    }
     private void Start()
     {
-        maxHP = unitManager.unit.unitMaxHitPoints;
+        Debug.Log(_unitManager.unit.unitMaxHitPoints);
+        _maxHP = _unitManager.unit.unitMaxHitPoints / _unitManager._subsytems.Count;
+        SetToMaxHP();
     }
+
     private void OnDisable()
     {
         OnHealthRemoved(this);
@@ -34,21 +43,22 @@ public class unit_subsytems : MonoBehaviour
     //HEALTH & DAMAGE FUNCTIONS
     public void SetToMaxHP()
     {
-        curHP = maxHP;
+        curHP = _maxHP;
         OnHealthAdded(this);
     }
     public void ModifyHealth(float amount)
     {
         curHP += amount;
-        float currentHPpct = curHP / maxHP;
+        float currentHPpct = curHP / _maxHP;
         OnHealthPctChanged(currentHPpct);
     }
 }
 
 public enum subsytemType
 {
+    squadron,
     hull,
     engine,
     weapon,
-
+    shield
 }

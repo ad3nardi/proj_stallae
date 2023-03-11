@@ -12,6 +12,6 @@ public abstract class formation_base : MonoBehaviour
     public Vector3 GetNoise(Vector3 pos)
     {
         var noise = Mathf.PerlinNoise(pos.x * _noise, pos.z * _noise);
-        return new Vector3(noise, 0, noise);
+        return new Vector3(noise, noise, noise);
     }
 }

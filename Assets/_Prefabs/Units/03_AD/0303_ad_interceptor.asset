@@ -24,8 +24,8 @@ MonoBehaviour:
   unitFireRate: 2
   unitSubSystems: []
   unitMaxSpeed: 5
-  unitAcceleration: 5
-  unitRotationSpeed: 5
+  unitAcceleration: 30
+  unitRotationSpeed: 100
   unitSlowdownTime: 2
   unitWallForce: 2
   unitWallDist: 0.2
