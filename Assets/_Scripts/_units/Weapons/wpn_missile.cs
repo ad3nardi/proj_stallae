@@ -18,6 +18,9 @@ public class wpn_missile : OptimizedBehaviour
     [SerializeField] private float _speed = 15;
     [SerializeField] private float _rotateSpeed = 95;
 
+    [Header("Variations")]
+    [SerializeField] private bool _isElectrical;
+
     [Header("Prediction")]
     [SerializeField] private float _maxDistancePredict = 100;
     [SerializeField] private float _minDistancePredict = 5;
@@ -128,6 +131,10 @@ public class wpn_missile : OptimizedBehaviour
     private void DamageTarget()
     {
         _explosion.Play();
+        if (_isElectrical)
+        {
+            _target.
+        }
         _target.ModifyHealth(-_damage);
         _parentPool.ReturnObject(this);
     }

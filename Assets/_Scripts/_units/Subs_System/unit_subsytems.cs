@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class unit_subsytems : OptimizedBehaviour
@@ -11,17 +12,20 @@ public class unit_subsytems : OptimizedBehaviour
     {
         get
         {
-            if (_unitManager == null) _unitManager = GetComponent<unit_Manager>();
+            if (_unitManager == null)
+                _unitManager = GetComponent<unit_Manager>();
             return _unitManager;
         }
         set => _unitManager = value;
     }
+    [SerializeField] public bool _isDestroyed;
+    [SerializeField] public bool _isDisabled;
 
     [Header("Settings")]
     [SerializeField] public subsytemType _subsystem;
     [SerializeField] private float _maxHP;
 
-    [SerializeField] public float curHP { get; private set; }
+    [SerializeField] public float _curHP { get; private set; }
 
     public static event Action<unit_subsytems> OnHealthAdded = delegate { };
     public static event Action<unit_subsytems> OnHealthRemoved = delegate { };
@@ -30,8 +34,9 @@ public class unit_subsytems : OptimizedBehaviour
     //UNITY FUNCTIONS
     private void Start()
     {
-        Debug.Log(_unitManager.unit.unitMaxHitPoints);
+        _unitManager = UnitManager;
         _maxHP = _unitManager.unit.unitMaxHitPoints / _unitManager._subsytems.Count;
+        Debug.Log(CachedGameObject + "Unit Max HP:" + _maxHP );
         SetToMaxHP();
     }
 
@@ -43,14 +48,28 @@ public class unit_subsytems : OptimizedBehaviour
     //HEALTH & DAMAGE FUNCTIONS
     public void SetToMaxHP()
     {
-        curHP = _maxHP;
+        _curHP = _maxHP;
         OnHealthAdded(this);
     }
     public void ModifyHealth(float amount)
     {
-        curHP += amount;
-        float currentHPpct = curHP / _maxHP;
+        _curHP += amount;
+        float currentHPpct = _curHP / _maxHP;
         OnHealthPctChanged(currentHPpct);
+        if (_curHP >= 0)
+        {
+            _unitManager.SubsSystemDestoryed(this);
+        }
+        else
+            return;   
+    }
+    public void SystemDisable()
+    {
+        _isDisabled = true;
+    }
+    public void SystemDestroy()
+    {
+        _isDestroyed = true;
     }
 }
 

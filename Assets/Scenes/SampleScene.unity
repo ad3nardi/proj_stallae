@@ -2189,6 +2189,21 @@ PrefabInstance:
       propertyPath: _idleMultiplier
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5697958403810547936, guid: 5bd5c4b3b059a8d458e9743abe20b7f3,
+        type: 3}
+      propertyPath: _subsytems.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5697958403810547936, guid: 5bd5c4b3b059a8d458e9743abe20b7f3,
+        type: 3}
+      propertyPath: _subsytems.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5697958403810547936, guid: 5bd5c4b3b059a8d458e9743abe20b7f3,
+        type: 3}
+      propertyPath: _subsytems.Array.data[1]
+      value: 
+      objectReference: {fileID: 1730680814}
     - target: {fileID: 5697958403810547937, guid: 5bd5c4b3b059a8d458e9743abe20b7f3,
         type: 3}
       propertyPath: m_RootOrder
@@ -2472,6 +2487,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1730680814 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5586128918187182045, guid: 5bd5c4b3b059a8d458e9743abe20b7f3,
+    type: 3}
+  m_PrefabInstance: {fileID: 1404388555}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76711f468e8325f429d87aa92fff8aac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1734758355
 GameObject:
   m_ObjectHideFlags: 0

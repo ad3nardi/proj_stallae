@@ -22,6 +22,11 @@ public class unit_Manager : OptimizedBehaviour
     [SerializeField] private RichAI _AImovement;
     [SerializeField] public List<unit_subsytems> _subsytems = new List<unit_subsytems>();
 
+    [Header("Unit Sub-Sysetms")]
+    [SerializeField] private ss_logic_shield _shield;
+    [SerializeField] private bool _hasShields;
+    [SerializeField] private bool _isShielded;
+
     [Header("Unit Status")]
     [SerializeField] public bool _isSelected;
     [SerializeField] public Transform _target;
@@ -44,6 +49,11 @@ public class unit_Manager : OptimizedBehaviour
         //Set Unit to Idle on its spawn Position
         _movement.SetDefaults();
         mission_none();
+        if(_shield == null)
+        {
+            _hasShields = false;
+        }
+        _isShielded = _hasShields;
     }
     private void LateUpdate()
     {
@@ -84,7 +94,7 @@ public class unit_Manager : OptimizedBehaviour
                 break;
         }
     }
-    //UNIT SELEcTION
+    //UNIT SELECTION
     public void UnitSelected()
     {
         _isSelected = true;
@@ -94,6 +104,28 @@ public class unit_Manager : OptimizedBehaviour
     {
         _isSelected = false;
         _highlightGO.CachedGameObject.SetActive(false);
+    }
+    //UNIT SUB-SYSTEM FUNCTIONS
+    public void SubsSystemDestoryed(unit_subsytems unitSS)
+    {
+        if(unitSS._subsystem == subsytemType.shield)
+        {
+
+        }
+        else if(unitSS._subsystem == subsytemType.weapon)
+        {
+
+        }
+        if (unitSS._subsystem == subsytemType.engine)
+        {
+
+        }
+        else if (unitSS._subsystem == subsytemType.hull)
+        {
+
+        }
+        else
+            return;
     }
 
     //UNIT MISSIONS
@@ -109,7 +141,6 @@ public class unit_Manager : OptimizedBehaviour
         _target = _AttackTarget;
         _targetUnitSS = _AttackTargetSS;
     }
-    //Unit will move to passed in Vec3 coordinate
     public void mission_move(Vector3 target)
     {
         _cMission = currentMission.mMove;
