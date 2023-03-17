@@ -32,7 +32,7 @@ public class unit_Manager : OptimizedBehaviour
     [SerializeField] public Transform _target;
     [SerializeField] public unit_subsytems _targetUnitSS;
     [SerializeField] public Vector3 _targetPosition;
-
+    
     //UNITY FUNCTIONS
     private void Awake()
     {
@@ -221,7 +221,6 @@ public class unit_Manager : OptimizedBehaviour
 
     }
 }
-
 public enum currentMission
 {
     mNone,

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ss_logic_hanger : MonoBehaviour
+public class ss_logic_hanger : unit_subsytems
 {
     [Header("Plugins")]
     [SerializeField] private unit_Manager _unitM;
@@ -14,6 +14,7 @@ public class ss_logic_hanger : MonoBehaviour
     [SerializeField] private float _sCurSquadHold;
     [SerializeField] private float _sRegenSquadRate;
     [SerializeField] private float _sRegenWaitTime;
+    [SerializeField] private List<unit_Manager> _curSquads = new List<unit_Manager>();
 
     [Header("Destroyed Stats")]
     [SerializeField] private float _sDestroyedRegenRate;
@@ -31,4 +32,14 @@ public class ss_logic_hanger : MonoBehaviour
 
     [Header("Visual Display")]
     [SerializeField] private Image _squadDisplay;
+
+    private void Start()
+    {
+        
+    }
+
+    private void Update()
+    {
+        
+    }
 }

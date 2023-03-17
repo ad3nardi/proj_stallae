@@ -192,7 +192,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1353096029}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 2, y: -0.7, z: -7.51}
+  m_LocalPosition: {x: 2.68, y: -2.36, z: -7.18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -244,7 +244,7 @@ TrailRenderer:
   m_Time: 1
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 2
+    widthMultiplier: 4
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -332,7 +332,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1857100065}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -2, y: -0.7, z: -7.51}
+  m_LocalPosition: {x: -2.06, y: -2.32, z: -7.41}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -384,7 +384,7 @@ TrailRenderer:
   m_Time: 1
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 2
+    widthMultiplier: 4
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -493,6 +493,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _unitManager: {fileID: 5697958403810547936}
+  _isDestroyed: 0
+  _isDisabled: 0
   _subsystem: 2
   _maxHP: 0
 --- !u!1 &4927537911859830781
@@ -540,6 +542,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _unitManager: {fileID: 5697958403810547936}
+  _isDestroyed: 0
+  _isDisabled: 0
   _subsystem: 0
   _maxHP: 0
 --- !u!1 &5204912433233871358
@@ -587,6 +591,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _unitManager: {fileID: 5697958403810547936}
+  _isDestroyed: 0
+  _isDisabled: 0
   _subsystem: 1
   _maxHP: 0
 --- !u!1 &5493581417459672478
@@ -650,7 +656,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5697958403384889162}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 10, z: 0}
+  m_LocalPosition: {x: 0, y: 6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -781,6 +787,9 @@ MonoBehaviour:
   - {fileID: 7791808531409345428}
   - {fileID: 5047245029425821458}
   - {fileID: 5586128918187182045}
+  _shield: {fileID: 0}
+  _hasShields: 0
+  _isShielded: 0
   _isSelected: 0
   _target: {fileID: 0}
   _targetUnitSS: {fileID: 0}

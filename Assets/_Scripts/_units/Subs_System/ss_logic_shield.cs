@@ -28,9 +28,8 @@ public class ss_logic_shield : unit_subsytems
     //Unity Functions
     private void Update()
     {
-        _sRegenWaitTimer += Time.deltaTime;
-        _isDisableTimer += Time.deltaTime;
         UpdateRegen();
+        UpdateTimers(Time.deltaTime);
     }
 
     //Update Functions
@@ -45,6 +44,11 @@ public class ss_logic_shield : unit_subsytems
             _sCurHP += _sDestroyedRegenRate * Time.deltaTime;
         else
             return;
+    }
+    private void UpdateTimers(float time)
+    {
+        _sRegenWaitTimer += time;
+        _isDisableTimer += time;
     }
 
     //Shield Functions

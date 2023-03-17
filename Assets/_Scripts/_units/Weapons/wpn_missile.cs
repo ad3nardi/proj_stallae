@@ -46,7 +46,6 @@ public class wpn_missile : OptimizedBehaviour
         if (_explosion == null)
             _explosion = GetComponent<VisualEffect>();
     }
-
     private void OnEnable()
     {
         _targetLastPos = _target.CachedTransform.position;
@@ -100,7 +99,7 @@ public class wpn_missile : OptimizedBehaviour
             return;
     }
 
-    //FIXED UPDATe FUNCTIONS
+    //FIXED UPDATE FUNCTIONS
     private void FUpdateMovement(float leadTimePercentage)
     {
         var predictionTime = Mathf.Lerp(0, _maxTimePrediction, leadTimePercentage);
@@ -133,7 +132,7 @@ public class wpn_missile : OptimizedBehaviour
         _explosion.Play();
         if (_isElectrical)
         {
-            _target.
+            _target.SystemDisable();
         }
         _target.ModifyHealth(-_damage);
         _parentPool.ReturnObject(this);
