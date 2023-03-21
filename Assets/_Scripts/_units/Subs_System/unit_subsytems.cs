@@ -18,12 +18,13 @@ public class unit_subsytems : OptimizedBehaviour
         }
         set => _unitManager = value;
     }
-    [SerializeField] public bool _isDestroyed;
-    [SerializeField] public bool _isDisabled;
+    [SerializeField] private bool _isDestroyed;
+    [SerializeField] private bool _isDisabled;
 
     [Header("Settings")]
     [SerializeField] public subsytemType _subsystem;
     [SerializeField] private float _maxHP;
+    [SerializeField] private float _disableTimer;
 
     [SerializeField] public float _curHP { get; private set; }
 
@@ -31,13 +32,20 @@ public class unit_subsytems : OptimizedBehaviour
     public static event Action<unit_subsytems> OnHealthRemoved = delegate { };
     public event Action<float> OnHealthPctChanged = delegate { };
 
+    public event Action<bool> OnDestroyed = delegate { };
+    public event Action<bool> OnDisabled = delegate { };
+
     //UNITY FUNCTIONS
     private void Start()
     {
         _unitManager = UnitManager;
         _maxHP = _unitManager.unit.unitMaxHitPoints / _unitManager._subsytems.Count;
-        Debug.Log(CachedGameObject + "Unit Max HP:" + _maxHP );
+
         SetToMaxHP();
+    }
+    private void Update()
+    {
+        UpdateTimers(Time.deltaTime);
     }
 
     private void OnDisable()
@@ -50,6 +58,8 @@ public class unit_subsytems : OptimizedBehaviour
     {
         _curHP = _maxHP;
         OnHealthAdded(this);
+        OnDestroyed(_isDestroyed);
+        OnDisabled(_isDisabled);
     }
     public void ModifyHealth(float amount)
     {
@@ -58,18 +68,30 @@ public class unit_subsytems : OptimizedBehaviour
         OnHealthPctChanged(currentHPpct);
         if (_curHP >= 0)
         {
-            _unitManager.SubsSystemDestoryed(this);
+            OnDestroyed(false);
         }
         else
-            return;   
+            OnDestroyed(true);   
     }
-    public void SystemDisable()
+    public void SystemDisable(bool isDisabled)
     {
-        _isDisabled = true;
+        _isDisabled = isDisabled;
+        OnDisabled(_isDisabled);
     }
     public void SystemDestroy()
     {
         _isDestroyed = true;
+        OnDestroyed(_isDestroyed);
+    }
+
+    private void UpdateTimers(float time)
+    {
+        _disableTimer += time;
+
+        if(_disableTimer >= 0)
+        {
+            SystemDisable(false);
+        }
     }
 }
 

@@ -130,10 +130,7 @@ public class wpn_missile : OptimizedBehaviour
     private void DamageTarget()
     {
         _explosion.Play();
-        if (_isElectrical)
-        {
-            _target.SystemDisable();
-        }
+
         _target.ModifyHealth(-_damage);
         _parentPool.ReturnObject(this);
     }

@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.VFX;
 using Pathfinding;
+using Pathfinding.ClipperLib;
 
 public class player_manager : MonoBehaviour
 {
@@ -32,7 +34,7 @@ public class player_manager : MonoBehaviour
     [Header("Units")]
     [SerializeField] public List<unit_Manager> _allyUnits;
     [SerializeField] public List<unit_Manager> _selectedUnits;
-    [SerializeField] public unit_subsytems _targetUnitSS;
+    [SerializeField] public int _targetUnitSS;
 
     //UNITY FUNCTIONS
     private void Awake()
@@ -45,7 +47,6 @@ public class player_manager : MonoBehaviour
     {
         _selectedUnits = new List<unit_Manager>();
         _selectedUnits.Clear();
-        _targetUnitSS = null;
     }
     private void Update()
     {
@@ -218,35 +219,42 @@ public class player_manager : MonoBehaviour
         //Move all selected units to target location
         _moveVFX.transform.position = hitPoint;
         _moveVFX.Play();
-        float radsum = 0;
+
         for (int i = 0; i < _selectedUnits.Count; i++)
         {
-            radsum += _selectedUnits[i].transform.GetComponent<RichAI>().radius;
+            _selectedUnits[i].mission_move(command_moveMath(hitPoint, i));
+        }
+        manage_deselectAll();  
+    }
+    private void command_autoTargetSubSystem(Transform targetUnitT)
+    {
+
+        //Choose random sub-system from target's list -ssi- if not designated
+        unit_Manager targetUnitM = targetUnitT.GetComponent<unit_Manager>();
+        _targetUnitSS = UnityEngine.Random.Range(0, targetUnitM._subsytems.Count);
+        
+        for (int i = 0; i < _selectedUnits.Count; i++)
+        {
+            _selectedUnits[i].mission_attack(targetUnitM, _targetUnitSS, command_moveMath(targetUnitT.position, i));
+        }
+    }
+
+    private Vector3 command_moveMath(Vector3 hitPoint, int i)
+    {
+        float radsum = 0;
+        for (int r = 0; r < _selectedUnits.Count; r++)
+        {
+            radsum += _selectedUnits[r].transform.GetComponent<RichAI>().radius;
+            Debug.Log("Radsum to " + radsum);
         }
 
         float radius = radsum / (Mathf.PI);
         radius *= 2f;
 
-        for (int i = 0; i < _selectedUnits.Count; i++)
-        {
-            float deg = 2 * Mathf.PI * i / _selectedUnits.Count;
-            Vector3 p = hitPoint + new Vector3(Mathf.Cos(deg), 0, Mathf.Sin(deg)) * radius;
+        float deg = 2 * Mathf.PI * i / _selectedUnits.Count;
+        Vector3 p = hitPoint + new Vector3(Mathf.Cos(deg), 0, Mathf.Sin(deg)) * radius;
 
-            _selectedUnits[i].mission_move(p);
-        }
-
-        manage_deselectAll();  
-    }
-    private void command_autoTargetSubSystem(Transform targetUnitT)
-    {
-        //Choose random sub-system from target's list -ssi- if not designated
-        
-        unit_Manager targetUnitM = targetUnitT.GetComponent<unit_Manager>();
-        int ssi = Random.Range(0, targetUnitM._subsytems.Count);
-        _targetUnitSS = targetUnitM._subsytems[ssi];
-        for (int i = 0; i < _selectedUnits.Count; i++)
-        {
-            _selectedUnits[i].mission_attack(targetUnitT, _targetUnitSS);
-        }
+        Debug.Log("Moving to " + p);
+        return p;
     }
 }

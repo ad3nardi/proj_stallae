@@ -1,16 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ss_logic_shield : unit_subsytems
+public class ss_logic_shield : OptimizedBehaviour
 {
     [Header ("Plugins")]
     [SerializeField] private unit_Manager _unitM;
+    [SerializeField] private unit_subsytems _unitSS;
 
     [Header("Shield Stats")]
-    [SerializeField] private float _sMaxHP;
-    [SerializeField] private float _sCurHP;
+    [SerializeField] private float _maxShieldHP;
+    [SerializeField] private float _curShieldHP;
     [SerializeField] private float _sRegenRate;
     [SerializeField] private float _sDestroyedRegenRate;
     [SerializeField] private float _sRegenWaitTime;
@@ -21,44 +23,58 @@ public class ss_logic_shield : unit_subsytems
     [Header("Shield Internal")]
     [SerializeField] private float _sRegenWaitTimer;
     [SerializeField] private float _isDisableTimer;
+    [SerializeField] private bool _isDisabled;
+    [SerializeField] private bool _isDestroyed;
 
     [Header("Visual Display")]
     [SerializeField] private Image _hpDisplay;
 
-    //Unity Functions
-    private void Update()
+    private void Start()
     {
-        UpdateRegen();
+        if(_unitSS == null)
+        {
+            _unitSS = GetComponent<unit_subsytems>();
+        }
+        _unitSS.OnDisabled += Disabled;
+        _unitSS.OnDestroyed += Destroyed;
+
+}
+//Unity Functions
+private void Update()
+    {
         UpdateTimers(Time.deltaTime);
+        UpdateRegen();
     }
 
     //Update Functions
-    private void UpdateRegen()
-    {
-        if (_sRegenWaitTimer >= _sRegenWaitTime)
-        {
-            _isRegenWaiting = false;
-            _sCurHP += _sRegenRate * Time.deltaTime;
-        }
-        else if (_sRegenWaitTimer >= _sRegenWaitTime)
-            _sCurHP += _sDestroyedRegenRate * Time.deltaTime;
-        else
-            return;
-    }
     private void UpdateTimers(float time)
     {
         _sRegenWaitTimer += time;
         _isDisableTimer += time;
     }
+    private void UpdateRegen()
+    {
+        if (!_isDestroyed)
+        {
+            if (_sRegenWaitTimer >= _sRegenWaitTime)
+            {
+                _isRegenWaiting = false;
+                _curShieldHP += _sRegenRate * Time.deltaTime;
+            }
+            else
+                return;
+        }
+        else
+            return;
+    }
 
     //Shield Functions
-    public void Disabled()
+    private void Disabled(bool isDisabled)
     {
-       
+        _isDisabled = isDisabled;
     }
-    public void Destroyed(float timer)
+    private void Destroyed(bool isDestroyed)
     {
-         
-        
+        _isDestroyed = isDestroyed;
     }
 }

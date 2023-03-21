@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Pathfinding;
+using System;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(RichAI))]
 [RequireComponent(typeof(unit_combat))]
@@ -14,7 +17,6 @@ public class unit_Manager : OptimizedBehaviour
     [SerializeField] public OptimizedBehaviour _highlightGO;
 
     [Header("Unit Plugins")]
-    [SerializeField] private currentMission _cMission;
     [Range (0 , 1)]
     [SerializeField] private float _idleMultiplier;
     [SerializeField] private unit_movement _movement;
@@ -23,16 +25,20 @@ public class unit_Manager : OptimizedBehaviour
     [SerializeField] public List<unit_subsytems> _subsytems = new List<unit_subsytems>();
 
     [Header("Unit Sub-Sysetms")]
-    [SerializeField] private ss_logic_shield _shield;
+    [SerializeField] private float _hitPoints;
+    [SerializeField] private float _shieldHitPoints;
     [SerializeField] private bool _hasShields;
     [SerializeField] private bool _isShielded;
 
     [Header("Unit Status")]
-    [SerializeField] public bool _isSelected;
-    [SerializeField] public Transform _target;
-    [SerializeField] public unit_subsytems _targetUnitSS;
+    [SerializeField] private currentMission _cMission;
     [SerializeField] public Vector3 _targetPosition;
-    
+    [SerializeField] public unit_Manager _target;
+    [SerializeField] public bool _isIdle;
+    [SerializeField] public int _targetUnitSS;
+    [SerializeField] public bool _isSelected;
+
+
     //UNITY FUNCTIONS
     private void Awake()
     {
@@ -49,18 +55,19 @@ public class unit_Manager : OptimizedBehaviour
         //Set Unit to Idle on its spawn Position
         _movement.SetDefaults();
         mission_none();
-        if(_shield == null)
-        {
-            _hasShields = false;
-        }
         _isShielded = _hasShields;
     }
     private void LateUpdate()
     {
+        if (_isIdle)
+            IdleMove();
+        else
+            return;
+
         switch (_cMission)
         {
             case currentMission.mNone:
-                mission_none();
+                IdleMove();
                 break;
             case currentMission.mAttack:
                 break;
@@ -106,44 +113,29 @@ public class unit_Manager : OptimizedBehaviour
         _highlightGO.CachedGameObject.SetActive(false);
     }
     //UNIT SUB-SYSTEM FUNCTIONS
-    public void SubsSystemDestoryed(unit_subsytems unitSS)
+    private void IdleMove()
     {
-        if(unitSS._subsystem == subsytemType.shield)
-        {
-
-        }
-        else if(unitSS._subsystem == subsytemType.weapon)
-        {
-
-        }
-        if (unitSS._subsystem == subsytemType.engine)
-        {
-
-        }
-        else if (unitSS._subsystem == subsytemType.hull)
-        {
-
-        }
-        else
-            return;
+        CachedTransform.position += CachedTransform.forward * _idleMultiplier * Time.deltaTime;
+    }
+    public void ChangeHitPoints(float hp)
+    {
+        _hitPoints += hp;
+    }
+    public void TakeDamage(int i, float dmg)
+    {
+        _subsytems[i].ModifyHealth(dmg);
     }
 
     //UNIT MISSIONS
     public void mission_none()
     {
         _cMission = currentMission.mNone;
-        CachedTransform.position += CachedTransform.forward * _idleMultiplier * Time.deltaTime;
-        //_AImovement.destination = CachedTransform.position + Vector3.forward * _idleMultiplier;
-    }
-    public void mission_attack(Transform _AttackTarget, unit_subsytems _AttackTargetSS)
-    {
-        _cMission = currentMission.mAttack;
-        _target = _AttackTarget;
-        _targetUnitSS = _AttackTargetSS;
+        _isIdle = true;
     }
     public void mission_move(Vector3 target)
     {
         _cMission = currentMission.mMove;
+        _isIdle = false;
         _AImovement.destination = target;
 
         /*
@@ -175,6 +167,15 @@ public class unit_Manager : OptimizedBehaviour
 
         }
         */
+    }
+    public void mission_attack(unit_Manager attackTarget, int attackTargetSS, Vector3 targetPos)
+    {
+        _isIdle  = false;
+        _cMission = currentMission.mAttack;
+        _target = attackTarget;
+        _targetUnitSS = attackTargetSS;
+        _AImovement.destination = targetPos;
+        _combat.TargetEnemy(_target, _targetUnitSS);
     }
     public void mission_retreat()
     {
