@@ -133,7 +133,6 @@ GameObject:
   - component: {fileID: 781088213}
   - component: {fileID: 4617446465913876795}
   - component: {fileID: 4617446465913876794}
-  - component: {fileID: 781088207}
   - component: {fileID: 781088206}
   - component: {fileID: 4617446465913876791}
   m_Layer: 6
@@ -176,17 +175,22 @@ MonoBehaviour:
   layerSet: {fileID: 11400000, guid: 94fd8df2a235c474f88db6e3c04ac5ec, type: 2}
   unit: {fileID: 11400000, guid: 41d89a94df6ddcb44a1f3c14757a6f12, type: 2}
   _highlightGO: {fileID: 3019708907152481237}
-  _cMission: 0
   _idleMultiplier: 0.186
   _movement: {fileID: 781088205}
   _combat: {fileID: 4617446465913876793}
   _AImovement: {fileID: 4617446465913876794}
   _subsytems:
   - {fileID: 781088213}
-  _isSelected: 0
-  _target: {fileID: 0}
-  _targetUnitSS: {fileID: 0}
+  _hitPoints: 0
+  _shieldHitPoints: 0
+  _hasShields: 0
+  _isShielded: 0
+  _cMission: 0
   _targetPosition: {x: 0, y: 0, z: 0}
+  _target: {fileID: 0}
+  _isIdle: 0
+  _targetUnitSS: 0
+  _isSelected: 0
 --- !u!114 &4617446465913876793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,10 +214,12 @@ MonoBehaviour:
   _curDamageDelay: 0
   _maxColliders: 0
   _isFiring: 0
-  _atkRange: 0
+  _rotSpeed: 0
+  _atkRange: 7
   _bestTarget: {fileID: 0}
+  _targetTransform: {fileID: 0}
   _target: {fileID: 0}
-  _useAutoTarget: 0
+  _firingTarget: 0
   _targetsInRange: []
   _weaponsSet:
   - {fileID: 11400000, guid: 20e232f38e3e09f4ab4282aad3ab0614, type: 2}
@@ -231,11 +237,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c25c7b0781e4b9e4f85a2a20f8d4b13d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _unitM: {fileID: 4617446465913876792}
+  layerSet: {fileID: 11400000, guid: 94fd8df2a235c474f88db6e3c04ac5ec, type: 2}
   _seeker: {fileID: 0}
   _aiCon: {fileID: 0}
-  _unitM: {fileID: 0}
-  unitVis: []
-  _checkDistance: 0
+  _unitVis:
+  - {fileID: 8778080652872475782}
+  _checkDistance: 6
+  _heightChangeTime: 0
+  _moveSpeed: 0
+  _attackRange: 4.04
+  _moveCheckLayers:
+    serializedVersion: 2
+    m_Bits: 192
+  _heightAdjust: {x: 0, y: 20, z: 0}
+  _moveCheckOffset: {x: 0, y: 0, z: 3}
 --- !u!114 &781088213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -249,8 +265,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _unitManager: {fileID: 0}
+  _isDestroyed: 0
+  _isDisabled: 0
   _subsystem: 0
   _maxHP: 0
+  _disableTimer: 0
 --- !u!114 &4617446465913876795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -292,7 +311,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 5
-  radius: 0.5
+  radius: 2
   height: 2
   canMove: 1
   maxSpeed: 1
@@ -318,24 +337,9 @@ MonoBehaviour:
   endReachedDistance: 0.01
   wallForce: 3
   wallDist: 1
-  funnelSimplification: 0
+  funnelSimplification: 1
   slowWhenNotFacingTarget: 1
   animCompatibility: {fileID: 0}
---- !u!114 &781088207
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4617446465913876790}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77f586f285b3847808d79083bd19ef1f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 1
-  unwrap: 1
-  splitAtEveryPortal: 0
 --- !u!114 &781088206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -369,7 +373,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &7532680125946641370
 PrefabInstance:

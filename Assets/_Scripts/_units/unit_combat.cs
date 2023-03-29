@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.VFX;
 using static UnityEditor.Progress;
@@ -24,7 +25,8 @@ public class unit_combat : OptimizedBehaviour
     [SerializeField] private Transform _targetTransform;
     [SerializeField] private unit_Manager _target;
     [SerializeField] private int _firingTarget;
-    [SerializeField] public bool _useAutoTarget;
+    [SerializeField] public bool _useAutoTarget { get; private set; }
+    [SerializeField] public bool _targetInRange { get; private set; }
 
     [Header("Lists")]
     [SerializeField] public List<Transform> _targetsInRange;
@@ -63,8 +65,7 @@ public class unit_combat : OptimizedBehaviour
             updateIfTargetInRange();
     }
     public void OnDrawGizmos()
-    {
-        
+    { 
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(CachedTransform.position, _atkRange);
     }
@@ -98,6 +99,7 @@ public class unit_combat : OptimizedBehaviour
         {
             if (_targetsInRange.Contains(_target.transform))
             {
+
                 _unitM._isIdle = true;
                 
                 return;
@@ -136,6 +138,7 @@ public class unit_combat : OptimizedBehaviour
             {
                 Quaternion targetRot = Quaternion.Euler(0, _target.CachedTransform.rotation.y, _weaponsPos[i].rotation.eulerAngles.z);
                 _weaponsPos[i].rotation = Quaternion.Lerp(_weaponsPos[i].rotation, targetRot, Time.deltaTime * _rotSpeed);
+                Debug.Log("Updating Rotation " + i);
             }
         }
     }

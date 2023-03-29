@@ -480,7 +480,7 @@ GameObject:
   - component: {fileID: 978468740}
   - component: {fileID: 978468739}
   - component: {fileID: 978468738}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Decal Projector (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1284,7 +1284,7 @@ GameObject:
   - component: {fileID: 2722587194001425387}
   - component: {fileID: 3667402396299982494}
   - component: {fileID: 1647393117980854971}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: laser_cannon (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1543,7 +1543,7 @@ GameObject:
   - component: {fileID: 6039504493854892927}
   - component: {fileID: 6547641734925622633}
   - component: {fileID: 6399412718380422347}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: laser_cannon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1744,7 +1744,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7292078166403841921}
   - component: {fileID: 7791808531409345428}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: subsystem_weapons
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1795,7 +1795,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4102249700071988982}
   - component: {fileID: 5586128918187182045}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: subsystem_hull
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1845,7 +1845,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1289873519687393591}
   - component: {fileID: 5047245029425821458}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: subsystem_engines
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2115,7 +2115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03dd252736d2dbb49b03d94abf5893cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _unitM: {fileID: 0}
+  _unitM: {fileID: 5697958403810547936}
   layerSet: {fileID: 11400000, guid: 94fd8df2a235c474f88db6e3c04ac5ec, type: 2}
   targetLayer:
     serializedVersion: 2
@@ -2127,12 +2127,11 @@ MonoBehaviour:
   _maxColliders: 10
   _isFiring: 0
   _rotSpeed: 1.05
-  _atkRange: 0
+  _atkRange: 50
   _bestTarget: {fileID: 0}
   _targetTransform: {fileID: 0}
   _target: {fileID: 0}
   _firingTarget: 0
-  _useAutoTarget: 0
   _targetsInRange: []
   _weaponsSet:
   - {fileID: 11400000, guid: 20e232f38e3e09f4ab4282aad3ab0614, type: 2}
@@ -2158,11 +2157,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c25c7b0781e4b9e4f85a2a20f8d4b13d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _unitM: {fileID: 5697958403810547936}
+  layerSet: {fileID: 11400000, guid: 94fd8df2a235c474f88db6e3c04ac5ec, type: 2}
   _seeker: {fileID: 1483931452544692994}
   _aiCon: {fileID: 7318125543239817735}
-  _unitM: {fileID: 5697958403810547936}
-  unitVis: []
-  _checkDistance: 0
+  _unitVis:
+  - {fileID: 5697958403384889157}
+  - {fileID: 7292078166403841921}
+  _checkDistance: 30
+  _heightChangeTime: 1
+  _moveSpeed: 1
+  _attackRange: 0
+  _moveCheckLayers:
+    serializedVersion: 2
+    m_Bits: 192
+  _heightAdjust: {x: 0, y: 10, z: 0}
+  _moveCheckOffset: {x: 0, y: 0, z: 7}
 --- !u!114 &1483931452544692994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2330,6 +2340,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7542912324095513191}
     m_Modifications:
+    - target: {fileID: 636202853980299259, guid: 8b7d7ab8d91957347bf8007b7b0afbae,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 1434703196506590137, guid: 8b7d7ab8d91957347bf8007b7b0afbae,
         type: 3}
       propertyPath: m_RootOrder
@@ -2450,10 +2465,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7542912324095513191}
     m_Modifications:
+    - target: {fileID: 1755791810551532359, guid: baca31341d41f184faba0006e848a2a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2070941216722696755, guid: baca31341d41f184faba0006e848a2a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6450335402258025127, guid: baca31341d41f184faba0006e848a2a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 8705836227375876151, guid: baca31341d41f184faba0006e848a2a2,
         type: 3}
       propertyPath: m_Name
       value: wpn_laser_cannon_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8705836227375876151, guid: baca31341d41f184faba0006e848a2a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8956750045213975716, guid: baca31341d41f184faba0006e848a2a2,
         type: 3}
@@ -2525,6 +2560,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7542912324095513191}
     m_Modifications:
+    - target: {fileID: 636202853980299259, guid: 8b7d7ab8d91957347bf8007b7b0afbae,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 1434703196506590137, guid: 8b7d7ab8d91957347bf8007b7b0afbae,
         type: 3}
       propertyPath: m_RootOrder
@@ -2650,6 +2690,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: highlight
       objectReference: {fileID: 0}
+    - target: {fileID: 1013645033837437480, guid: 65f90eead524cc64daefc2470fda37ac,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 1013645033837437481, guid: 65f90eead524cc64daefc2470fda37ac,
         type: 3}
       propertyPath: m_RootOrder
@@ -2747,10 +2792,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7542912324095513191}
     m_Modifications:
+    - target: {fileID: 1755791810551532359, guid: baca31341d41f184faba0006e848a2a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2070941216722696755, guid: baca31341d41f184faba0006e848a2a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6450335402258025127, guid: baca31341d41f184faba0006e848a2a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 8705836227375876151, guid: baca31341d41f184faba0006e848a2a2,
         type: 3}
       propertyPath: m_Name
       value: wpn_laser_cannon_01 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8705836227375876151, guid: baca31341d41f184faba0006e848a2a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8956750045213975716, guid: baca31341d41f184faba0006e848a2a2,
         type: 3}
@@ -2822,6 +2887,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7542912324095513191}
     m_Modifications:
+    - target: {fileID: 636202853980299259, guid: 8b7d7ab8d91957347bf8007b7b0afbae,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 1434703196506590137, guid: 8b7d7ab8d91957347bf8007b7b0afbae,
         type: 3}
       propertyPath: m_RootOrder
@@ -2942,10 +3012,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7542912324095513191}
     m_Modifications:
+    - target: {fileID: 1755791810551532359, guid: baca31341d41f184faba0006e848a2a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2070941216722696755, guid: baca31341d41f184faba0006e848a2a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6450335402258025127, guid: baca31341d41f184faba0006e848a2a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 8705836227375876151, guid: baca31341d41f184faba0006e848a2a2,
         type: 3}
       propertyPath: m_Name
       value: wpn_laser_cannon_01 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8705836227375876151, guid: baca31341d41f184faba0006e848a2a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8956750045213975716, guid: baca31341d41f184faba0006e848a2a2,
         type: 3}
@@ -3077,6 +3167,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: wpn_antiAir_01
       objectReference: {fileID: 0}
+    - target: {fileID: 3055595188362130372, guid: 9791291816b495043bccf294bc1087a0,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4184229869203668284, guid: 9791291816b495043bccf294bc1087a0,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9791291816b495043bccf294bc1087a0, type: 3}
 --- !u!4 &6000616083678524949 stripped
@@ -3092,10 +3192,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7542912324095513191}
     m_Modifications:
+    - target: {fileID: 1755791810551532359, guid: baca31341d41f184faba0006e848a2a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2070941216722696755, guid: baca31341d41f184faba0006e848a2a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6450335402258025127, guid: baca31341d41f184faba0006e848a2a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 8705836227375876151, guid: baca31341d41f184faba0006e848a2a2,
         type: 3}
       propertyPath: m_Name
       value: wpn_laser_cannon_01 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8705836227375876151, guid: baca31341d41f184faba0006e848a2a2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8956750045213975716, guid: baca31341d41f184faba0006e848a2a2,
         type: 3}

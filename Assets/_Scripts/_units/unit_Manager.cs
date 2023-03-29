@@ -61,8 +61,6 @@ public class unit_Manager : OptimizedBehaviour
     {
         if (_isIdle)
             IdleMove();
-        else
-            return;
 
         switch (_cMission)
         {
@@ -70,9 +68,10 @@ public class unit_Manager : OptimizedBehaviour
                 IdleMove();
                 break;
             case currentMission.mAttack:
+                _movement.StopAtAttackRangeMax(_target); 
                 break;
             case currentMission.mMove:
-                if(_AImovement.reachedDestination)
+                if (_AImovement.reachedDestination)
                     mission_none();
                 break;
             case currentMission.mRetreat:
@@ -101,6 +100,7 @@ public class unit_Manager : OptimizedBehaviour
                 break;
         }
     }
+    
     //UNIT SELECTION
     public void UnitSelected()
     {
@@ -112,6 +112,7 @@ public class unit_Manager : OptimizedBehaviour
         _isSelected = false;
         _highlightGO.CachedGameObject.SetActive(false);
     }
+    
     //UNIT SUB-SYSTEM FUNCTIONS
     private void IdleMove()
     {
@@ -136,6 +137,7 @@ public class unit_Manager : OptimizedBehaviour
     {
         _cMission = currentMission.mMove;
         _isIdle = false;
+        _movement.SetIsStop(false);
         _AImovement.destination = target;
 
         /*
@@ -170,8 +172,8 @@ public class unit_Manager : OptimizedBehaviour
     }
     public void mission_attack(unit_Manager attackTarget, int attackTargetSS, Vector3 targetPos)
     {
-        _isIdle  = false;
         _cMission = currentMission.mAttack;
+        _isIdle  = false;
         _target = attackTarget;
         _targetUnitSS = attackTargetSS;
         _AImovement.destination = targetPos;
@@ -207,7 +209,8 @@ public class unit_Manager : OptimizedBehaviour
     }
     public void mission_stop()
     {
-
+        _cMission = currentMission.mStop;
+        _movement.SetIsStop(true);
     }
     public void mission_ambush()
     {

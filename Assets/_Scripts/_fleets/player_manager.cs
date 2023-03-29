@@ -2,14 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.VFX;
 using Pathfinding;
-using Pathfinding.ClipperLib;
+
 
 public class player_manager : MonoBehaviour
 {
     [Header("Plugins")]
     [SerializeField] private Camera _cam;
+    [SerializeField] private EventSystem _eventSystem;
     [SerializeField] private LayerSet _layerSet;
 
     [Header("Inputs (DO NOT SET IN EDITOR)")]
@@ -19,7 +21,9 @@ public class player_manager : MonoBehaviour
     [SerializeField] private Vector3 _attackDragStartPos;
     [SerializeField] private Vector3 _attackDragEndPos;
     [SerializeField] private float _mouseDownTime;
+
     //Bools to check input Hold
+    [SerializeField] private bool _isMouseDown;
     [SerializeField] private bool _attackDragging;
     [SerializeField] private bool _boxSelectDragging;
 
@@ -40,6 +44,7 @@ public class player_manager : MonoBehaviour
     private void Awake()
     {
         _cam = Helpers.Camera;
+        _eventSystem = Helpers.EventSystem;
         _attackDragging = false;
         _boxSelectDragging = false;
     }
@@ -50,13 +55,10 @@ public class player_manager : MonoBehaviour
     }
     private void Update()
     {
-        if (_attackDragging)
-            Input_AttackDragging();
-        if (_boxSelectDragging && _mouseDownTime + _dragDelay > Time.time)
-            Input_SelectBoxResize();
-
-        UpdateMouseDownTimer();
-
+        if (_attackDragging) Input_AttackDragging();
+        if (_isMouseDown) UpdateMouseDownTimer();
+        if (_boxSelectDragging) Input_SelectBoxResize();
+        if (_mouseDownTime > _dragDelay) _boxSelectDragging = true;
     }
 
     public void OnDrawGizmos()
@@ -67,13 +69,22 @@ public class player_manager : MonoBehaviour
     //PLAYER INPUT FUNCTIONS
     public void InputSelect(bool inp)
     {
-        Input_AttackDragStart();
-        Input_SelectBoxStart();
+        if (!_eventSystem.IsPointerOverGameObject())
+        {
+            Input_AttackDragStart();
+            Input_SelectBoxStart();
+            _isMouseDown = true;
+        }
+        else
+            return;
     }
     public void InputRelease(bool inp)
     {
         Input_AttackDragRelease();
         Input_SelectBoxRelease();
+        _isMouseDown = false;
+        _boxSelectDragging = false;
+        _mouseDownTime = 0;
     }
     public void InputSelectPos(float x, float y)
     {
@@ -82,37 +93,37 @@ public class player_manager : MonoBehaviour
     }
     private void UpdateMouseDownTimer()
     {
-        _mouseDownTime = Time.time;
+        _mouseDownTime += Time.deltaTime;
     }
-    
+
     //UNIT INPUT SELECTION FUNCTIONS
     private void Input_SelectBoxStart()
     {
-        _boxSelectDragging = true;
         _startMousePos = _mousePos;
         _selectionBoxUI.sizeDelta = Vector2.zero;
         _selectionBoxUI.gameObject.SetActive(true);
 
         RaycastHit hit;
-        if (Physics.Raycast(_cam.ViewportPointToRay(_selectPos), out hit))
-        {
-            if (hit.transform.gameObject.layer == _layerSet.layerPlayerUnit)
+        
+            if (Physics.Raycast(_cam.ViewportPointToRay(_selectPos), out hit))
             {
-                manage_deselectAll();
-                manage_addSelected(hit.transform.GetComponent<unit_Manager>());
-                return;
+                if (hit.transform.gameObject.layer == _layerSet.layerPlayerUnit)
+                {
+                    manage_deselectAll();
+                    manage_addSelected(hit.transform.GetComponent<unit_Manager>());
+                    return;
+                }
+                else if (_selectedUnits.Count != 0 && hit.transform.gameObject.layer == _layerSet.layerNavigation)
+                {
+                    command_moveSelected(hit.point);
+                    return;
+                }
+                else
+                {
+                    manage_deselectAll();
+                    return;
+                }
             }
-            else if (_selectedUnits.Count != 0 && hit.transform.gameObject.layer == _layerSet.layerNavigation)
-            {
-                command_moveSelected(hit.point);
-                return;
-            }
-            else
-            {
-                manage_deselectAll();
-                return;
-            }
-        }
     }
     private void Input_SelectBoxResize()
     {
@@ -124,20 +135,20 @@ public class player_manager : MonoBehaviour
         _selectionBoxUI.sizeDelta = new Vector2(Mathf.Abs(width), Mathf.Abs(height));
         Bounds bounds = new Bounds(_selectionBoxUI.anchoredPosition, _selectionBoxUI.sizeDelta);
 
-        for (int i = 0; i < _allyUnits.Count; i++)
-        {
-            if (UnitsInSelectionBox(_cam.WorldToScreenPoint(_allyUnits[i].transform.position), bounds))
+        manage_deselectAll();
+            for (int i = 0; i < _allyUnits.Count; i++)
             {
+                if (UnitsInSelectionBox(_cam.WorldToScreenPoint(_allyUnits[i].transform.position), bounds))
+                {
                     manage_addSelected(_allyUnits[i].transform.GetComponent<unit_Manager>());
-            }
-        } 
+                }
+            } 
     }
     private void Input_SelectBoxRelease()
     {
         _mouseDownTime = 0f;
-        _boxSelectDragging = false;
         _selectionBoxUI.sizeDelta = Vector2.zero;
-        _selectionBoxUI.gameObject.SetActive(false);   
+        _selectionBoxUI.gameObject.SetActive(false);
     }
     private bool UnitsInSelectionBox(Vector2 position, Bounds bounds)
     {
@@ -149,13 +160,11 @@ public class player_manager : MonoBehaviour
     {
         if (_selectedUnits.Count != 0)
         {
-            Debug.Log("Input Attack Sucess");
             RaycastHit hit;
             if (Physics.Raycast(_cam.ViewportPointToRay(_selectPos), out hit))
             {
                 if (hit.transform.gameObject.layer == _layerSet.layerEnemyUnit)
                 {
-                    Debug.Log("Attack: " + hit);
                     _attackDragStartPos = Vector3.zero;
                     _attackUI.SetActive(true);
                     command_autoTargetSubSystem(hit.transform);
@@ -177,16 +186,12 @@ public class player_manager : MonoBehaviour
     }
     private void Input_AttackDragging()
     {
-        Vector3 draggingPoint = _mousePos;// _cam.ScreenToWorldPoint(_selectPos);
-
-        Debug.Log("Drag Point " + draggingPoint);
+        Vector3 draggingPoint = _mousePos;
     }
     private void Input_AttackDragRelease()
     {
         _attackDragEndPos = _selectPos;
         _attackDragging = false;
-
-        Debug.Log("End Pos " + _attackDragEndPos);
     }
     
     //UNIT MANAGEMENT FUNCTIONS
@@ -223,6 +228,7 @@ public class player_manager : MonoBehaviour
         for (int i = 0; i < _selectedUnits.Count; i++)
         {
             _selectedUnits[i].mission_move(command_moveMath(hitPoint, i));
+            
         }
         manage_deselectAll();  
     }
@@ -238,14 +244,12 @@ public class player_manager : MonoBehaviour
             _selectedUnits[i].mission_attack(targetUnitM, _targetUnitSS, command_moveMath(targetUnitT.position, i));
         }
     }
-
     private Vector3 command_moveMath(Vector3 hitPoint, int i)
     {
         float radsum = 0;
         for (int r = 0; r < _selectedUnits.Count; r++)
         {
             radsum += _selectedUnits[r].transform.GetComponent<RichAI>().radius;
-            Debug.Log("Radsum to " + radsum);
         }
 
         float radius = radsum / (Mathf.PI);
@@ -254,7 +258,7 @@ public class player_manager : MonoBehaviour
         float deg = 2 * Mathf.PI * i / _selectedUnits.Count;
         Vector3 p = hitPoint + new Vector3(Mathf.Cos(deg), 0, Mathf.Sin(deg)) * radius;
 
-        Debug.Log("Moving to " + p);
+        Debug.Log("MoveMath to " + p);
         return p;
     }
 }

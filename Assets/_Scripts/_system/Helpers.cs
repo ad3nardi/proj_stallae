@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public static class Helpers
 {
     public static Camera _camera;
+    public static EventSystem _eventSystem;
 
     public static Camera Camera
     {
@@ -14,6 +15,15 @@ public static class Helpers
             return _camera;
         }
     }
+    public static EventSystem EventSystem
+    {
+        get
+        {
+            if (_eventSystem == null) _eventSystem = EventSystem.current;
+            return _eventSystem;
+        }
+    }
+
 
     private static readonly Dictionary<float, WaitForSeconds> WaitDictionary = new Dictionary<float, WaitForSeconds>();
     public static WaitForSeconds GetWait(float time)
