@@ -124,6 +124,7 @@ public class unit_Manager : OptimizedBehaviour
     }
     public void TakeDamage(int i, float dmg)
     {
+        Debug.Log("Taking Damage");
         _subsytems[i].ModifyHealth(dmg);
     }
 

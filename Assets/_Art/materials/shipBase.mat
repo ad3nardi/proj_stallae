@@ -138,6 +138,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 60084cc046ce26e48b3c6bf5fd070d02, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _specularSheen:
+        m_Texture: {fileID: 2800000, guid: 37e6f91f3efb0954cbdce254638862ea, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _texcoord:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -272,6 +276,7 @@ Material:
     - _RimLightInLight: 1
     - _RimLightSoftness: 1
     - _RimLightUnfill: 1.5
+    - _RimOffset: 0.12
     - _SPECIN: 33.31
     - _SPECMODE: 0
     - _STIL: 0
@@ -322,6 +327,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _CustomLightDirection: {r: 0, g: 0, b: 10, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionHighlights: {r: 3.7960784, g: 4, b: 0, a: 0}
     - _FresnelSettings: {r: 0, g: 1, b: 3.18, a: 0}
     - _GlossColor: {r: 1, g: 1, b: 1, a: 1}
     - _Glow_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -332,12 +338,15 @@ Material:
     - _OutlineOffset: {r: 0, g: 0, b: 0, a: 1}
     - _OverallShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _PTCol: {r: 0, g: 0, b: 0, a: 1}
+    - _RimCutoff: {r: 0.41, g: 0.41, b: 0, a: 0}
     - _RimLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _RimTint: {r: 0.5188679, g: 0.5188679, b: 0.5188679, a: 1}
     - _SSAOColor: {r: 0, g: 0, b: 0, a: 0}
     - _SelfLitColor: {r: 1, g: 1, b: 1, a: 1}
     - _SelfShadowRealTimeShadowColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowTColor: {r: 1, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _SpecSheenTileOffset: {r: 1, g: 0, b: 0, a: 0}
     - _XYZPosition: {r: 0, g: 0, b: 0, a: 0}
     - _albedoTint: {r: 1, g: 1, b: 1, a: 0.50980395}
     - _smoothStepDark: {r: 0.98, g: 1, b: 0, a: 0}
