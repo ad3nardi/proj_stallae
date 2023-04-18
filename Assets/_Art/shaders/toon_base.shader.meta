@@ -4,7 +4,6 @@ ShaderImporter:
   externalObjects: {}
   defaultTextures:
   - _albedo: {fileID: 2800000, guid: 60084cc046ce26e48b3c6bf5fd070d02, type: 3}
-  - _specularSheen: {fileID: 2800000, guid: 7f3e009c059ee8a40b58a5f11f6feb25, type: 3}
   nonModifiableTextures: []
   preprocessorOverride: 0
   userData: 

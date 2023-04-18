@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 public static class Helpers
 {
     public static Camera _camera;
+    public static LayerSet _layerSet;
+    public static TagSet _tagSet;
     public static EventSystem _eventSystem;
 
     public static Camera Camera
@@ -23,7 +25,22 @@ public static class Helpers
             return _eventSystem;
         }
     }
-
+    public static LayerSet LayerSet
+    {
+        get
+        {
+            if(_layerSet == null) _layerSet = ScriptableObject.CreateInstance<LayerSet>();
+            return _layerSet;
+        }
+    }
+    public static TagSet TagSet
+    {
+        get
+        {
+            if (_tagSet == null) _tagSet = ScriptableObject.CreateInstance<TagSet>();
+            return _tagSet;
+        }
+    }
 
     private static readonly Dictionary<float, WaitForSeconds> WaitDictionary = new Dictionary<float, WaitForSeconds>();
     public static WaitForSeconds GetWait(float time)

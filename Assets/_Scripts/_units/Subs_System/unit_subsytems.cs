@@ -39,7 +39,7 @@ public class unit_subsytems : OptimizedBehaviour
     private void Start()
     {
         _unitManager = UnitManager;
-        _maxHP = _unitManager.unit.unitMaxHitPoints / _unitManager._subsytems.Count;
+        _maxHP = _unitManager._unit.unitMaxHitPoints / _unitManager._subsytems.Count;
 
         SetToMaxHP();
     }

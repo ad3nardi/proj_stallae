@@ -9,6 +9,7 @@ public class unit_combat : OptimizedBehaviour
 {
     [Header("Plugins")]
     [SerializeField] private unit_Manager _unitM;
+    [SerializeField] public TagSet tagSet;
     [SerializeField] public LayerSet layerSet;
     [SerializeField] public LayerMask targetLayer;
 
@@ -38,13 +39,14 @@ public class unit_combat : OptimizedBehaviour
     private void Awake()
     {
         _unitM = GetComponent<unit_Manager>();
-        _fireRate = _unitM.unit.unitFireRate;
-        _atkRange = _unitM.unit.unitAttackRange;
+        _fireRate = _unitM._unit.unitFireRate;
+        _atkRange = _unitM._unit.unitAttackRange;
         _useAutoTarget = false;
     }
     private void Start()
     {
-        layerSet = _unitM.layerSet;
+        layerSet = Helpers.LayerSet;
+        tagSet = Helpers.TagSet;
         _bestTarget = null;
 
         _targetsInRange = new List<Transform>();

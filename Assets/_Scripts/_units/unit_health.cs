@@ -21,7 +21,7 @@ public class unit_health : OptimizedBehaviour
 
     private void Start()
     {
-        maxHP = unitManager.unit.unitMaxHitPoints;
+        maxHP = unitManager._unit.unitMaxHitPoints;
     }
 
     public void SetToMaxHP()

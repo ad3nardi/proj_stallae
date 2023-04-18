@@ -9,19 +9,25 @@ public class unit_movement : OptimizedBehaviour
 {
 	[Header("Plugins")]
 	[SerializeField] public LayerSet layerSet;
+	[SerializeField] public TagSet tagSet;
+	[SerializeField] public int _sizeTag;
     [SerializeField] private unit_Manager _unitM;
     [SerializeField] private Seeker _seeker;
     [SerializeField] private RichAI _aiCon;
-    [Header("Unit Plugins")]
-	[SerializeField] private List<Transform> _unitVis = new List<Transform>();
+    [Header("Unit Visual Management")]
+	[SerializeField] private Transform _unitVis;
+	[SerializeField] private LayerMask _moveCheckLayers;
+	[SerializeField] private float _heightChangeTimer;
+    [SerializeField] private float _heightChangeTime;
+	[SerializeField] private float _percentComplete;
+	[SerializeField] private float _startHeight;
+	[SerializeField] private float _endHeight;
 
 	[Header("Settings")]
 	[SerializeField] private float _checkDistance;
-    [SerializeField] private float _heightChangeTime;
     [SerializeField] private float _moveSpeed;
     [SerializeField] private float _attackRange;
-	[SerializeField] private LayerMask _moveCheckLayers;
-    [SerializeField] private Vector3 _heightAdjust;
+    [SerializeField] private float _heightAdjust;
     [SerializeField] private Vector3 _moveCheckOffset;
 
 	// UNITY FUNCTIONS
@@ -32,50 +38,79 @@ public class unit_movement : OptimizedBehaviour
         _aiCon = GetComponent<RichAI>();
 	}
 
-    public void Update()
-	{
-		UpdateCheckCollision();
-	}
+    public void Start()
+    {
+        layerSet = Helpers.LayerSet;
+        tagSet = Helpers.TagSet;
+		_startHeight = _unitVis.position.y;
+		_endHeight = _unitVis.position.y + _heightAdjust;
+    }
 
-    private void OnDrawGizmos()
+	private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(CachedTransform.position + _moveCheckOffset, Vector3.one * _checkDistance);
     }
 
 	// UPDATE FUNCTIONS
-    public void UpdateCheckCollision()
+    /*public void UpdateCheckCollision()
 	{
 		Collider[] hitCollider = Physics.OverlapBox(CachedTransform.position +_moveCheckOffset, Vector3.one * _checkDistance, Quaternion.identity, _moveCheckLayers);
 
-        if (hitCollider.Length > 1)
+		if (hitCollider.Length > 1)
 		{
-            for (int i = 0; i < _unitVis.Count; i++)
+			for (int c = 0; c < hitCollider.Length; c++)
 			{
-				_unitVis[i].position = Vector3.Lerp(_unitVis[i].position, _unitVis[i].position + _heightAdjust, _heightChangeTime * Time.deltaTime);
+				unit_Manager unitCheck = hitCollider[c].GetComponent<unit_Manager>();
+                
+				//Go Up
+				if (_unitVis.position.y == _startHeight)
+                    _heightChangeTimer = 0;
+				if (_sizeTag < unitCheck._sizeTag)
+				{
+                    _heightChangeTimer += Time.deltaTime;
+                    _percentComplete = _heightChangeTimer / _heightChangeTime;
+                    _unitVis.position = new Vector3 (_unitVis.position.x, Mathf.Lerp(_startHeight, _endHeight, _percentComplete), _unitVis.position.z);
+					return;
+				}
+
+				//Go Down
+				if (_unitVis.position.y == _endHeight)
+                    _heightChangeTimer = 0;
+
+                if (_unitVis.position.y <= _endHeight)
+                {
+                    _heightChangeTimer += Time.deltaTime;
+                    _percentComplete = _heightChangeTimer / _heightChangeTime;
+                    _unitVis.position = new Vector3(_unitVis.position.x, Mathf.Lerp(_startHeight, _endHeight, _percentComplete), _unitVis.position.z);
+                }
+                else
+					return;
 			}
 		}
+		else
+			return;
 	}
+	*/
 
 	//MOVEMENT FUNCTIONS
     public void SetDefaults()
 	{
-		_moveSpeed = _aiCon.maxSpeed;
-        _aiCon.maxSpeed = _unitM.unit.unitMaxSpeed;
-		_aiCon.acceleration = _unitM.unit.unitAcceleration;
-		_aiCon.rotationSpeed = _unitM.unit.unitRotationSpeed;
-		_aiCon.slowdownTime = _unitM.unit.unitSlowdownTime;
-		_aiCon.wallForce = _unitM.unit.unitWallForce;
-		_aiCon.wallDist = _unitM.unit.unitWallDist;
-		_aiCon.endReachedDistance = _unitM.unit.unitEndReachedDistance;
+        _sizeTag = _unitM._sizeTag;
+        _moveSpeed = _aiCon.maxSpeed;
+        _aiCon.maxSpeed = _unitM._unit.unitMaxSpeed;
+		_aiCon.acceleration = _unitM._unit.unitAcceleration;
+		_aiCon.rotationSpeed = _unitM._unit.unitRotationSpeed;
+		_aiCon.slowdownTime = _unitM._unit.unitSlowdownTime;
+		_aiCon.wallForce = _unitM._unit.unitWallForce;
+		_aiCon.wallDist = _unitM._unit.unitWallDist;
+		_aiCon.endReachedDistance = _unitM._unit.unitEndReachedDistance;
 
-		_attackRange = _unitM.unit.unitAttackRange;
+		_attackRange = _unitM._unit.unitAttackRange;
 
-        _checkDistance = _unitM.unit.unitCheckDistance;
+        _checkDistance = _unitM._unit.unitCheckDistance;
         _aiCon.isStopped = false;
-
     }
-
 	public void StopAtAttackRangeMax(unit_Manager target)
 	{
 		_aiCon.destination = command_moveMath(target.CachedTransform.position);

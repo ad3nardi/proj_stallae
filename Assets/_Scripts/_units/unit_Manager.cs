@@ -13,7 +13,9 @@ public class unit_Manager : OptimizedBehaviour
 {
     [Header("Plugins")]
     [SerializeField] public LayerSet layerSet;
-    [SerializeField] public unit_settings unit;
+    [SerializeField] public TagSet tagSet;
+    [SerializeField] public unit_settings _unit;
+    [SerializeField] public int _sizeTag;
     [SerializeField] public OptimizedBehaviour _highlightGO;
 
     [Header("Unit Plugins")]
@@ -43,19 +45,21 @@ public class unit_Manager : OptimizedBehaviour
     private void Awake()
     {
         //Cache
-        _movement = GetComponent<unit_movement>();
         _AImovement = GetComponent<RichAI>();
+        _movement = GetComponent<unit_movement>();
         _combat = GetComponent<unit_combat>();
+        layerSet = Helpers.LayerSet;
+        tagSet = Helpers.TagSet;
     }
     private void Start()
     {
+        _sizeTag = ((int)_unit.sizeTag);
         UnitDeselected();
         _target = null;
-
-        //Set Unit to Idle on its spawn Position
         _movement.SetDefaults();
-        mission_none();
         _isShielded = _hasShields;
+        //Set Unit to Idle on its spawn Position
+        mission_none();
     }
     private void LateUpdate()
     {

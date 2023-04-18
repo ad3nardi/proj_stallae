@@ -11,9 +11,10 @@ public class unit_settings : ScriptableObject
 
     [Header("Unit Attributes")]
     public FactionType faction;
-    public bool hasShields;
+    public SizeTag sizeTag;
     public bool canAttack;
     public bool hasSubSystems;
+    public bool hasShields;
 
     [Header("Unit Stats")]
     public float unitPointCost;

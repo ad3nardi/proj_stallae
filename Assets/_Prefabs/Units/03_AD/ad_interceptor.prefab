@@ -94,7 +94,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _noise: 0.398
-  Spread: 1.11
+  Spread: 1.2
   _amount: 9
   _radius: 1.66
   _radiusGrowthMultiplier: 0.15
@@ -116,7 +116,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _unitGizmoSize: {x: 1, y: 1, z: 1}
   _gizmoColor: {r: 0.9150943, g: 0.4704966, b: 0.4704966, a: 1}
-  _gizmoMesh: {fileID: -2890363443418381803, guid: 8277126be8143554f9e09a9597094bd7,
+  _gizmoMesh: {fileID: -138123576269632472, guid: 8e9dd0b4c11292747b104b5c4fbd7448,
     type: 3}
 --- !u!1 &4617446465913876790
 GameObject:
@@ -173,7 +173,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   layerSet: {fileID: 11400000, guid: 94fd8df2a235c474f88db6e3c04ac5ec, type: 2}
-  unit: {fileID: 11400000, guid: 41d89a94df6ddcb44a1f3c14757a6f12, type: 2}
+  tagSet: {fileID: 0}
+  _unit: {fileID: 11400000, guid: 41d89a94df6ddcb44a1f3c14757a6f12, type: 2}
+  _sizeTag: 0
   _highlightGO: {fileID: 3019708907152481237}
   _idleMultiplier: 0.186
   _movement: {fileID: 781088205}
@@ -204,6 +206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _unitM: {fileID: 4617446465913876792}
+  tagSet: {fileID: 0}
   layerSet: {fileID: 11400000, guid: 94fd8df2a235c474f88db6e3c04ac5ec, type: 2}
   targetLayer:
     serializedVersion: 2
@@ -237,20 +240,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c25c7b0781e4b9e4f85a2a20f8d4b13d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _unitM: {fileID: 4617446465913876792}
   layerSet: {fileID: 11400000, guid: 94fd8df2a235c474f88db6e3c04ac5ec, type: 2}
+  tagSet: {fileID: 0}
+  _sizeTag: 0
+  _unitM: {fileID: 4617446465913876792}
   _seeker: {fileID: 0}
   _aiCon: {fileID: 0}
-  _unitVis:
-  - {fileID: 8778080652872475782}
-  _checkDistance: 6
-  _heightChangeTime: 0
-  _moveSpeed: 0
-  _attackRange: 4.04
+  _unitVis: {fileID: 8778080652872475782}
   _moveCheckLayers:
     serializedVersion: 2
     m_Bits: 192
-  _heightAdjust: {x: 0, y: 20, z: 0}
+  _heightChangeTimer: 0
+  _heightChangeTime: 1
+  _percentComplete: 0
+  _startHeight: 0
+  _endHeight: 0
+  _checkDistance: 6
+  _moveSpeed: 0
+  _attackRange: 4.04
+  _heightAdjust: 6
   _moveCheckOffset: {x: 0, y: 0, z: 3}
 --- !u!114 &781088213
 MonoBehaviour:
