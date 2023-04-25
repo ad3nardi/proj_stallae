@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(RichAI))]
 [RequireComponent(typeof(Seeker))]
@@ -11,93 +12,33 @@ public class unit_movement : OptimizedBehaviour
 	[SerializeField] public LayerSet layerSet;
 	[SerializeField] public TagSet tagSet;
 	[SerializeField] public int _sizeTag;
-    [SerializeField] private unit_Manager _unitM;
-    [SerializeField] private Seeker _seeker;
-    [SerializeField] private RichAI _aiCon;
-    [Header("Unit Visual Management")]
-	[SerializeField] private Transform _unitVis;
-	[SerializeField] private LayerMask _moveCheckLayers;
-	[SerializeField] private float _heightChangeTimer;
-    [SerializeField] private float _heightChangeTime;
-	[SerializeField] private float _percentComplete;
-	[SerializeField] private float _startHeight;
-	[SerializeField] private float _endHeight;
+	[SerializeField] private unit_Manager _unitM;
+	[SerializeField] private Seeker _seeker;
+	[SerializeField] private RichAI _aiCon;
 
 	[Header("Settings")]
-	[SerializeField] private float _checkDistance;
-    [SerializeField] private float _moveSpeed;
-    [SerializeField] private float _attackRange;
-    [SerializeField] private float _heightAdjust;
-    [SerializeField] private Vector3 _moveCheckOffset;
+	[SerializeField] private float _attackRange;
 
 	// UNITY FUNCTIONS
 	public void Awake()
 	{
 		_unitM = GetComponent<unit_Manager>();
 		_seeker = GetComponent<Seeker>();
-        _aiCon = GetComponent<RichAI>();
-	}
+		_aiCon = GetComponent<RichAI>();
 
-    public void Start()
-    {
-        layerSet = Helpers.LayerSet;
-        tagSet = Helpers.TagSet;
-		_startHeight = _unitVis.position.y;
-		_endHeight = _unitVis.position.y + _heightAdjust;
     }
 
-	private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(CachedTransform.position + _moveCheckOffset, Vector3.one * _checkDistance);
-    }
-
-	// UPDATE FUNCTIONS
-    /*public void UpdateCheckCollision()
+	public void Start()
 	{
-		Collider[] hitCollider = Physics.OverlapBox(CachedTransform.position +_moveCheckOffset, Vector3.one * _checkDistance, Quaternion.identity, _moveCheckLayers);
+		layerSet = Helpers.LayerSet;
+		tagSet = Helpers.TagSet;
 
-		if (hitCollider.Length > 1)
-		{
-			for (int c = 0; c < hitCollider.Length; c++)
-			{
-				unit_Manager unitCheck = hitCollider[c].GetComponent<unit_Manager>();
-                
-				//Go Up
-				if (_unitVis.position.y == _startHeight)
-                    _heightChangeTimer = 0;
-				if (_sizeTag < unitCheck._sizeTag)
-				{
-                    _heightChangeTimer += Time.deltaTime;
-                    _percentComplete = _heightChangeTimer / _heightChangeTime;
-                    _unitVis.position = new Vector3 (_unitVis.position.x, Mathf.Lerp(_startHeight, _endHeight, _percentComplete), _unitVis.position.z);
-					return;
-				}
-
-				//Go Down
-				if (_unitVis.position.y == _endHeight)
-                    _heightChangeTimer = 0;
-
-                if (_unitVis.position.y <= _endHeight)
-                {
-                    _heightChangeTimer += Time.deltaTime;
-                    _percentComplete = _heightChangeTimer / _heightChangeTime;
-                    _unitVis.position = new Vector3(_unitVis.position.x, Mathf.Lerp(_startHeight, _endHeight, _percentComplete), _unitVis.position.z);
-                }
-                else
-					return;
-			}
-		}
-		else
-			return;
 	}
-	*/
 
-	//MOVEMENT FUNCTIONS
+    //MOVEMENT FUNCTIONS
     public void SetDefaults()
 	{
         _sizeTag = _unitM._sizeTag;
-        _moveSpeed = _aiCon.maxSpeed;
         _aiCon.maxSpeed = _unitM._unit.unitMaxSpeed;
 		_aiCon.acceleration = _unitM._unit.unitAcceleration;
 		_aiCon.rotationSpeed = _unitM._unit.unitRotationSpeed;
@@ -107,8 +48,6 @@ public class unit_movement : OptimizedBehaviour
 		_aiCon.endReachedDistance = _unitM._unit.unitEndReachedDistance;
 
 		_attackRange = _unitM._unit.unitAttackRange;
-
-        _checkDistance = _unitM._unit.unitCheckDistance;
         _aiCon.isStopped = false;
     }
 	public void StopAtAttackRangeMax(unit_Manager target)
@@ -309,4 +248,4 @@ public class unit_movement : OptimizedBehaviour
 
 		CachedTransform.position = pos;
 	}
-	*/
+	*/ 

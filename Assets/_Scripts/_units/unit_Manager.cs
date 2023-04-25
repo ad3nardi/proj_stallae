@@ -7,8 +7,7 @@ using System;
 using Unity.VisualScripting;
 
 [RequireComponent(typeof(RichAI))]
-[RequireComponent(typeof(unit_combat))]
-[RequireComponent(typeof(unit_movement))]
+
 public class unit_Manager : OptimizedBehaviour
 {
     [Header("Plugins")]

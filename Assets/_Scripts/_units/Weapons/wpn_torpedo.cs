@@ -27,6 +27,10 @@ public class wpn_torpedo : OptimizedBehaviour
         _damageTargets = new List<unit_subsytems>();
         _parentPool = GetComponentInParent<objectPooling>();
     }
+    private void Start()
+    {
+        _layerSet = Helpers.LayerSet;
+    }
     private void Update()
     {
         UpdatePosition();

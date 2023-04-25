@@ -29,6 +29,7 @@ public class player_manager : MonoBehaviour
 
     [Header("Input Modifications")]
     [SerializeField] private float _dragDelay;
+    [SerializeField] private LayerMask _inputMask;
 
     [Header("UI")]
     [SerializeField] private RectTransform _selectionBoxUI;
@@ -50,6 +51,7 @@ public class player_manager : MonoBehaviour
     }
     private void Start()
     {
+        _layerSet = Helpers.LayerSet;
         _selectedUnits = new List<unit_Manager>();
         _selectedUnits.Clear();
     }
@@ -105,7 +107,7 @@ public class player_manager : MonoBehaviour
 
         RaycastHit hit;
         
-            if (Physics.Raycast(_cam.ViewportPointToRay(_selectPos), out hit))
+            if (Physics.Raycast(_cam.ViewportPointToRay(_selectPos), out hit, _inputMask))
             {
                 if (hit.transform.gameObject.layer == _layerSet.layerPlayerUnit)
                 {
@@ -161,7 +163,7 @@ public class player_manager : MonoBehaviour
         if (_selectedUnits.Count != 0)
         {
             RaycastHit hit;
-            if (Physics.Raycast(_cam.ViewportPointToRay(_selectPos), out hit))
+            if (Physics.Raycast(_cam.ViewportPointToRay(_selectPos), out hit, _inputMask))
             {
                 if (hit.transform.gameObject.layer == _layerSet.layerEnemyUnit)
                 {

@@ -42,6 +42,7 @@ public class wpn_missile : OptimizedBehaviour
     }
     private void Start()
     {
+        _layerSet = Helpers.LayerSet;
         _parentPool = GetComponentInParent<objectPooling>();
         if (_explosion == null)
             _explosion = GetComponent<VisualEffect>();

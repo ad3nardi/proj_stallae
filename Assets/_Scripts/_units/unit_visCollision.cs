@@ -2,78 +2,141 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class unit_visCollision : MonoBehaviour
+public class unit_visCollision : OptimizedBehaviour
 {
-    public float maxCollisionHeight = 5f; // Maximum height to increase when colliding
-    public float collisionDuration = 1f; // Duration for the object to reach the maximum height
-    public float returnDuration = 1f; // Duration for the object to return to its original height
 
-    private bool isColliding = false; // Flag to track collision status
-    private bool hasReturned = false; // Flag to track if object has returned to original height
-    private Vector3 originalPosition; // Original position of the object
-    private float currentCollisionTime = 0f; // Current time for collision duration
-    private float currentReturnTime = 0f; // Current time for return duration
+    [Header("Plugins")]
+    [SerializeField] public LayerSet _layerSet;
+    [SerializeField] public TagSet _tagSet;
+    [SerializeField] public int _sizeTag;
+    [SerializeField] private Collider _unitCol;
+
+
+    [Header("Rise/Return Movement")]
+    
+    [SerializeField] private LayerMask _moveCheckLayers;
+    [SerializeField] private Vector3 _startingPos;
+    [SerializeField] private Vector3 _risePos;
+    [SerializeField] private float _checkDistance;
+
+    [SerializeField] private float _riseHeight;
+    [SerializeField] private float _riseTimer;
+    [SerializeField] private float _riseTime;
+    [SerializeField] private bool _atRise;
+
+    [SerializeField] private float _returnHieght;
+    [SerializeField] private float _returnTimer;
+    [SerializeField] private float _returnTime;
+    [SerializeField] private bool _atReturn;
+    [SerializeField] private bool _colliding;
+
+    private void Awake()
+    {
+        _unitCol = GetComponent<Collider>();
+
+    }
 
     private void Start()
     {
-        originalPosition = transform.position; // Store the original position of the object
+        _layerSet = Helpers.LayerSet;
+
+        _startingPos = CachedTransform.position;
+        _risePos = CachedTransform.up * _riseHeight;
+        _returnHieght = CachedTransform.position.y;
+        _atReturn = true;
     }
 
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireSphere(CachedTransform.position, _checkDistance);
+    }
     private void Update()
     {
-        // If currently colliding and collision duration not reached, increase Y position
-        if (isColliding && currentCollisionTime < collisionDuration)
-        {
-            float newY = Mathf.Lerp(originalPosition.y, originalPosition.y + maxCollisionHeight, currentCollisionTime / collisionDuration);
-            transform.position = new Vector3(transform.position.x, newY, transform.position.z);
-            currentCollisionTime += Time.deltaTime;
-        }
-        // If currently colliding and collision duration reached, reset current collision time and flag
-        else if (isColliding)
-        {
-            currentCollisionTime = 0f;
-        }
-
-        // If not colliding and return duration not reached, decrease Y position
-        if (!isColliding && currentReturnTime < returnDuration && hasReturned)
-        {
-            float newY = Mathf.Lerp(originalPosition.y + maxCollisionHeight, originalPosition.y, currentReturnTime / returnDuration);
-            transform.position = new Vector3(transform.position.x, newY, transform.position.z);
-            currentReturnTime += Time.deltaTime;
-        }
-        // If not colliding and return duration reached, reset current return time and flag
-        else if (!isColliding && hasReturned)
-        {
-            currentReturnTime = 0f;
-            hasReturned = false;
-        }
+        UpdateTimers();
+        UpdateCheckMovement();
     }
 
     private void FixedUpdate()
     {
-        // Check for collision using OverlapSphere
-        Collider[] colliders = Physics.OverlapSphere(transform.position, transform.localScale.magnitude);
-        bool wasColliding = isColliding; // Store previous collision status
-        isColliding = false;
-        foreach (Collider collider in colliders)
+        Collider[] colliders = Physics.OverlapSphere(CachedTransform.position, _checkDistance, _moveCheckLayers);
+
+        for (int i = 0; i < colliders.Length; i++)
         {
-            if (collider.gameObject != gameObject)
+            if (colliders[i] != _unitCol)
             {
-                isColliding = true;
-                break;
+                
+                if (_sizeTag < colliders[i].GetComponent<unit_visCollision>()._sizeTag)
+                {
+                    Debug.Log(colliders[i]);
+                    _colliding = true;
+                    return;
+                }
+                else
+                    return;
+            }
+            else
+            {
+                _colliding = false;
+                return;
             }
         }
+    }
 
-        // Update hasReturned flag
-        if (!isColliding && transform.position.y <= originalPosition.y)
+    #region Update Functions
+    private void UpdateTimers()
+    {
+        if (_atRise)
+            _returnTimer = 0f;
+
+        if (_atReturn)
+            _riseTimer = 0f;
+
+        _riseTimer += Time.deltaTime;
+        _returnTimer += Time.deltaTime;
+    }
+    
+    private void UpdateCheckMovement()
+    {
+
+        if (CachedTransform.position.y < _riseHeight)
         {
-            hasReturned = true;
+            _atRise = false;
         }
-
-        // Keep the game object at the maximum height while colliding
-        if (isColliding && !wasColliding)
+        if (CachedTransform.position.y > _returnHieght)
         {
-            transform.position = new Vector3(transform.position.x, originalPosition.y + maxCollisionHeight, transform.position.z);
+            _atReturn = false;
+        }
+        if (CachedTransform.position.y >= _riseHeight)
+        {
+            _atRise = true;
+            _atReturn = false;
+        }
+        if (CachedTransform.position.y <= _returnHieght)
+        {
+            _atReturn = true;
+            _atRise = false;
+        }
+        if (_colliding)
+        {
+            if (!_atRise)
+            {
+                _risePos = new Vector3(CachedTransform.position.x, _riseHeight, CachedTransform.position.z);
+                CachedTransform.position = Vector3.Lerp(CachedTransform.position, _risePos, _riseTimer / _riseTime);
+                _atReturn = false;
+            }
+        }
+        if (!_colliding)
+        {
+            if (!_atReturn)
+            {
+                _startingPos = new Vector3(CachedTransform.position.x, _returnHieght, CachedTransform.position.z);
+                CachedTransform.position = Vector3.Lerp(CachedTransform.position, _startingPos, _returnTimer / _returnTime);
+                _atRise = false;
+                _atReturn = false;
+            }
         }
     }
+    #endregion
+
 }
