@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5056893571849668518}
+  - component: {fileID: 3797097581026048127}
   m_Layer: 6
   m_Name: weapons
   m_TagString: Untagged
@@ -31,6 +32,18 @@ Transform:
   m_Father: {fileID: 4617446465913876796}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3797097581026048127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 298417558962256373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8675760e0e8a1cd47a94f502de2d2c1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4440073577070855068
 GameObject:
   m_ObjectHideFlags: 0
@@ -132,8 +145,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67e7dc5a24009a7458d3cec8d63c24c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  layerSet: {fileID: 0}
-  tagSet: {fileID: 0}
+  _layerSet: {fileID: 0}
+  _tagSet: {fileID: 0}
   _sizeTag: 1
   _unitCol: {fileID: 0}
   _moveCheckLayers:
@@ -141,14 +154,14 @@ MonoBehaviour:
     m_Bits: 1024
   _startingPos: {x: 0, y: 0, z: 0}
   _risePos: {x: 0, y: 0, z: 0}
-  _checkDistance: 0
-  _riseHeight: 0
+  _checkDistance: 5
+  _riseHeight: 5
   _riseTimer: 0
-  _riseTime: 0
+  _riseTime: 2
   _atRise: 0
   _returnHieght: 0
   _returnTimer: 0
-  _returnTime: 0
+  _returnTime: 2
   _atReturn: 0
   _colliding: 0
 --- !u!135 &4617446465552483574
@@ -162,7 +175,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 4
+  m_Radius: 1.5
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4617446465913876790
 GameObject:
@@ -254,6 +267,9 @@ MonoBehaviour:
   _unitM: {fileID: 4617446465913876792}
   tagSet: {fileID: 0}
   layerSet: {fileID: 11400000, guid: 94fd8df2a235c474f88db6e3c04ac5ec, type: 2}
+  targetCheckLayer:
+    serializedVersion: 2
+    m_Bits: 0
   targetLayer:
     serializedVersion: 2
     m_Bits: 0
@@ -269,6 +285,7 @@ MonoBehaviour:
   _targetTransform: {fileID: 0}
   _target: {fileID: 0}
   _firingTarget: 0
+  _weaponOrigin: {fileID: 3797097581026048127}
   _targetsInRange: []
   _weaponsSet:
   - {fileID: 11400000, guid: 20e232f38e3e09f4ab4282aad3ab0614, type: 2}

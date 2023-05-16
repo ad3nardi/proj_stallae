@@ -31,7 +31,6 @@ public class unit_subsytems : OptimizedBehaviour
     public static event Action<unit_subsytems> OnHealthAdded = delegate { };
     public static event Action<unit_subsytems> OnHealthRemoved = delegate { };
     public event Action<float> OnHealthPctChanged = delegate { };
-
     public event Action<bool> OnDestroyed = delegate { };
     public event Action<bool> OnDisabled = delegate { };
 
@@ -88,9 +87,14 @@ public class unit_subsytems : OptimizedBehaviour
     {
         _disableTimer += time;
 
-        if(_disableTimer >= 0)
+        if (!_isDisabled)
+            return;
+        else if (_isDisabled)
         {
-            SystemDisable(false);
+            if(_disableTimer >= 0)
+            {
+                SystemDisable(false);
+            }
         }
     }
 }
