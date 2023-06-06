@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.VFX;
-using static UnityEditor.Progress;
 
 public class unit_combat : OptimizedBehaviour
 {
@@ -178,21 +177,16 @@ public class unit_combat : OptimizedBehaviour
     {
         _curFireTime = 0f;
 
-        RaycastHit hit;
-        if(Physics.Raycast(_weaponOriginTransform.position, _target.CachedTransform.position - _weaponOriginTransform.position, out hit, Mathf.Infinity, targetLayer, QueryTriggerInteraction.Collide))
+
+        _isFiring = true;
+        for (int i = 0; i < _weaponVFX.Count; i++)
         {
-            if(hit.transform == _target.CachedTransform)
-            {
-                _isFiring = true;
-                for (int i = 0; i < _weaponVFX.Count; i++)
-                {
-                    _weaponVFX[i].Play();
-                }
-                for (int i = 0; i < _weaponsSet.Count; i++)
-                {
-                    _target.TakeDamage(_firingTarget, _weaponsSet[i].weapon_damage);
-                }
-            }
+            _weaponVFX[i].Play();
+
+        }
+        for (int i = 0; i < _weaponsSet.Count; i++)
+        {
+            _target.TakeDamage(_firingTarget, _weaponsSet[i].weapon_damage);
         }
 
     }

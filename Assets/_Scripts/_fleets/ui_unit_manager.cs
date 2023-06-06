@@ -36,6 +36,21 @@ public class ui_unit_manager : OptimizedBehaviour
             for (int i = 0; i < _pm._selectedUnits.Count; i++)
             {
                 _pm._selectedUnits[i].missoin_guard();
+                _pm.manage_deselectAll();
+            }
+        }
+        else
+            return;
+    }
+
+    public void uiSetAutoFire()
+    {
+        if (_pm._selectedUnits.Count != 0)
+        {
+            for (int i = 0; i < _pm._selectedUnits.Count; i++)
+            {
+                _pm._selectedUnits[i].set_autoFire();
+                _pm.manage_deselectAll();
             }
         }
         else

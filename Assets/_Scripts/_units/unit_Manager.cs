@@ -228,6 +228,12 @@ public class unit_Manager : OptimizedBehaviour
     {
 
     }
+
+    //Combat Command Passthrough
+    public void set_autoFire()
+    {
+        _combat.ToggleAutoTarget();
+    }
 }
 public enum currentMission
 {

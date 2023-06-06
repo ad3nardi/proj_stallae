@@ -193,6 +193,7 @@ public class player_manager : MonoBehaviour
     private void Input_AttackDragRelease()
     {
         _attackDragEndPos = _selectPos;
+        _attackUI.SetActive(false);
         _attackDragging = false;
     }
     

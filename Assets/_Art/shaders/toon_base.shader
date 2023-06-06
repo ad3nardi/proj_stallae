@@ -7,6 +7,7 @@ Shader "unlit_cartoon_Base"
 		[HideInInspector] _AlphaCutoff("Alpha Cutoff ", Range(0, 1)) = 0.5
 		[HideInInspector] _EmissionColor("Emission Color", Color) = (1,1,1,1)
 		[ASEBegin]_albedo("_albedo", 2D) = "white" {}
+		_albedo1("_albedo", 2D) = "white" {}
 		_albedoTint("albedoTint", Color) = (1,1,1,0)
 		_AORemapOld("AO Remap Old", Vector) = (0,0.5,0,0)
 		_AORemapNew("AO Remap New", Vector) = (0,0.5,0,0)
@@ -16,7 +17,8 @@ Shader "unlit_cartoon_Base"
 		[HDR]_RimTint("Rim Tint", Color) = (1,1,1,0)
 		_RimCutoff("RimCutoff", Vector) = (0,1,0,0)
 		_RimCutoffOuter("RimCutoffOuter", Vector) = (0.6,0.5,0,0)
-		[ASEEnd][HDR]_EmissionHighlights("EmissionHighlights", Color) = (0.9473977,1,0,0)
+		_AOStrength("AO Strength", Float) = 0
+		[ASEEnd]_EmissiveStrength("Emissive Strength", Float) = 0
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 
 
@@ -174,7 +176,7 @@ Shader "unlit_cartoon_Base"
 			HLSLPROGRAM
 
 			#pragma multi_compile_instancing
-			#define ASE_SRP_VERSION 120108
+			#define ASE_SRP_VERSION 120111
 
 
 			#pragma multi_compile _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3
@@ -242,7 +244,7 @@ Shader "unlit_cartoon_Base"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _EmissionHighlights;
+			float4 _albedo1_ST;
 			float4 _albedo_ST;
 			float4 _albedoTint;
 			float4 _RimTint;
@@ -252,6 +254,8 @@ Shader "unlit_cartoon_Base"
 			float2 _AORemapNew;
 			float2 _RimCutoff;
 			float2 _RimCutoffOuter;
+			float _EmissiveStrength;
+			float _AOStrength;
 			float _RimOffset;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
@@ -263,6 +267,7 @@ Shader "unlit_cartoon_Base"
 			#endif
 			CBUFFER_END
 
+			sampler2D _albedo1;
 			sampler2D _albedo;
 
 
@@ -496,6 +501,8 @@ Shader "unlit_cartoon_Base"
 
 				float smoothstepResult86 = smoothstep( _smoothstepLight.x , _smoothstepLight.y , IN.ase_color.g);
 				float Highlights97 = smoothstepResult86;
+				float2 uv_albedo1 = IN.ase_texcoord3.xy * _albedo1_ST.xy + _albedo1_ST.zw;
+				float4 tex2DNode181 = tex2D( _albedo1, uv_albedo1 );
 				float2 uv_albedo = IN.ase_texcoord3.xy * _albedo_ST.xy + _albedo_ST.zw;
 				float time168 = 23.25;
 				float2 voronoiSmoothId168 = 0;
@@ -535,7 +542,7 @@ Shader "unlit_cartoon_Base"
 				
 				float3 BakedAlbedo = 0;
 				float3 BakedEmission = 0;
-				float3 Color = ( ( ( ( Highlights97 * _EmissionHighlights ) + ( float4( 0,0,0,0 ) + ( albedo37 * float4( temp_output_13_0 , 0.0 ) ) + ( albedo37 * SampleGradient( gradient34, ( (dotResult30*0.5 + 0.5) * addLight26 ) ) ) ) + ( 0.0 - DarkLights112 ) ) * AO99 ) + RimLight154 ).rgb;
+				float3 Color = ( ( ( ( Highlights97 * ( tex2DNode181 + _EmissiveStrength ) ) + ( float4( 0,0,0,0 ) + ( albedo37 * float4( temp_output_13_0 , 0.0 ) ) + ( albedo37 * SampleGradient( gradient34, ( (dotResult30*0.5 + 0.5) * addLight26 ) ) ) ) + ( 0.0 - DarkLights112 ) ) * ( _AOStrength * AO99 ) ) + RimLight154 ).rgb;
 				float Alpha = 1;
 				float AlphaClipThreshold = 0.5;
 				float AlphaClipThresholdShadow = 0.5;
@@ -580,7 +587,7 @@ Shader "unlit_cartoon_Base"
 			HLSLPROGRAM
 
 			#pragma multi_compile_instancing
-			#define ASE_SRP_VERSION 120108
+			#define ASE_SRP_VERSION 120111
 
 
 			#pragma vertex vert
@@ -620,7 +627,7 @@ Shader "unlit_cartoon_Base"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _EmissionHighlights;
+			float4 _albedo1_ST;
 			float4 _albedo_ST;
 			float4 _albedoTint;
 			float4 _RimTint;
@@ -630,6 +637,8 @@ Shader "unlit_cartoon_Base"
 			float2 _AORemapNew;
 			float2 _RimCutoff;
 			float2 _RimCutoffOuter;
+			float _EmissiveStrength;
+			float _AOStrength;
 			float _RimOffset;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
@@ -840,7 +849,7 @@ Shader "unlit_cartoon_Base"
 			HLSLPROGRAM
 
 			#pragma multi_compile_instancing
-			#define ASE_SRP_VERSION 120108
+			#define ASE_SRP_VERSION 120111
 
 
 			#pragma vertex vert
@@ -876,7 +885,7 @@ Shader "unlit_cartoon_Base"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _EmissionHighlights;
+			float4 _albedo1_ST;
 			float4 _albedo_ST;
 			float4 _albedoTint;
 			float4 _RimTint;
@@ -886,6 +895,8 @@ Shader "unlit_cartoon_Base"
 			float2 _AORemapNew;
 			float2 _RimCutoff;
 			float2 _RimCutoffOuter;
+			float _EmissiveStrength;
+			float _AOStrength;
 			float _RimOffset;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
@@ -1069,7 +1080,7 @@ Shader "unlit_cartoon_Base"
 			HLSLPROGRAM
 
 			#pragma multi_compile_instancing
-			#define ASE_SRP_VERSION 120108
+			#define ASE_SRP_VERSION 120111
 
 
 			#pragma vertex vert
@@ -1106,7 +1117,7 @@ Shader "unlit_cartoon_Base"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _EmissionHighlights;
+			float4 _albedo1_ST;
 			float4 _albedo_ST;
 			float4 _albedoTint;
 			float4 _RimTint;
@@ -1116,6 +1127,8 @@ Shader "unlit_cartoon_Base"
 			float2 _AORemapNew;
 			float2 _RimCutoff;
 			float2 _RimCutoffOuter;
+			float _EmissiveStrength;
+			float _AOStrength;
 			float _RimOffset;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
@@ -1284,7 +1297,7 @@ Shader "unlit_cartoon_Base"
 			HLSLPROGRAM
 
 			#pragma multi_compile_instancing
-			#define ASE_SRP_VERSION 120108
+			#define ASE_SRP_VERSION 120111
 
 
 			#pragma vertex vert
@@ -1321,7 +1334,7 @@ Shader "unlit_cartoon_Base"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _EmissionHighlights;
+			float4 _albedo1_ST;
 			float4 _albedo_ST;
 			float4 _albedoTint;
 			float4 _RimTint;
@@ -1331,6 +1344,8 @@ Shader "unlit_cartoon_Base"
 			float2 _AORemapNew;
 			float2 _RimCutoff;
 			float2 _RimCutoffOuter;
+			float _EmissiveStrength;
+			float _AOStrength;
 			float _RimOffset;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
@@ -1501,7 +1516,7 @@ Shader "unlit_cartoon_Base"
 			HLSLPROGRAM
 
 			#pragma multi_compile_instancing
-			#define ASE_SRP_VERSION 120108
+			#define ASE_SRP_VERSION 120111
 
 
 			#pragma vertex vert
@@ -1541,7 +1556,7 @@ Shader "unlit_cartoon_Base"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _EmissionHighlights;
+			float4 _albedo1_ST;
 			float4 _albedo_ST;
 			float4 _albedoTint;
 			float4 _RimTint;
@@ -1551,6 +1566,8 @@ Shader "unlit_cartoon_Base"
 			float2 _AORemapNew;
 			float2 _RimCutoff;
 			float2 _RimCutoffOuter;
+			float _EmissiveStrength;
+			float _AOStrength;
 			float _RimOffset;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
@@ -1723,7 +1740,7 @@ Shader "unlit_cartoon_Base"
 			HLSLPROGRAM
 
 			#pragma multi_compile_instancing
-			#define ASE_SRP_VERSION 120108
+			#define ASE_SRP_VERSION 120111
 
 
 			#pragma exclude_renderers glcore gles gles3 
@@ -1766,7 +1783,7 @@ Shader "unlit_cartoon_Base"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _EmissionHighlights;
+			float4 _albedo1_ST;
 			float4 _albedo_ST;
 			float4 _albedoTint;
 			float4 _RimTint;
@@ -1776,6 +1793,8 @@ Shader "unlit_cartoon_Base"
 			float2 _AORemapNew;
 			float2 _RimCutoff;
 			float2 _RimCutoffOuter;
+			float _EmissiveStrength;
+			float _AOStrength;
 			float _RimOffset;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
@@ -1954,7 +1973,7 @@ Node;AmplifyShaderEditor.SimpleMaxOpNode;21;-1529.087,343.5877;Inherit;False;2;0
 Node;AmplifyShaderEditor.WorldNormalVector;28;-2220.079,783.7098;Inherit;False;False;1;0;FLOAT3;0,0,1;False;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.ScaleAndOffsetNode;31;-1762.146,848.8333;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0.5;False;2;FLOAT;0.5;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;33;-1536.146,958.8328;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.ColorNode;41;-2158.146,-256.0265;Inherit;False;Property;_albedoTint;albedoTint;1;0;Create;True;0;0;0;False;0;False;1,1,1,0;1,1,1,0.4627451;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.ColorNode;41;-2158.146,-256.0265;Inherit;False;Property;_albedoTint;albedoTint;3;0;Create;True;0;0;0;False;0;False;1,1,1,0;1,1,1,0.4627451;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.GetLocalVarNode;32;-1921.146,976.8329;Inherit;False;26;addLight;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.BreakToComponentsNode;23;-1842.659,167.173;Inherit;False;FLOAT3;1;0;FLOAT3;0,0,0;False;16;FLOAT;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT;5;FLOAT;6;FLOAT;7;FLOAT;8;FLOAT;9;FLOAT;10;FLOAT;11;FLOAT;12;FLOAT;13;FLOAT;14;FLOAT;15
 Node;AmplifyShaderEditor.SimpleMaxOpNode;24;-1662.024,166.3253;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
@@ -1962,9 +1981,9 @@ Node;AmplifyShaderEditor.SimpleMaxOpNode;25;-1529.473,188.9736;Inherit;False;2;0
 Node;AmplifyShaderEditor.SimpleAddOpNode;22;-1384.514,257.5568;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;26;-1230.11,251.4749;Inherit;False;addLight;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.FunctionNode;13;-2062.047,102.7551;Inherit;False;SRP Additional Light;-1;;1;6c86746ad131a0a408ca599df5f40861;7,6,0,9,0,23,0,27,0,25,0,24,0,26,0;6;2;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;15;FLOAT3;0,0,0;False;14;FLOAT3;1,1,1;False;18;FLOAT;0.5;False;32;FLOAT4;0,0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.Vector2Node;128;-1905.408,1657.659;Inherit;False;Property;_smoothstepLight;smoothstepLight;4;0;Create;True;0;0;0;False;0;False;0,0;0.95,1;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
-Node;AmplifyShaderEditor.Vector2Node;101;-2177.359,1884.207;Inherit;False;Property;_AORemapNew;AO Remap New;3;0;Create;True;0;0;0;False;0;False;0,0.5;0,0.5;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
-Node;AmplifyShaderEditor.Vector2Node;102;-2167.359,1754.207;Inherit;False;Property;_AORemapOld;AO Remap Old;2;0;Create;True;0;0;0;False;0;False;0,0.5;0,1;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
+Node;AmplifyShaderEditor.Vector2Node;128;-1905.408,1657.659;Inherit;False;Property;_smoothstepLight;smoothstepLight;6;0;Create;True;0;0;0;False;0;False;0,0;0.95,1;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
+Node;AmplifyShaderEditor.Vector2Node;101;-2177.359,1884.207;Inherit;False;Property;_AORemapNew;AO Remap New;5;0;Create;True;0;0;0;False;0;False;0,0.5;0,0.5;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
+Node;AmplifyShaderEditor.Vector2Node;102;-2167.359,1754.207;Inherit;False;Property;_AORemapOld;AO Remap Old;4;0;Create;True;0;0;0;False;0;False;0,0.5;0,1;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
 Node;AmplifyShaderEditor.OneMinusNode;95;-1439.332,1803.883;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;56;-32.0295,50.57286;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;ShadowCaster;0;2;ShadowCaster;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;3;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;False;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=ShadowCaster;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;57;-32.0295,50.57286;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;DepthOnly;0;3;DepthOnly;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;3;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;False;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;False;False;True;1;LightMode=DepthOnly;False;False;0;;0;0;Standard;0;False;0
@@ -1981,7 +2000,6 @@ Node;AmplifyShaderEditor.ViewDirInputsCoordNode;149;-2194.843,2213.276;Inherit;F
 Node;AmplifyShaderEditor.WorldSpaceLightDirHlpNode;29;-2250.146,942.8333;Inherit;False;False;1;0;FLOAT;0;False;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.LightAttenuation;14;-2282.781,323.1116;Inherit;False;0;1;FLOAT;0
 Node;AmplifyShaderEditor.LightColorNode;17;-2240.588,395.531;Inherit;False;0;3;COLOR;0;FLOAT3;1;FLOAT;2
-Node;AmplifyShaderEditor.SamplerNode;11;-2247.838,-451.2291;Inherit;True;Property;_albedo;_albedo;0;0;Create;True;0;0;0;False;0;False;-1;60084cc046ce26e48b3c6bf5fd070d02;60084cc046ce26e48b3c6bf5fd070d02;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;45;-752.7927,76.67247;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;FLOAT3;0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;54;-381.2005,87.23708;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;ExtraPrePass;0;0;ExtraPrePass;5;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;3;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;0;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.GetLocalVarNode;51;-948.8005,-33.91479;Inherit;False;37;albedo;1;0;OBJECT;;False;1;COLOR;0
@@ -1989,17 +2007,12 @@ Node;AmplifyShaderEditor.IndirectDiffuseLighting;50;-997.6882,-154.5926;Inherit;
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;52;-756.2459,-53.3774;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;55;869.2253,43.25552;Float;False;True;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;unlit_cartoon_Base;2992e84f91cbeb14eab234972e07ea9d;True;Forward;0;1;Forward;8;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;3;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;True;12;all;0;False;True;1;1;False;;0;False;;1;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForwardOnly;False;False;0;;0;0;Standard;23;Surface;0;0;  Blend;0;0;Two Sided;1;0;Forward Only;0;0;Cast Shadows;1;0;  Use Shadow Threshold;0;0;Receive Shadows;1;0;GPU Instancing;1;0;LOD CrossFade;0;0;Built-in Fog;0;0;DOTS Instancing;0;0;Meta Pass;0;0;Extra Pre Pass;0;0;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Vertex Position,InvertActionOnDeselection;1;0;0;10;False;True;True;True;False;False;True;True;True;True;False;;False;0
 Node;AmplifyShaderEditor.SimpleAddOpNode;124;252.1063,24.85732;Inherit;False;3;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;87;428.8876,25.58111;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;FLOAT;0;False;1;COLOR;0
-Node;AmplifyShaderEditor.GetLocalVarNode;100;239.0234,161.172;Inherit;False;99;AO;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;167;92.31372,-46.77231;Inherit;False;2;2;0;FLOAT;0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
-Node;AmplifyShaderEditor.ColorNode;166;-185.6081,-116.4289;Inherit;False;Property;_EmissionHighlights;EmissionHighlights;10;1;[HDR];Create;True;0;0;0;False;0;False;0.9473977,1,0,0;0.07343292,2,0,0;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.GetLocalVarNode;98;-145.4457,-198.4211;Inherit;False;97;Highlights;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;44;-987.1751,188.4174;Inherit;False;37;albedo;1;0;OBJECT;;False;1;COLOR;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;73;-821.3232,311.9338;Inherit;True;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.GradientSampleNode;35;-1338.146,934.8333;Inherit;True;2;0;OBJECT;;False;1;FLOAT;0;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.SimpleAddOpNode;53;-595.2339,53.85418;Inherit;True;3;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;169;-1430.058,-345.5414;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;FLOAT;0;False;1;COLOR;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;36;-1887.825,-450.6404;Inherit;True;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.VoronoiNode;168;-1852.412,-223.4364;Inherit;False;0;0;1;0;1;False;1;False;False;False;4;0;FLOAT2;0,0;False;1;FLOAT;23.25;False;2;FLOAT;16.6;False;3;FLOAT;0;False;3;FLOAT;0;FLOAT2;1;FLOAT2;2
 Node;AmplifyShaderEditor.SmoothstepOpNode;170;-1638.616,-224.9778;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0.1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;37;-1271.818,-350.0417;Inherit;False;albedo;-1;True;1;0;COLOR;0,0,0,0;False;1;COLOR;0
@@ -2012,27 +2025,39 @@ Node;AmplifyShaderEditor.TFHCRemapNode;94;-1895.362,1802.829;Inherit;False;5;0;F
 Node;AmplifyShaderEditor.VertexColorNode;75;-2209.444,1550.806;Inherit;False;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.DotProductOpNode;141;-1961.396,2261.085;Inherit;False;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.WorldNormalVector;139;-2220.178,2376.315;Inherit;False;False;1;0;FLOAT3;0,0,1;False;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.RangedFloatNode;142;-1983.065,2374.579;Inherit;False;Property;_RimOffset;Rim Offset;6;0;Create;True;0;0;0;False;0;False;0.2;0.1;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;142;-1983.065,2374.579;Inherit;False;Property;_RimOffset;Rim Offset;8;0;Create;True;0;0;0;False;0;False;0.2;0.1;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SmoothstepOpNode;145;-1282.204,2331.118;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;152;-1285.576,2246.75;Inherit;False;19;sun;1;0;OBJECT;;False;1;COLOR;0
-Node;AmplifyShaderEditor.ColorNode;148;-1328.904,2463.306;Inherit;False;Property;_RimTint;Rim Tint;7;1;[HDR];Create;True;0;0;0;False;0;False;1,1,1,0;0.5188679,0.5188679,0.5188679,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.ColorNode;148;-1328.904,2463.306;Inherit;False;Property;_RimTint;Rim Tint;9;1;[HDR];Create;True;0;0;0;False;0;False;1,1,1,0;0.5188679,0.5188679,0.5188679,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SaturateNode;151;-1662.564,2260.376;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;147;-1056.487,2304.724;Inherit;True;3;3;0;COLOR;0,0,0,0;False;1;FLOAT;0;False;2;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.OneMinusNode;144;-1470.412,2259.757;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleAddOpNode;143;-1801.939,2260.836;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.Vector2Node;159;-1471.362,2343.651;Inherit;False;Property;_RimCutoff;RimCutoff;8;0;Create;True;0;0;0;False;0;False;0,1;0.3,0.35;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
-Node;AmplifyShaderEditor.Vector2Node;135;-1904.222,1474.993;Inherit;False;Property;_smoothStepDark;smoothStepDark;5;0;Create;True;0;0;0;False;0;False;0,1;0.98,1;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
+Node;AmplifyShaderEditor.Vector2Node;159;-1471.362,2343.651;Inherit;False;Property;_RimCutoff;RimCutoff;10;0;Create;True;0;0;0;False;0;False;0,1;0.3,0.35;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
+Node;AmplifyShaderEditor.Vector2Node;135;-1904.222,1474.993;Inherit;False;Property;_smoothStepDark;smoothStepDark;7;0;Create;True;0;0;0;False;0;False;0,1;0.98,1;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
 Node;AmplifyShaderEditor.SmoothstepOpNode;113;-1641.928,1389.291;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleSubtractOpNode;132;-10.44818,142.3552;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;117;-212.0107,219.202;Inherit;False;112;DarkLights;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SmoothstepOpNode;174;-1287.132,2663.728;Inherit;True;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;1;FLOAT;0
-Node;AmplifyShaderEditor.Vector2Node;175;-1545.833,2663.729;Inherit;False;Property;_RimCutoffOuter;RimCutoffOuter;9;0;Create;True;0;0;0;False;0;False;0.6,0.5;0.6,0.5;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
-Node;AmplifyShaderEditor.GetLocalVarNode;155;240.9406,265.1691;Inherit;False;154;RimLight;1;0;OBJECT;;False;1;COLOR;0
+Node;AmplifyShaderEditor.Vector2Node;175;-1545.833,2663.729;Inherit;False;Property;_RimCutoffOuter;RimCutoffOuter;11;0;Create;True;0;0;0;False;0;False;0.6,0.5;0.6,0.5;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
 Node;AmplifyShaderEditor.SimpleAddOpNode;137;631.9667,38.09631;Inherit;True;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;154;-371.6228,2430.073;Inherit;True;RimLight;-1;True;1;0;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.GradientNode;34;-1596.146,763.8333;Inherit;False;1;4;2;0,0,0,0.1176471;0.6221263,0.4544322,0.8679245,0.3411765;0.740566,0.9842913,1,0.6;1,1,1,1;1,0;1,1;0;1;OBJECT;0
 Node;AmplifyShaderEditor.SimpleSubtractOpNode;177;-759.8904,2410.004;Inherit;True;2;0;COLOR;0,0,0,0;False;1;FLOAT;0;False;1;COLOR;0
 Node;AmplifyShaderEditor.SaturateNode;180;-517.0637,2427.866;Inherit;False;1;0;COLOR;0,0,0,0;False;1;COLOR;0
+Node;AmplifyShaderEditor.SimpleAddOpNode;53;-595.2339,53.85418;Inherit;True;3;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;COLOR;0,0,0,0;False;1;COLOR;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;36;-1887.825,-450.6404;Inherit;True;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
+Node;AmplifyShaderEditor.SamplerNode;11;-2247.838,-451.2291;Inherit;True;Property;_albedo;_albedo;0;0;Create;True;0;0;0;False;0;False;-1;60084cc046ce26e48b3c6bf5fd070d02;60084cc046ce26e48b3c6bf5fd070d02;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SimpleAddOpNode;182;-140.4319,-92.45541;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;FLOAT;0.65;False;1;COLOR;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;87;428.8876,25.58111;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;FLOAT;0;False;1;COLOR;0
+Node;AmplifyShaderEditor.GetLocalVarNode;155;417.9406,326.1691;Inherit;False;154;RimLight;1;0;OBJECT;;False;1;COLOR;0
+Node;AmplifyShaderEditor.GetLocalVarNode;100;210.0234,263.172;Inherit;False;99;AO;1;0;OBJECT;;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;184;372.187,178.1439;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;183;232.187,173.1439;Inherit;False;Property;_AOStrength;AO Strength;12;0;Create;True;0;0;0;False;0;False;0;1.2;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;185;-401.813,-0.8560791;Inherit;False;Property;_EmissiveStrength;Emissive Strength;13;0;Create;True;0;0;0;False;0;False;0;1;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SamplerNode;181;-743.2983,-389.7996;Inherit;True;Property;_albedo1;_albedo;1;0;Create;True;0;0;0;False;0;False;-1;60084cc046ce26e48b3c6bf5fd070d02;60084cc046ce26e48b3c6bf5fd070d02;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SamplerNode;189;-656.813,-202.8561;Inherit;True;Property;_albedo2;_albedo;1;0;Create;True;0;0;0;False;0;False;-1;60084cc046ce26e48b3c6bf5fd070d02;60084cc046ce26e48b3c6bf5fd070d02;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SimpleAddOpNode;188;-377.813,-294.8561;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 WireConnection;15;0;14;0
 WireConnection;15;1;17;0
 WireConnection;20;0;18;0
@@ -2063,20 +2088,14 @@ WireConnection;55;2;137;0
 WireConnection;124;0;167;0
 WireConnection;124;1;53;0
 WireConnection;124;2;132;0
-WireConnection;87;0;124;0
-WireConnection;87;1;100;0
 WireConnection;167;0;98;0
-WireConnection;167;1;166;0
+WireConnection;167;1;182;0
 WireConnection;73;0;44;0
 WireConnection;73;1;35;0
 WireConnection;35;0;34;0
 WireConnection;35;1;33;0
-WireConnection;53;1;45;0
-WireConnection;53;2;73;0
 WireConnection;169;0;36;0
 WireConnection;169;1;170;0
-WireConnection;36;0;11;0
-WireConnection;36;1;41;0
 WireConnection;170;0;168;0
 WireConnection;37;0;169;0
 WireConnection;112;0;113;0
@@ -2116,5 +2135,17 @@ WireConnection;154;0;180;0
 WireConnection;177;0;147;0
 WireConnection;177;1;174;0
 WireConnection;180;0;177;0
+WireConnection;53;1;45;0
+WireConnection;53;2;73;0
+WireConnection;36;0;11;0
+WireConnection;36;1;41;0
+WireConnection;182;0;181;0
+WireConnection;182;1;185;0
+WireConnection;87;0;124;0
+WireConnection;87;1;184;0
+WireConnection;184;0;183;0
+WireConnection;184;1;100;0
+WireConnection;188;0;181;0
+WireConnection;188;1;189;0
 ASEEND*/
-//CHKSM=DD57AD97833E3AF69558D4139A6387C41E37FC8C
+//CHKSM=00DAF1EAA5A1641EAFE2B5BB43A1D3D38F4EC4AD
