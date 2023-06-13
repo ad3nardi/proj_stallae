@@ -144,7 +144,6 @@ public class unit_combat : OptimizedBehaviour
         {
             for (int i = 0; i < _weaponsPos.Count; i++)
             {
-                
                 Quaternion targetRot = Quaternion.LookRotation(_target.CachedTransform.position - CachedTransform.position);
                 _weaponsPos[i].rotation = Quaternion.Slerp(_weaponsPos[i].rotation, targetRot, Time.deltaTime * _rotSpeed);
             }
