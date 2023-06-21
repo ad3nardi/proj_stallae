@@ -50,7 +50,7 @@ public class unit_movement : OptimizedBehaviour
 		_attackRange = _unitM._unit.unitAttackRange;
         _aiCon.isStopped = false;
     }
-	public void StopAtAttackRangeMax(unit_Manager target)
+	/*public void StopAtAttackRangeMax(unit_Manager target)
 	{
 		_aiCon.destination = command_moveMath(target.CachedTransform.position);
 		float dist = Vector3.SqrMagnitude(target.CachedTransform.position - CachedTransform.position);
@@ -61,7 +61,7 @@ public class unit_movement : OptimizedBehaviour
 		else
             SetIsStop(false);
     }
-
+	*/
 	//UTILITY FUNCTIONS
 	public void SetIsStop(bool isStopped)
 	{

@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 101
   faction: 0
-  hasShields: 0
+  sizeTag: 1
   canAttack: 1
   hasSubSystems: 0
+  hasShields: 0
   unitPointCost: 1
   unitMaxHitPoints: 5
   untMaxShields: 0

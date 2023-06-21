@@ -13,7 +13,7 @@ public class unit_subsytems : OptimizedBehaviour
         get
         {
             if (_unitManager == null)
-                _unitManager = GetComponent<unit_Manager>();
+                _unitManager = GetComponentInParent<unit_Manager>();
             return _unitManager;
         }
         set => _unitManager = value;
@@ -35,13 +35,18 @@ public class unit_subsytems : OptimizedBehaviour
     public event Action<bool> OnDisabled = delegate { };
 
     //UNITY FUNCTIONS
-    private void Start()
+    private void OnEnable()
     {
+        SetToMaxHP();
         _unitManager = UnitManager;
         _maxHP = _unitManager._unit.unitMaxHitPoints / _unitManager._subsytems.Count;
 
+    }
+    private void Start()
+    {
         SetToMaxHP();
     }
+
     private void Update()
     {
         UpdateTimers(Time.deltaTime);
@@ -60,8 +65,11 @@ public class unit_subsytems : OptimizedBehaviour
         OnDestroyed(_isDestroyed);
         OnDisabled(_isDisabled);
     }
+
     public void ModifyHealth(float amount)
     {
+        Debug.Log("Taking Damage");
+
         _curHP += amount;
         float currentHPpct = _curHP / _maxHP;
         OnHealthPctChanged(currentHPpct);
@@ -72,11 +80,13 @@ public class unit_subsytems : OptimizedBehaviour
         else
             OnDestroyed(true);   
     }
+
     public void SystemDisable(bool isDisabled)
     {
         _isDisabled = isDisabled;
         OnDisabled(_isDisabled);
     }
+
     public void SystemDestroy()
     {
         _isDestroyed = true;

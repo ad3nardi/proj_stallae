@@ -19,6 +19,7 @@ public class camera_con : OptimizedBehaviour
     [SerializeField] private InputAction camZoomAct;
     [SerializeField] private InputAction camDragAct;
 
+
     [Header("Horizontal Motion")]
     [SerializeField] private float _maxSpeed;
     [SerializeField] private float _speed;
@@ -60,6 +61,10 @@ public class camera_con : OptimizedBehaviour
         _cam = Helpers.Camera;
         camTrans = _cam.transform;
         _playerInput.GetComponent<PlayerInput>();
+    }
+
+    private void Start()
+    {
     }
 
     private void OnEnable()

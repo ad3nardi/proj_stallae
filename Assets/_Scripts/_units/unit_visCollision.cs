@@ -31,16 +31,12 @@ public class unit_visCollision : OptimizedBehaviour
     [SerializeField] private bool _atReturn;
     [SerializeField] private bool _colliding;
 
-    private void Awake()
-    {
-        _unitCol = GetComponent<Collider>();
-
-    }
-
     private void Start()
     {
         _layerSet = Helpers.LayerSet;
+        _tagSet = Helpers.TagSet;
 
+        _unitCol = GetComponent<SphereCollider>();
         _startingPos = CachedTransform.position;
         _risePos = CachedTransform.up * _riseHeight;
         _returnHieght = CachedTransform.position.y;
@@ -69,7 +65,6 @@ public class unit_visCollision : OptimizedBehaviour
                 
                 if (_sizeTag < colliders[i].GetComponent<unit_visCollision>()._sizeTag)
                 {
-                    Debug.Log(colliders[i]);
                     _colliding = true;
                     return;
                 }

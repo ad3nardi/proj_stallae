@@ -107,10 +107,9 @@ public class unit_combat : OptimizedBehaviour
         for (int i = 0; i < _targetsInRange.Count; i++)
         {
             if (_targetsInRange.Contains(_target.transform))
-            {
-                _unitM._isIdle = true;
-            }
-
+                _unitM._targetInRange = true;
+            else
+                _unitM._targetInRange = false;
         }
     }
     private void updateClosestTarget()
@@ -176,17 +175,22 @@ public class unit_combat : OptimizedBehaviour
     {
         _curFireTime = 0f;
 
-
-        _isFiring = true;
-        for (int i = 0; i < _weaponVFX.Count; i++)
+        if (_unitM._targetInRange == true)
         {
-            _weaponVFX[i].Play();
 
+            _isFiring = true;
+            for (int i = 0; i < _weaponVFX.Count; i++)
+            {
+                _weaponVFX[i].Play();
+
+            }
+            for (int i = 0; i < _weaponsSet.Count; i++)
+            {
+                _target.TakeDamage(_firingTarget, -_weaponsSet[i].weapon_damage);
+            }
         }
-        for (int i = 0; i < _weaponsSet.Count; i++)
-        {
-            _target.TakeDamage(_firingTarget, _weaponsSet[i].weapon_damage);
-        }
+        else
+            return;
 
     }
 

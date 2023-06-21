@@ -26,8 +26,8 @@ MonoBehaviour:
   unitSubSystems: []
   unitMaxSpeed: 30
   unitAcceleration: 3
-  unitRotationSpeed: 50
-  unitSlowdownTime: 0.5
+  unitRotationSpeed: 30
+  unitSlowdownTime: 0.1
   unitWallForce: 5
   unitWallDist: 0.2
   unitEndReachedDistance: 0.1

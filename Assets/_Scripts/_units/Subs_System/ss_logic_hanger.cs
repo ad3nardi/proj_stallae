@@ -7,7 +7,6 @@ public class ss_logic_hanger : unit_subsytems
 {
     [Header("Plugins")]
     [SerializeField] private unit_Manager _unitM;
-    [SerializeField] private unit_subsytems _unitSS;
 
     [Header("Hanger Stats")]
     [SerializeField] private float _sMaxSquadHold;

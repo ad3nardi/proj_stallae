@@ -36,6 +36,7 @@ public class unit_Manager : OptimizedBehaviour
     [SerializeField] public Vector3 _targetPosition;
     [SerializeField] public unit_Manager _target;
     [SerializeField] public bool _isIdle;
+    [SerializeField] public bool _targetInRange;
     [SerializeField] public int _targetUnitSS;
     [SerializeField] public bool _isSelected;
 
@@ -44,11 +45,12 @@ public class unit_Manager : OptimizedBehaviour
     private void Awake()
     {
         //Cache
+        layerSet = Helpers.LayerSet;
+        tagSet = Helpers.TagSet;
         _AImovement = GetComponent<RichAI>();
         _movement = GetComponent<unit_movement>();
         _combat = GetComponent<unit_combat>();
-        layerSet = Helpers.LayerSet;
-        tagSet = Helpers.TagSet;
+        
     }
     private void Start()
     {
@@ -71,7 +73,11 @@ public class unit_Manager : OptimizedBehaviour
                 IdleMove();
                 break;
             case currentMission.mAttack:
-                _movement.StopAtAttackRangeMax(_target); 
+                if(_targetInRange)
+                    _movement.SetIsStop(true);
+                else
+                    _movement.SetIsStop(false);
+                //_movement.StopAtAttackRangeMax(_target); 
                 break;
             case currentMission.mMove:
                 if (_AImovement.reachedDestination)
@@ -127,8 +133,12 @@ public class unit_Manager : OptimizedBehaviour
     }
     public void TakeDamage(int i, float dmg)
     {
-        Debug.Log("Taking Damage");
         _subsytems[i].ModifyHealth(dmg);
+    }
+
+    public void MoveSpeedChange(float mveSpd)
+    {
+        _AImovement.maxSpeed = _unit.unitMaxSpeed * mveSpd;
     }
 
     //UNIT MISSIONS
