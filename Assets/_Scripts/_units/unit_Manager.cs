@@ -40,6 +40,7 @@ public class unit_Manager : OptimizedBehaviour
     [SerializeField] public int _targetUnitSS;
     [SerializeField] public bool _isSelected;
 
+    public static event Action<string, float, float, float, float, float, float, float> OnSelected = delegate { };
 
     //UNITY FUNCTIONS
     private void Awake()
@@ -64,50 +65,11 @@ public class unit_Manager : OptimizedBehaviour
     }
     private void LateUpdate()
     {
+        UpdateDisplayCard();
+        UpdateCurrentMission();
+        
         if (_isIdle)
             IdleMove();
-
-        switch (_cMission)
-        {
-            case currentMission.mNone:
-                IdleMove();
-                break;
-            case currentMission.mAttack:
-                if(_targetInRange)
-                    _movement.SetIsStop(true);
-                else
-                    _movement.SetIsStop(false);
-                //_movement.StopAtAttackRangeMax(_target); 
-                break;
-            case currentMission.mMove:
-                if (_AImovement.reachedDestination)
-                    mission_none();
-                break;
-            case currentMission.mRetreat:
-                break;
-            case currentMission.mGuard:
-                break;
-            case currentMission.mSticky:
-                break;
-            case currentMission.mEnter:
-                break;
-            case currentMission.mCapture:
-                break;
-            case currentMission.mGuardArea:
-                break;
-            case currentMission.mReturn:
-                break;
-            case currentMission.mStop:
-                break;
-            case currentMission.mAmbush:
-                break;
-            case currentMission.mHunt:
-                break;
-            case currentMission.mTimedHunt:
-                break;
-            default:
-                break;
-        }
     }
     
     //UNIT SELECTION
@@ -115,6 +77,9 @@ public class unit_Manager : OptimizedBehaviour
     {
         _isSelected = true;
         _highlightGO.CachedGameObject.SetActive(true);
+        //OnSelected();
+
+
     }
     public void UnitDeselected()
     {
@@ -243,6 +208,55 @@ public class unit_Manager : OptimizedBehaviour
     public void set_autoFire()
     {
         _combat.ToggleAutoTarget();
+    }
+
+    private void UpdateDisplayCard()
+    {
+
+    }
+    private void UpdateCurrentMission()
+    {
+        switch (_cMission)
+        {
+            case currentMission.mNone:
+                IdleMove();
+                break;
+            case currentMission.mAttack:
+                if (_targetInRange)
+                    _movement.SetIsStop(true);
+                else
+                    _movement.SetIsStop(false);
+                //_movement.StopAtAttackRangeMax(_target); 
+                break;
+            case currentMission.mMove:
+                if (_AImovement.reachedDestination)
+                    mission_none();
+                break;
+            case currentMission.mRetreat:
+                break;
+            case currentMission.mGuard:
+                break;
+            case currentMission.mSticky:
+                break;
+            case currentMission.mEnter:
+                break;
+            case currentMission.mCapture:
+                break;
+            case currentMission.mGuardArea:
+                break;
+            case currentMission.mReturn:
+                break;
+            case currentMission.mStop:
+                break;
+            case currentMission.mAmbush:
+                break;
+            case currentMission.mHunt:
+                break;
+            case currentMission.mTimedHunt:
+                break;
+            default:
+                break;
+        }
     }
 }
 public enum currentMission

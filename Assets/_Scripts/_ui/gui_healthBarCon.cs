@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class gui_healthBarCon : MonoBehaviour
 {
+    [SerializeField] private GameObject _objParent;
+    private Transform _tParent;
+    
     [SerializeField] gui_healthBarVis _healthBarPrefab;
 
     private Dictionary<unit_subsytems, gui_healthBarVis> _healthBars = new Dictionary<unit_subsytems, gui_healthBarVis>();
@@ -14,11 +17,16 @@ public class gui_healthBarCon : MonoBehaviour
         unit_subsytems.OnHealthRemoved += RemoveHealthBar;
     }
 
+    private void Start()
+    {
+        _tParent = _objParent.GetComponent<Transform>();
+    }
+
     private void AddHealthBar(unit_subsytems health)
     {
         if(_healthBars.ContainsKey(health) == false)
         {
-            var healthBar = Instantiate(_healthBarPrefab, transform);
+            var healthBar = Instantiate(_healthBarPrefab, _tParent);
             _healthBars.Add(health, healthBar);
             healthBar.SetHealth(health);
         }

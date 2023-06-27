@@ -54,4 +54,14 @@ public class ui_guiCon : MonoBehaviour
             Time.timeScale = 1.0f;
         }
     }
+
+    public void SelectedCard()
+    {
+
+    }
+
+    public void CardSelect()
+    {
+
+    }
 }
