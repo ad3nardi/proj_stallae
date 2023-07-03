@@ -10,14 +10,14 @@ public class gui_healthBarVis : OptimizedBehaviour
     [SerializeField] private float _updateSpeedSeconds = 0.5f; 
     [SerializeField] private float _posOffset;
     
-    private unit_subsytems _health;
+    private unit_subsystem _health;
 
     private void OnEnable()
     {
         _cam = Helpers.Camera;
     }
 
-    public void SetHealth(unit_subsytems health)
+    public void SetHealth(unit_subsystem health)
     {
         this._health = health;
         health.OnHealthPctChanged += HandleHealthChanged;

@@ -4,20 +4,10 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class unit_subsytems : OptimizedBehaviour
+public class unit_subsystem : OptimizedBehaviour
 {
     [Header("Plugins")]
-    [SerializeField] private unit_Manager _unitManager;
-    public unit_Manager UnitManager
-    {
-        get
-        {
-            if (_unitManager == null)
-                _unitManager = GetComponentInParent<unit_Manager>();
-            return _unitManager;
-        }
-        set => _unitManager = value;
-    }
+    [SerializeField] private unit_subSystemManager _subsystemM;
     [SerializeField] private bool _isDestroyed;
     [SerializeField] private bool _isDisabled;
 
@@ -28,24 +18,22 @@ public class unit_subsytems : OptimizedBehaviour
 
     [SerializeField] public float _curHP { get; private set; }
 
-    public static event Action<unit_subsytems> OnHealthAdded = delegate { };
-    public static event Action<unit_subsytems> OnHealthRemoved = delegate { };
+    public static event Action<unit_subsystem> OnHealthAdded = delegate { };
+    public static event Action<unit_subsystem> OnHealthRemoved = delegate { };
     public event Action<float> OnHealthPctChanged = delegate { };
     public event Action<bool> OnDestroyed = delegate { };
     public event Action<bool> OnDisabled = delegate { };
 
     //UNITY FUNCTIONS
+    private void Awake()
+    {
+        _subsystemM = GetComponentInParent<unit_subSystemManager>();
+    }
     private void OnEnable()
     {
-        SetToMaxHP();
-        _unitManager = UnitManager;
-        _maxHP = _unitManager._unit.unitMaxHitPoints / _unitManager._subsytems.Count;
+        _subsystemM.SetMaxHealth += SetToMaxHP;
+    }
 
-    }
-    private void Start()
-    {
-        SetToMaxHP();
-    }
 
     private void Update()
     {
@@ -54,22 +42,24 @@ public class unit_subsytems : OptimizedBehaviour
 
     private void OnDisable()
     {
+        _subsystemM.SetMaxHealth -= SetToMaxHP;
         OnHealthRemoved(this);
     }
 
     //HEALTH & DAMAGE FUNCTIONS
-    public void SetToMaxHP()
+    public void SetToMaxHP(float maxHp, float subSystemCount)
     {
+        _maxHP = maxHp / subSystemCount;
         _curHP = _maxHP;
         OnHealthAdded(this);
+        _isDisabled = false;
+        _isDestroyed = false;
         OnDestroyed(_isDestroyed);
         OnDisabled(_isDisabled);
     }
 
     public void ModifyHealth(float amount)
     {
-        Debug.Log("Taking Damage");
-
         _curHP += amount;
         float currentHPpct = _curHP / _maxHP;
         OnHealthPctChanged(currentHPpct);

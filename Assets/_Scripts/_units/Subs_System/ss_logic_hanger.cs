@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ss_logic_hanger : unit_subsytems
+public class ss_logic_hanger : unit_subsystem
 {
     [Header("Plugins")]
     [SerializeField] private unit_Manager _unitM;

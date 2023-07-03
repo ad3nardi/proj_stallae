@@ -22,14 +22,11 @@ public class unit_Manager : OptimizedBehaviour
     [SerializeField] private float _idleMultiplier;
     [SerializeField] private unit_movement _movement;
     [SerializeField] private unit_combat _combat;
+    [SerializeField] public unit_subSystemManager _subSystemMan { get; private set;}
     [SerializeField] private RichAI _AImovement;
-    [SerializeField] public List<unit_subsytems> _subsytems = new List<unit_subsytems>();
 
     [Header("Unit Sub-Sysetms")]
     [SerializeField] private float _hitPoints;
-    [SerializeField] private float _shieldHitPoints;
-    [SerializeField] private bool _hasShields;
-    [SerializeField] private bool _isShielded;
 
     [Header("Unit Status")]
     [SerializeField] private currentMission _cMission;
@@ -51,7 +48,9 @@ public class unit_Manager : OptimizedBehaviour
         _AImovement = GetComponent<RichAI>();
         _movement = GetComponent<unit_movement>();
         _combat = GetComponent<unit_combat>();
-        
+        _subSystemMan = GetComponent<unit_subSystemManager>();
+
+
     }
     private void Start()
     {
@@ -59,7 +58,6 @@ public class unit_Manager : OptimizedBehaviour
         UnitDeselected();
         _target = null;
         _movement.SetDefaults();
-        _isShielded = _hasShields;
         //Set Unit to Idle on its spawn Position
         mission_none();
     }
@@ -92,15 +90,6 @@ public class unit_Manager : OptimizedBehaviour
     {
         CachedTransform.position += CachedTransform.forward * _idleMultiplier * Time.deltaTime;
     }
-    public void ChangeHitPoints(float hp)
-    {
-        _hitPoints += hp;
-    }
-    public void TakeDamage(int i, float dmg)
-    {
-        _subsytems[i].ModifyHealth(dmg);
-    }
-
     public void MoveSpeedChange(float mveSpd)
     {
         _AImovement.maxSpeed = _unit.unitMaxSpeed * mveSpd;
@@ -209,7 +198,6 @@ public class unit_Manager : OptimizedBehaviour
     {
         _combat.ToggleAutoTarget();
     }
-
     private void UpdateDisplayCard()
     {
 

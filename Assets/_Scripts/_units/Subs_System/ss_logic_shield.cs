@@ -8,7 +8,7 @@ public class ss_logic_shield : OptimizedBehaviour
 {
     [Header ("Plugins")]
     [SerializeField] private unit_Manager _unitM;
-    [SerializeField] private unit_subsytems _unitSS;
+    [SerializeField] private unit_subsystem _unitSS;
 
     [Header("Shield Stats")]
     [SerializeField] private float _maxShieldHP;
@@ -33,7 +33,7 @@ public class ss_logic_shield : OptimizedBehaviour
     {
         if(_unitSS == null)
         {
-            _unitSS = GetComponent<unit_subsytems>();
+            _unitSS = GetComponent<unit_subsystem>();
         }
         _unitSS.OnDisabled += Disabled;
         _unitSS.OnDestroyed += Destroyed;

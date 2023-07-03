@@ -1095,10 +1095,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3997361219153326958}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76711f468e8325f429d87aa92fff8aac, type: 3}
+  m_Script: {fileID: 11500000, guid: 88e2c325e9c21ea4bb559f77e2739797, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _unitManager: {fileID: 5697958403810547936}
+  _subsystemM: {fileID: 0}
   _isDestroyed: 0
   _isDisabled: 0
   _subsystem: 3
@@ -1114,6 +1114,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1289873519687393591}
   - component: {fileID: 3582184604394213074}
+  - component: {fileID: 967754027}
   m_Layer: 2
   m_Name: subsystem_engines
   m_TagString: Untagged
@@ -1148,14 +1149,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e72670ff558bc5d4bab2626b085b12a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _unitManager: {fileID: 0}
+  _destroyedPct: 0.5
+  _disabledPct: 0
+--- !u!114 &967754027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5204912433233871358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e2c325e9c21ea4bb559f77e2739797, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _subsystemM: {fileID: 0}
   _isDestroyed: 0
   _isDisabled: 0
   _subsystem: 2
   _maxHP: 0
   _disableTimer: 0
-  _destroyedPct: 0.5
-  _disabledPct: 0
 --- !u!1 &5493581417459672478
 GameObject:
   m_ObjectHideFlags: 0
@@ -1348,6 +1361,7 @@ GameObject:
   - component: {fileID: 7318125543239817735}
   - component: {fileID: 1483931453133950284}
   - component: {fileID: 1483931451759500672}
+  - component: {fileID: 6035739559545820948}
   m_Layer: 7
   m_Name: ad_cruiser_E
   m_TagString: EnemyUnit
@@ -1395,13 +1409,7 @@ MonoBehaviour:
   _movement: {fileID: 2688272843042374706}
   _combat: {fileID: 5697958403810547939}
   _AImovement: {fileID: 7318125543239817735}
-  _subsytems:
-  - {fileID: 7791808531409345428}
-  - {fileID: 3582184604394213074}
   _hitPoints: 0
-  _shieldHitPoints: 0
-  _hasShields: 0
-  _isShielded: 0
   _cMission: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _target: {fileID: 0}
@@ -1437,11 +1445,11 @@ MonoBehaviour:
   _maxColliders: 10
   _isFiring: 0
   _rotSpeed: 1.05
-  _atkRange: 50
   _bestTarget: {fileID: 0}
-  _targetTransform: {fileID: 0}
-  _target: {fileID: 0}
+  _targetM: {fileID: 0}
+  _targetSS: {fileID: 0}
   _firingTarget: 0
+  _atkRange: 50
   _weaponOrigin: {fileID: 7791808531409345428}
   _targetsInRange: []
   _weaponsSet:
@@ -1576,6 +1584,21 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 18
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6035739559545820948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5697958403810547942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3334bad8433bb10429c89672b2d96296, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _TsubSystems:
+  - {fileID: 7292078166403841921}
+  - {fileID: 1289873519687393591}
 --- !u!1001 &420881156868341671
 PrefabInstance:
   m_ObjectHideFlags: 0

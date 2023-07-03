@@ -9,20 +9,16 @@ public class gui_healthBarCon : MonoBehaviour
     
     [SerializeField] gui_healthBarVis _healthBarPrefab;
 
-    private Dictionary<unit_subsytems, gui_healthBarVis> _healthBars = new Dictionary<unit_subsytems, gui_healthBarVis>();
+    private Dictionary<unit_subsystem, gui_healthBarVis> _healthBars = new Dictionary<unit_subsystem, gui_healthBarVis>();
 
     private void Awake()
     {
-        unit_subsytems.OnHealthAdded += AddHealthBar;
-        unit_subsytems.OnHealthRemoved += RemoveHealthBar;
-    }
-
-    private void Start()
-    {
+        unit_subsystem.OnHealthAdded += AddHealthBar;
+        unit_subsystem.OnHealthRemoved += RemoveHealthBar;
         _tParent = _objParent.GetComponent<Transform>();
     }
 
-    private void AddHealthBar(unit_subsytems health)
+    private void AddHealthBar(unit_subsystem health)
     {
         if(_healthBars.ContainsKey(health) == false)
         {
@@ -32,7 +28,7 @@ public class gui_healthBarCon : MonoBehaviour
         }
     }
 
-    private void RemoveHealthBar(unit_subsytems health)
+    private void RemoveHealthBar(unit_subsystem health)
     {
         if (_healthBars.ContainsKey(health))
         {

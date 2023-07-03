@@ -22,7 +22,7 @@ public class unit_settings : ScriptableObject
     public float untMaxShields;
     public float unitAttackRange;
     public float unitFireRate;
-    public List<unit_subsytems> unitSubSystems;
+    public List<unit_subsystem> unitSubSystems;
 
     [Header("Movement Settings")]
     public float unitMaxSpeed;

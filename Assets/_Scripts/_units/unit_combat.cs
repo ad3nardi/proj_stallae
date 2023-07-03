@@ -21,12 +21,14 @@ public class unit_combat : OptimizedBehaviour
     [SerializeField] private bool _isFiring;
     [SerializeField] private float _rotSpeed;
 
+    [Header("Targeting")]
+    [SerializeField] private unit_Manager _bestTarget;
+    [SerializeField] private unit_Manager _targetM;
+    [SerializeField] private unit_subSystemManager _targetSS;
+    [SerializeField] private int _firingTarget;
+
     [Header("RangeFinder")]
     [SerializeField] private float _atkRange;
-    [SerializeField] private unit_Manager _bestTarget;
-    [SerializeField] private Transform _targetTransform;
-    [SerializeField] private unit_Manager _target;
-    [SerializeField] private int _firingTarget;
     [SerializeField] public bool _useAutoTarget { get; private set; }
     [SerializeField] public bool _targetInRange { get; private set; }
 
@@ -67,15 +69,15 @@ public class unit_combat : OptimizedBehaviour
         updateWeaponRot();
         updateTargetsInRange();
         updateClosestTarget();
-        if(_target != null)
+        if(_targetM != null)
             updateIfTargetInRange();
     }
     public void OnDrawGizmos()
     { 
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(CachedTransform.position, _atkRange);
-        if(_target != null )
-            Gizmos.DrawLine(CachedTransform.position, _target.CachedTransform.position);
+        if(_targetM != null )
+            Gizmos.DrawLine(CachedTransform.position, _targetM.CachedTransform.position);
 
     }
 
@@ -106,7 +108,7 @@ public class unit_combat : OptimizedBehaviour
     {
         for (int i = 0; i < _targetsInRange.Count; i++)
         {
-            if (_targetsInRange.Contains(_target.transform))
+            if (_targetsInRange.Contains(_targetM.CachedTransform))
                 _unitM._targetInRange = true;
             else
                 _unitM._targetInRange = false;
@@ -129,7 +131,7 @@ public class unit_combat : OptimizedBehaviour
                     //AUTO TARGET ENABLED THROUGH UI:
                     if (_useAutoTarget)
                     {
-                        _target = _bestTarget;
+                        _targetM = _bestTarget;
                     }
                 }
             }
@@ -139,11 +141,11 @@ public class unit_combat : OptimizedBehaviour
     }
     private void updateWeaponRot()
     {
-        if (_target != null)
+        if (_targetM != null)
         {
             for (int i = 0; i < _weaponsPos.Count; i++)
             {
-                Quaternion targetRot = Quaternion.LookRotation(_target.CachedTransform.position - CachedTransform.position);
+                Quaternion targetRot = Quaternion.LookRotation(_targetM.CachedTransform.position - CachedTransform.position);
                 _weaponsPos[i].rotation = Quaternion.Slerp(_weaponsPos[i].rotation, targetRot, Time.deltaTime * _rotSpeed);
             }
         }
@@ -154,7 +156,7 @@ public class unit_combat : OptimizedBehaviour
     {
         if (_fireRate > _curFireTime)
             _curFireTime += Time.deltaTime;
-        else if (_fireRate <= _curFireTime && _target != null)
+        else if (_fireRate <= _curFireTime && _targetM != null)
             Fire();
         else
             return;
@@ -171,13 +173,19 @@ public class unit_combat : OptimizedBehaviour
     }
 
     //Combat Functions
+    public void TargetEnemy(unit_Manager target, int firingTarget)
+    {
+        _targetM = target;
+        _targetSS = _targetM._subSystemMan;
+        _firingTarget = firingTarget;
+    }
+
     private void Fire()
     {
         _curFireTime = 0f;
 
         if (_unitM._targetInRange == true)
         {
-
             _isFiring = true;
             for (int i = 0; i < _weaponVFX.Count; i++)
             {
@@ -186,7 +194,7 @@ public class unit_combat : OptimizedBehaviour
             }
             for (int i = 0; i < _weaponsSet.Count; i++)
             {
-                _target.TakeDamage(_firingTarget, -_weaponsSet[i].weapon_damage);
+                _targetSS.TakeDamage(_firingTarget, -_weaponsSet[i].weapon_damage);
             }
         }
         else
@@ -194,12 +202,6 @@ public class unit_combat : OptimizedBehaviour
 
     }
 
-    public void TargetEnemy(unit_Manager target, int firingTarget)
-    {
-        _target = target;
-        _firingTarget = firingTarget;
-        _targetTransform = _target._subsytems[_firingTarget].CachedTransform;
-    }
 
     //UI Based Functions
     public void ToggleAutoTarget()

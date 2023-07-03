@@ -8,7 +8,7 @@ public class wpn_missile : OptimizedBehaviour
     [Header("Plugins")]
     [SerializeField] private LayerSet _layerSet;
     [SerializeField] private LayerMask _targetLayer;
-    [SerializeField] private unit_subsytems _target;
+    [SerializeField] private unit_subsystem _target;
     [SerializeField] private objectPooling _parentPool;
     [SerializeField] private VisualEffect _explosion;
 
@@ -124,7 +124,7 @@ public class wpn_missile : OptimizedBehaviour
     }
     
     //WEAPON FUNCTIONS
-    public void DesignateTarget(unit_subsytems unitSS)
+    public void DesignateTarget(unit_subsystem unitSS)
     {
         _target = unitSS;
     }

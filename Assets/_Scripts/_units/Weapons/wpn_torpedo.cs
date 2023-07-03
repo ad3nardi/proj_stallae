@@ -11,7 +11,7 @@ public class wpn_torpedo : OptimizedBehaviour
     [SerializeField] private LayerMask _targetLayer;
     [SerializeField] private objectPooling _parentPool;
     [SerializeField] private VisualEffect _explosion;
-    [SerializeField] private List<unit_subsytems> _damageTargets;
+    [SerializeField] private List<unit_subsystem> _damageTargets;
     
     [Header("Settings")]
     [SerializeField] private float _hitSize;
@@ -24,7 +24,7 @@ public class wpn_torpedo : OptimizedBehaviour
     private void Awake()
     {
 
-        _damageTargets = new List<unit_subsytems>();
+        _damageTargets = new List<unit_subsystem>();
         _parentPool = GetComponentInParent<objectPooling>();
     }
     private void Start()
@@ -49,7 +49,7 @@ public class wpn_torpedo : OptimizedBehaviour
         {
             for (int i = 0; i < hitColliders.Length; i++)
             {
-                _damageTargets.Add(hitColliders[i].GetComponent<unit_subsytems>());
+                _damageTargets.Add(hitColliders[i].GetComponent<unit_subsystem>());
             }
             DamageTargets();
         }

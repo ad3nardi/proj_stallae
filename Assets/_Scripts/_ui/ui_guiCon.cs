@@ -8,6 +8,9 @@ public class ui_guiCon : MonoBehaviour
     [SerializeField] public TagSet tagSet;
 
     [SerializeField] private OptimizedBehaviour _pauseMenu;
+    [SerializeField] private GameObject _objGUI;
+    [SerializeField] private GameObject _objSelectionBox;
+    [SerializeField] private GameObject _objAttackUI;
     [SerializeField] private camera_con _cameraController;
 
     private GameObject _pauseMenuGO;
@@ -23,6 +26,9 @@ public class ui_guiCon : MonoBehaviour
 
     private void Start()
     {
+        _objGUI.SetActive(true);
+        _objSelectionBox.SetActive(true);
+        _objAttackUI.SetActive(false);
         _cameraController = _cameraController.GetComponent<camera_con>();
         _pauseMenuGO = _pauseMenu.GetComponent<OptimizedBehaviour>().CachedGameObject;
 
