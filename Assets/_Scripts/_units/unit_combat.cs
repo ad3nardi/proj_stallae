@@ -74,7 +74,7 @@ public class unit_combat : OptimizedBehaviour
     }
     public void OnDrawGizmos()
     { 
-        Gizmos.color = Color.red;
+        Gizmos.color = Color.magenta;
         Gizmos.DrawWireSphere(CachedTransform.position, _atkRange);
         if(_targetM != null )
             Gizmos.DrawLine(CachedTransform.position, _targetM.CachedTransform.position);
@@ -199,9 +199,7 @@ public class unit_combat : OptimizedBehaviour
         }
         else
             return;
-
     }
-
 
     //UI Based Functions
     public void ToggleAutoTarget()

@@ -16,12 +16,18 @@ public class enem_unitMan : OptimizedBehaviour
     [SerializeField] public Transform _targetT;
     [SerializeField] private unit_Manager _targetM;
     [SerializeField] private Vector3 _targetP;
-    
+
+    public void UpdateOrdersType(OrdersBeh orderBeh)
+    {
+
+    }
 
     public void SelectTarget(Transform t)
     {
-        _targetM = t.GetComponent< unit_Manager>();
+        _targetM = t.GetComponent<unit_Manager>();
         _targetP = t.position;
 
     }
 }
+
+    

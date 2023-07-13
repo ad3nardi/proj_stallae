@@ -10,25 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 77d85e003abd7e141bf9d7a64957905f, type: 3}
-  m_Name: 0303_ad_interceptor
+  m_Name: 0000_stl_valeria
   m_EditorClassIdentifier: 
-  id: 303
-  faction: 2
+  id: 101
+  faction: 0
   sizeTag: 1
   canAttack: 1
-  hasSubSystems: 1
+  hasSubSystems: 0
   hasShields: 0
-  unitPointCost: 2
-  unitMaxHitPoints: 2
-  untMaxShields: 2
-  unitAttackRange: 2
-  unitFireRate: 2
+  unitPointCost: 1
+  unitMaxHitPoints: 5
+  untMaxShields: 0
+  unitAttackRange: 3
+  unitFireRate: 3.69
   unitSubSystems: []
-  unitMaxSpeed: 30
-  unitAcceleration: 40
-  unitRotationSpeed: 100
-  unitSlowdownTime: 0.5
-  unitWallForce: 2
+  unitMaxSpeed: 10
+  unitAcceleration: 5
+  unitRotationSpeed: 360
+  unitSlowdownTime: 0.2
+  unitWallForce: 5
   unitWallDist: 0.2
   unitEndReachedDistance: 0.1
-  unitCheckDistance: 10
+  unitCheckDistance: 5
