@@ -9,9 +9,14 @@ using static UnityEditor.PlayerSettings;
 
 public class enem_battlegroupMan : OptimizedBehaviour
 {
+    [Header("Plugins")]
+    [SerializeField] public TagSet tagSet;
+    [SerializeField] public LayerSet layerSet;
+
+    [Header("Battlegroup Units")]
     [SerializeField] private List<Transform> _unitsT = new List<Transform>();
+    [SerializeField] private List<enem_unitMan> _unitsEM = new List<enem_unitMan>();
     [SerializeField] private List<Vector3> _unitsP = new List<Vector3>();
-    [SerializeField] private List<unit_Manager> _unitsM = new List<unit_Manager>();
 
     [Header("Behaviour Settings")]
     [SerializeField] private float _aggro;
@@ -19,7 +24,9 @@ public class enem_battlegroupMan : OptimizedBehaviour
 
     [Header("Orders Type")]
     public OrdersBeh _ordersBeh;
+    public RouteBeh _routeBeh;
     public EngageBeh _engageBeh;
+    public DistEngBeh _distEngBeh;
 
     [Header("Settings Front Zone Check")]
     [SerializeField] private bool _enemInZone;
@@ -37,20 +44,22 @@ public class enem_battlegroupMan : OptimizedBehaviour
     [SerializeField] private bool _inBand1, _inBand2, _inBand3;
 
     [Header("Spread Settings")]
-    [SerializeField] private bool _inFormation;
-    [SerializeField] private bool _moveOut;
+    [SerializeField] private bool _inFormation, _moveOut;
     [SerializeField] private float _spreadRadius;
 
+    [Header("Attack Target Choice")]
+    [SerializeField] private float _targetWeight;
+
+    [Header("Route Settings")]
+    [SerializeField] private float _toCommonPoint, _toFarPoint, _toFleet;
+
+    [Header("Engage Settings")]
+    [SerializeField] private OptimizedBehaviour _targetOB;
 
     [Header("Distance Engagement Settings")]
     [SerializeField] private float _squadronns;
     [SerializeField] private float _outerRange;
     [SerializeField] private float _targets;
-
-    [Header("Route Settings")]
-    [SerializeField] private float _toCommonPoint;
-    [SerializeField] private float _toFarPoint;
-    [SerializeField] private float _toFleet;
 
     [Header("Thresholds")]
     [SerializeField] private float _range;
@@ -62,7 +71,7 @@ public class enem_battlegroupMan : OptimizedBehaviour
     [SerializeField] private float _enemCountClose; 
     [SerializeField] private float _distFleet;
     [SerializeField] private float _distObj;
-    [SerializeField] private float _strVwk;
+    [SerializeField] private float _strVwk;    
 
     private void Awake()
     {
@@ -73,15 +82,17 @@ public class enem_battlegroupMan : OptimizedBehaviour
 
         _moveOut = false;
         ResetFlank();
+        layerSet = Helpers.LayerSet;
+        tagSet = Helpers.TagSet;
     }
 
     private void Start()
     {
-        _unitsM.Clear();
+        _unitsEM.Clear();
         for (int i = 0; i < _unitsT.Count; i++)
         {
             _unitsT[i] = _unitsT[i].GetComponent<OptimizedBehaviour>().CachedTransform;
-            _unitsM.Add(_unitsT[i].GetComponent<unit_Manager>());
+            _unitsEM.Add(_unitsT[i].GetComponent<enem_unitMan>());
         }
     }
 
@@ -93,7 +104,7 @@ public class enem_battlegroupMan : OptimizedBehaviour
 
         if (_moveOut)
         {
-            OnBattlegroupMove();
+            RecenterBattlegroup();
         }
 
         UpdateThresholdLevels();
@@ -131,15 +142,22 @@ public class enem_battlegroupMan : OptimizedBehaviour
     private void UpdateOrders()
     {
         if (_ordersBeh == OrdersBeh.None && !_inFormation)
-            SetFormation();
+        {
+            SetUnitFormation();
+        }
+        if(_ordersBeh == OrdersBeh.Engage)
+        {
+            Engage(_targetOB);
+        }
+
     }
 
     //Battlegroup Management
-    private void SetFormation()
+    private void SetUnitFormation()
     {
-        for (int i = 0; i < _unitsM.Count; i++)
+        for (int i = 0; i < _unitsEM.Count; i++)
         {
-            float angle = i * Mathf.PI * 2 / _unitsM.Count + (1 % 2 != 0 ? 0 : 0);
+            float angle = i * Mathf.PI * 2 / _unitsEM.Count + (1 % 2 != 0 ? 0 : 0);
 
             float radius = _spreadRadius;
             float x = Mathf.Cos(angle) * radius;
@@ -148,14 +166,12 @@ public class enem_battlegroupMan : OptimizedBehaviour
             float y = 0f;
 
             Vector3 pos = new Vector3(x, y, z) + CachedTransform.position;
-            //pos *= _spreadRadius;
-            Debug.Log(pos);
-            _unitsM[i].mission_move(pos);
+            _unitsEM[i].UnitMove(pos);
         }
         _inFormation = true;
     }
 
-    private void OnBattlegroupMove()
+    private void RecenterBattlegroup()
     {
         for (int i = 0; i < _unitsT.Count; i++)
         {
@@ -163,6 +179,7 @@ public class enem_battlegroupMan : OptimizedBehaviour
         }
         CachedTransform.position = GetMeanVector(_unitsP);
         _moveOut = false;
+        _unitsP.Clear();
     }
 
     private Vector3 GetMeanVector(List<Vector3> positions)
@@ -316,16 +333,29 @@ public class enem_battlegroupMan : OptimizedBehaviour
     }
     
     //ORDERS
-    public void Engage()
+    public void Engage(OptimizedBehaviour targetOB)
     {
+        for (int i = 0; i < _unitsEM.Count; i++)
+        {
+            _unitsEM[i].UpdateOrdersType(OrdersBeh.Engage);
+        }
+
         if (_engageBeh == EngageBeh.Direct)
         {
 
         }
+
+
         if (_engageBeh == EngageBeh.Flank)
         {
-
+            for (int i = 0; i < _unitsEM.Count; i++)
+            {
+                _unitsEM[i].EngageFlank(targetOB);
+            }
+            _engageBeh = EngageBeh.None;
         }
+
+
         if (_engageBeh == EngageBeh.Fsup)
         {
 
@@ -364,15 +394,13 @@ public class enem_battlegroupMan : OptimizedBehaviour
         }
     }
 }
-
 public enum OrdersBeh
 {
     None,
-    Engage,
     Route,
+    Engage,
     DistEngage
 }
-
 public enum EngageBeh
 {
     None,
@@ -380,7 +408,6 @@ public enum EngageBeh
     Flank,
     Fsup
 }
-
 public enum RouteBeh
 {
     None,
@@ -388,7 +415,6 @@ public enum RouteBeh
     ToPointFar,
     ToFleet
 }
-
 public enum DistEngBeh
 {
     None

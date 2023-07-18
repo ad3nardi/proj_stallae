@@ -29,7 +29,7 @@ public class unit_Manager : OptimizedBehaviour
     [SerializeField] private float _hitPoints;
 
     [Header("Unit Status")]
-    [SerializeField] private currentMission _cMission;
+    [SerializeField] public currentMission _cMission;
     [SerializeField] public Vector3 _targetPosition;
     [SerializeField] public unit_Manager _target;
     [SerializeField] public bool _isIdle;

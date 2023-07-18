@@ -1362,6 +1362,7 @@ GameObject:
   - component: {fileID: 1483931453133950284}
   - component: {fileID: 1483931451759500672}
   - component: {fileID: 6035739559545820948}
+  - component: {fileID: 3813091223312006350}
   m_Layer: 7
   m_Name: ad_cruiser_E
   m_TagString: EnemyUnit
@@ -1599,6 +1600,35 @@ MonoBehaviour:
   _TsubSystems:
   - {fileID: 7292078166403841921}
   - {fileID: 1289873519687393591}
+--- !u!114 &3813091223312006350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5697958403810547942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51a72c1d4461d464c8468d5df20d9b36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  layerSet: {fileID: 0}
+  tagSet: {fileID: 0}
+  _unitM: {fileID: 0}
+  _unit: {fileID: 0}
+  _sizeTag: 0
+  _orders: 0
+  _cMission: 0
+  _flankState: 0
+  _targetT: {fileID: 0}
+  _targetM: {fileID: 0}
+  _targetP: {x: 0, y: 0, z: 0}
+  _flankPointClose: 0.5
+  _flankPointOffset: 15
+  _flankCheckSize: {x: 0, y: 0, z: 0}
+  _flankLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1001 &420881156868341671
 PrefabInstance:
   m_ObjectHideFlags: 0

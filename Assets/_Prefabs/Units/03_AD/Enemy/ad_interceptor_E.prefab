@@ -194,6 +194,8 @@ GameObject:
   - component: {fileID: 4617446465913876794}
   - component: {fileID: 781088206}
   - component: {fileID: 4617446465913876791}
+  - component: {fileID: 2929690652326984117}
+  - component: {fileID: 7315542217947693143}
   m_Layer: 7
   m_Name: ad_interceptor_E
   m_TagString: EnemyUnit
@@ -277,11 +279,10 @@ MonoBehaviour:
   _isFiring: 0
   _rotSpeed: 0
   _bestTarget: {fileID: 0}
-  _targetTransform: {fileID: 0}
   _targetM: {fileID: 0}
   _targetSS: {fileID: 0}
-  _atkRange: 7
   _firingTarget: 0
+  _atkRange: 7
   _weaponOrigin: {fileID: 3797097581026048127}
   _targetsInRange: []
   _weaponsSet:
@@ -408,13 +409,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 1
-  smoothType: 2
-  subdivisions: 2
+  smoothType: 1
+  subdivisions: 1
   iterations: 2
   strength: 0.5
   uniformLength: 1
   maxSegmentLength: 2
-  bezierTangentLength: 0.4
+  bezierTangentLength: 0.6
   offset: 2
   factor: 0.1
 --- !u!135 &4617446465913876791
@@ -430,6 +431,49 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2929690652326984117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4617446465913876790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3334bad8433bb10429c89672b2d96296, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _TsubSystems:
+  - {fileID: 4617446465913876796}
+--- !u!114 &7315542217947693143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4617446465913876790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51a72c1d4461d464c8468d5df20d9b36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  layerSet: {fileID: 0}
+  tagSet: {fileID: 0}
+  _unit: {fileID: 0}
+  _unitM: {fileID: 0}
+  _sizeTag: 0
+  _orders: 0
+  _cMission: 0
+  _flankState: 0
+  _targetT: {fileID: 0}
+  _targetM: {fileID: 0}
+  _targetP: {x: 0, y: 0, z: 0}
+  _flankPointClose: 0.5
+  _flankPointOffset: 15
+  _flankCheckSize: {x: 0, y: 0, z: 0}
+  _flankLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1001 &7532680125946641370
 PrefabInstance:
   m_ObjectHideFlags: 0
