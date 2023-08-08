@@ -4,25 +4,22 @@ using UnityEngine;
 
 public class ui_unit_manager : OptimizedBehaviour
 {
-    [SerializeField] private player_manager _pm;
-    //Unity Function
-    private void Start()
-    {
-        if (_pm == null)
-            _pm = GetComponent<player_manager>();
-        else
-            return;
-    }
-
+    private SelectionMan _selectionMan;
     //UI FUNCTIONS
+    private void Awake()
+    {
+        _selectionMan = SelectionMan.Instance;
+    }
     public void uiSetStop()
     {
-        if (_pm._selectedUnits.Count != 0)
+        int count = _selectionMan.SelectedUnits.Count;
+
+        if (count > 0)
         {
-            for (int i = 0; i < _pm._selectedUnits.Count; i++)
+            for (int i = 0; i < count; i++)
             {
-                _pm._selectedUnits[i].mission_stop();
-                _pm.manage_deselectAll();
+                _selectionMan.SelectedUnits[i].mission_stop();
+                _selectionMan.DeselectAll();
             }
         }
         else
@@ -31,12 +28,13 @@ public class ui_unit_manager : OptimizedBehaviour
 
     public void uiSetGuard()
     {
-        if (_pm._selectedUnits.Count != 0)
+        int count = _selectionMan.SelectedUnits.Count;
+        if (count > 0)
         {
-            for (int i = 0; i < _pm._selectedUnits.Count; i++)
+            for (int i = 0; i < count; i++)
             {
-                _pm._selectedUnits[i].missoin_guard();
-                _pm.manage_deselectAll();
+                _selectionMan.SelectedUnits[i].missoin_guard();
+                _selectionMan.DeselectAll();
             }
         }
         else
@@ -45,12 +43,14 @@ public class ui_unit_manager : OptimizedBehaviour
 
     public void uiSetAutoFire()
     {
-        if (_pm._selectedUnits.Count != 0)
+        int count = _selectionMan.SelectedUnits.Count;
+
+        if (count > 0)
         {
-            for (int i = 0; i < _pm._selectedUnits.Count; i++)
+            for (int i = 0; i < count; i++)
             {
-                _pm._selectedUnits[i].set_autoFire();
-                _pm.manage_deselectAll();
+                _selectionMan.SelectedUnits[i].set_autoFire();
+                _selectionMan.DeselectAll();
             }
         }
         else

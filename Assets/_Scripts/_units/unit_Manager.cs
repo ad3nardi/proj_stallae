@@ -4,11 +4,13 @@ using UnityEngine;
 using UnityEngine.Events;
 using Pathfinding;
 using System;
-using Unity.VisualScripting;
+using Pathfinding.ClipperLib;
 
 [RequireComponent(typeof(RichAI))]
+[RequireComponent(typeof(unit_combat))]
+[RequireComponent(typeof(unit_movement))]
 
-public class unit_Manager : OptimizedBehaviour
+public class unit_Manager : OptimizedBehaviour, ISelectable
 {
     [Header("Plugins")]
     [SerializeField] public LayerSet layerSet;
@@ -24,6 +26,7 @@ public class unit_Manager : OptimizedBehaviour
     [SerializeField] private unit_combat _combat;
     [SerializeField] public unit_subSystemManager _subSystemMan { get; private set;}
     [SerializeField] private RichAI _AImovement;
+    [SerializeField] private float _radius;
 
     [Header("Unit Sub-Sysetms")]
     [SerializeField] private float _hitPoints;
@@ -34,10 +37,11 @@ public class unit_Manager : OptimizedBehaviour
     [SerializeField] public unit_Manager _target;
     [SerializeField] public bool _isIdle;
     [SerializeField] public bool _targetInRange;
-    [SerializeField] public int _targetUnitSS;
+    [SerializeField] public int _targetSS;
     [SerializeField] public bool _isSelected;
 
     public static event Action<string, float, float, float, float, float, float, float> OnSelected = delegate { };
+    public event Action<unit_Manager, float, bool[], float[]> GetStatusSS = delegate { };
 
     //UNITY FUNCTIONS
     private void Awake()
@@ -45,19 +49,19 @@ public class unit_Manager : OptimizedBehaviour
         //Cache
         layerSet = Helpers.LayerSet;
         tagSet = Helpers.TagSet;
+        SelectionMan.Instance.AvaliableUnits.Add(this);
         _AImovement = GetComponent<RichAI>();
         _movement = GetComponent<unit_movement>();
         _combat = GetComponent<unit_combat>();
-        _subSystemMan = GetComponent<unit_subSystemManager>();
-
-
-    }
+        _subSystemMan = GetComponentInChildren<unit_subSystemManager>();
+    }   
     private void Start()
     {
-        _sizeTag = ((int)_unit.sizeTag);
-        UnitDeselected();
         _target = null;
+        _sizeTag = ((int)_unit.sizeTag);
         _movement.SetDefaults();
+        _radius = _AImovement.radius;
+        Deselect();
         //Set Unit to Idle on its spawn Position
         mission_none();
     }
@@ -69,20 +73,28 @@ public class unit_Manager : OptimizedBehaviour
         if (_isIdle)
             IdleMove();
     }
-    
-    //UNIT SELECTION
-    public void UnitSelected()
+
+    //ISELECTABLE
+    public void Select()
     {
         _isSelected = true;
         _highlightGO.CachedGameObject.SetActive(true);
-        //OnSelected();
-
-
     }
-    public void UnitDeselected()
+    public void Deselect()
     {
         _isSelected = false;
         _highlightGO.CachedGameObject.SetActive(false);
+    }
+    public void GetInfoShip()
+    {
+        
+    }
+    public void GetInfoSS()
+    {
+        float shipHP = _subSystemMan._curHP;
+        bool[] ssActive = _subSystemMan._activeSubsytems;
+        float[] ssHP = _subSystemMan._subSystemHP;
+        GetStatusSS(this, shipHP, ssActive, ssHP);
     }
     
     //UNIT SUB-SYSTEM FUNCTIONS
@@ -101,51 +113,29 @@ public class unit_Manager : OptimizedBehaviour
         _cMission = currentMission.mNone;
         _isIdle = true;
     }
-    public void mission_move(Vector3 target)
+    public void mission_move(Vector3 moveP, int i, int c)
     {
         _cMission = currentMission.mMove;
         _isIdle = false;
         _movement.SetIsStop(false);
-        _AImovement.destination = target;
-
-        /*
-        float angle = 60; // angular step
-        int countOnCircle = (int)(360 / angle); // max number in one round
-        int count = meshAgents.Count; // number of agents
-        float step = 1; // circle number
-        int i = 1; // agent serial number
-        float randomizeAngle = Random.Range(0, angle);
-
-        while (count > 1)
-        {
-            var vec = Vector3.forward;
-            vec = Quaternion.Euler(0, angle * (countOnCircle - 1) + randomizeAngle, 0) * vec;
-
-            meshAgents[i].SetDestination(myAgent.destination + vec * (myAgent.radius + meshAgents[i].radius + 0.5f) * step);
-            countOnCircle--;
-            count--;
-            i++;
-
-            if (countOnCircle == 0)
-            {
-                if (step != 3 && step != 4 && step < 6 || step == 10) { angle /= 2f; }
-                countOnCircle = (int)(360 / angle);
-                step++;
-                randomizeAngle = Random.Range(0, angle);
-
-            }
-
-        }
-        */
+        _AImovement.destination = command_moveMath(moveP, i, c);
     }
-    public void mission_attack(unit_Manager attackTarget, int attackTargetSS, Vector3 targetPos)
+    public void mission_forceMove(Vector3 moveP)
+    {
+        _cMission = currentMission.mMove;
+        _isIdle = false;
+        _movement.SetIsStop(false);
+        _AImovement.destination = moveP;
+    }
+    public void mission_attack(unit_Manager target, int targetSS, Vector3 targetPos, int i, int c)
     {
         _cMission = currentMission.mAttack;
         _isIdle  = false;
-        _target = attackTarget;
-        _targetUnitSS = attackTargetSS;
-        _AImovement.destination = targetPos;
-        _combat.TargetEnemy(_target, _targetUnitSS);
+        _target = target;
+        _targetSS = targetSS;
+        _movement.SetIsStop(false);
+        _AImovement.destination = command_moveMath(target.CachedTransform.position, i, c);
+        _combat.TargetEnemy(_target, _targetSS);
     }
     public void mission_retreat()
     {
@@ -213,8 +203,10 @@ public class unit_Manager : OptimizedBehaviour
                 if (_targetInRange)
                     _movement.SetIsStop(true);
                 else
+                {
+                    _AImovement.destination = _target.CachedTransform.position;
                     _movement.SetIsStop(false);
-                //_movement.StopAtAttackRangeMax(_target); 
+                }
                 break;
             case currentMission.mMove:
                 if (_AImovement.reachedDestination)
@@ -245,6 +237,18 @@ public class unit_Manager : OptimizedBehaviour
             default:
                 break;
         }
+    }
+
+    //Movement Functions
+    private Vector3 command_moveMath(Vector3 hitPoint, int i, int c)
+    {
+        float radius = _radius / (Mathf.PI);
+        radius *= 2f;
+
+        float deg = 2 * Mathf.PI * i / c;
+        Vector3 p = hitPoint + new Vector3(Mathf.Cos(deg), 0, Mathf.Sin(deg)) * radius;
+
+        return p;
     }
 }
 public enum currentMission

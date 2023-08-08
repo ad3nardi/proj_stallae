@@ -33,8 +33,6 @@ public class unit_combat : OptimizedBehaviour
     [SerializeField] public bool _targetInRange { get; private set; }
 
     [Header("Lists")]
-    [SerializeField] private OptimizedBehaviour _weaponOrigin;
-    private Transform _weaponOriginTransform;
     [SerializeField] public List<Transform> _targetsInRange;
     [SerializeField] private List<wpn_settings> _weaponsSet = new List<wpn_settings>();
     [SerializeField] private List<Transform> _weaponsPos = new List<Transform>();
@@ -53,14 +51,17 @@ public class unit_combat : OptimizedBehaviour
         layerSet = Helpers.LayerSet;
         tagSet = Helpers.TagSet;
         _bestTarget = null;
-        _weaponOriginTransform = _weaponOrigin.CachedTransform;
 
         _targetsInRange = new List<Transform>();
         _weaponVFX.Clear();
-        for (int i = 0; i < _weaponsPos.Count; i++)
+        if(_weaponsPos.Count > 0)
         {
-            _weaponVFX.Add(_weaponsPos[i].GetComponentInChildren<VisualEffect>());
+            for (int i = 0; i < _weaponsPos.Count; i++)
+            {
+                _weaponVFX.Add(_weaponsPos[i].GetComponentInChildren<VisualEffect>());
+            }
         }
+        
     }
     private void Update()
     {
@@ -106,13 +107,10 @@ public class unit_combat : OptimizedBehaviour
     }
     private void updateIfTargetInRange()
     {
-        for (int i = 0; i < _targetsInRange.Count; i++)
-        {
-            if (_targetsInRange.Contains(_targetM.CachedTransform))
-                _unitM._targetInRange = true;
-            else
-                _unitM._targetInRange = false;
-        }
+        if (_targetsInRange.Contains(_targetM.CachedTransform))
+             _unitM._targetInRange = true;
+        else
+            _unitM._targetInRange = false;
     }
     private void updateClosestTarget()
     {

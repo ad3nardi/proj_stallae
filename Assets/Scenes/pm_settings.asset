@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cacb12c3a7c7ef468aea8c896b7c2f7, type: 3}
+  m_Name: pm_settings
+  m_EditorClassIdentifier: 
+  _dragDelay: 0.1
+  _inputMask:
+    serializedVersion: 2
+    m_Bits: 448
+  _selectionBoxUI: {fileID: 0}
+  _moveVFX: {fileID: 2000472240034173622, guid: 867e0affc871b3c4f8257f4a369f000e,
+    type: 3}
+  _attackUI: {fileID: 6353294883772721867, guid: fd849b6ad9ff8d64b8840af44315374c,
+    type: 3}
+  _defaultUI: {fileID: 7524296660041362329, guid: 1fb420fbedd66214582c09823fd6eedd,
+    type: 3}
+  _radialMenu: {fileID: 0}

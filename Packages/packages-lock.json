@@ -1,5 +1,19 @@
 {
   "dependencies": {
+    "com.gametoolkit.localization": {
+      "version": "https://github.com/ibrahimpenekli/GameToolkit-Localization.git#2.2.3",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "e9fdf4b4ecaf1fce64df46724c3ff56c8780e5a1"
+    },
+    "com.marijnzwemmer.unity-toolbar-extender": {
+      "version": "https://github.com/marijnz/unity-toolbar-extender.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "dbd76ed996483d219c39d240f785b1790aa039ed"
+    },
     "com.unity.2d.common": {
       "version": "6.0.6",
       "depth": 1,

@@ -2,15 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class man_cursor : MonoBehaviour
+public class man_cursor : Singleton<man_cursor>
 {
-    public static man_cursor _instance;
-
     [SerializeField] private Texture2D _cursorTexMain, _cursorTexCrosshair;
-
-    private void Awake()
+    public void Awake()
     {
-        _instance = this;
+        _cursorTexMain = Resources.Load<Texture2D>("UI_Sprites/curs_default");
     }
 
     public void ActivateMainCursor()

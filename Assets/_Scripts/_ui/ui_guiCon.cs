@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ui_guiCon : MonoBehaviour
+public class ui_guiCon : OptimizedBehaviour
 {
     [SerializeField] public LayerSet layerSet;
     [SerializeField] public TagSet tagSet;
@@ -31,6 +31,7 @@ public class ui_guiCon : MonoBehaviour
         _objAttackUI.SetActive(false);
         _cameraController = _cameraController.GetComponent<camera_con>();
         _pauseMenuGO = _pauseMenu.GetComponent<OptimizedBehaviour>().CachedGameObject;
+        man_cursor.Instance.ActivateMainCursor();
 
         _pauseMenuGO.gameObject.SetActive(false);
     }

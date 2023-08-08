@@ -64,7 +64,7 @@ public class enem_fleetMan : OptimizedBehaviour
         Gizmos.DrawWireSphere(_vShip.CachedTransform.position, _checkRangeBandOne);
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(_vShip.CachedTransform.position, _checkRangeBandTwo);
-        Gizmos.color = new Color(60, 60, 60, 0.3f);
+        Gizmos.color = new Color(60, 60, 60, 0.05f);
         
         for (int row = 0; row < _gridSize; row++)
         {
@@ -73,7 +73,7 @@ public class enem_fleetMan : OptimizedBehaviour
                 float xPos = col * _squareSize - _hotzoneOverlap;
                 float yPos = row * _squareSize - _hotzoneOverlap;
 
-                Gizmos.DrawCube(new Vector3(xPos- _mapOffset, 0, yPos - _mapOffset), _hotzoneScale*2);
+                Gizmos.DrawWireCube(new Vector3(xPos- _mapOffset, 0, yPos - _mapOffset), _hotzoneScale*2);
             }
         }
     }
@@ -140,4 +140,3 @@ public class enem_fleetMan : OptimizedBehaviour
 
     }
 }
-

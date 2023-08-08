@@ -359,7 +359,7 @@ Material:
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecSheenTileOffset: {r: 1, g: 0, b: 0, a: 0}
     - _XYZPosition: {r: 0, g: 0, b: 0, a: 0}
-    - _albedoTint: {r: 1, g: 1, b: 1, a: 0.4627451}
+    - _albedoTint: {r: 1, g: 1, b: 1, a: 1}
     - _smoothStepDark: {r: 0.98, g: 1, b: 0, a: 0}
     - _smoothstepDark: {r: 0, g: 1, b: 0, a: 0}
     - _smoothstepLight: {r: 0.95, g: 1, b: 0, a: 0}

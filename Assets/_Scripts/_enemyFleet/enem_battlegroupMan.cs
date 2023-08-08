@@ -1,12 +1,7 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using Unity.Burst.Intrinsics;
-using Unity.VisualScripting;
-using UnityEditor;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEditor.PlayerSettings;
-
 public class enem_battlegroupMan : OptimizedBehaviour
 {
     [Header("Plugins")]
@@ -14,19 +9,19 @@ public class enem_battlegroupMan : OptimizedBehaviour
     [SerializeField] public LayerSet layerSet;
 
     [Header("Battlegroup Units")]
-    [SerializeField] private List<Transform> _unitsT = new List<Transform>();
+    [SerializeField] public List<Transform> _unitsT = new List<Transform>();
     [SerializeField] private List<enem_unitMan> _unitsEM = new List<enem_unitMan>();
+    [SerializeField] private List<unit_Manager> _unitsM = new List<unit_Manager>();
     [SerializeField] private List<Vector3> _unitsP = new List<Vector3>();
 
     [Header("Behaviour Settings")]
+    public OrdersBeh _ordersBeh;
     [SerializeField] private float _aggro;
     [SerializeField] private float _spread;
+    [SerializeField] private bool _ifChangeTarget;
+    [SerializeField] private OptimizedBehaviour _targetOB;
+    [SerializeField] private OptimizedBehaviour _closestTarget;
 
-    [Header("Orders Type")]
-    public OrdersBeh _ordersBeh;
-    public RouteBeh _routeBeh;
-    public EngageBeh _engageBeh;
-    public DistEngBeh _distEngBeh;
 
     [Header("Settings Front Zone Check")]
     [SerializeField] private bool _enemInZone;
@@ -53,34 +48,52 @@ public class enem_battlegroupMan : OptimizedBehaviour
     [Header("Route Settings")]
     [SerializeField] private float _toCommonPoint, _toFarPoint, _toFleet;
 
-    [Header("Engage Settings")]
-    [SerializeField] private OptimizedBehaviour _targetOB;
-
     [Header("Distance Engagement Settings")]
     [SerializeField] private float _squadronns;
     [SerializeField] private float _outerRange;
     [SerializeField] private float _targets;
 
-    [Header("Thresholds")]
+    [Header("Threshold Inputs")]
     [SerializeField] private float _range;
+    [SerializeField] private float _enemFriendsCheckRange;
     [SerializeField] private float _hp;
     [SerializeField] private float _pwr;
     [SerializeField] private float _enemDist;
+    [SerializeField] private float _enemCountNear;
     [SerializeField] private float _enemCountFar;
     [SerializeField] private float _enemCountMid;
     [SerializeField] private float _enemCountClose; 
     [SerializeField] private float _distFleet;
     [SerializeField] private float _distObj;
-    [SerializeField] private float _strVwk;    
+    [SerializeField] private float _strVwk;
+
+    [Header("Threshold Adjustments")]
+    [SerializeField] private float _adjEnemNear;
+    [SerializeField] private float _adjEnemAlone;
+    [SerializeField] private float _adjEnemFriends;
+
+    [Header("Threshold Levels")]
+    [SerializeField] private float _lvlEnemNear;
+    [SerializeField] private float _lvlEnemAlone;
+    [SerializeField] private float _lvlEnemFriends;
+
+    [Header("Thresholds")]
+    [SerializeField] private float _threshEngage;
+    [SerializeField] private float _threshEnemNear;
+    [SerializeField] private float _threshEnemAlone;
+    [SerializeField] private float _threshEnemFriends;
 
     private void Awake()
     {
+        _ifChangeTarget = true;
         _inFormation = false;
         _inBand1 = false;
         _inBand2 = false;
         _inBand3 = false;
 
         _moveOut = false;
+        _ordersBeh = OrdersBeh.None;
+
         ResetFlank();
         layerSet = Helpers.LayerSet;
         tagSet = Helpers.TagSet;
@@ -93,6 +106,8 @@ public class enem_battlegroupMan : OptimizedBehaviour
         {
             _unitsT[i] = _unitsT[i].GetComponent<OptimizedBehaviour>().CachedTransform;
             _unitsEM.Add(_unitsT[i].GetComponent<enem_unitMan>());
+            _unitsM.Add(_unitsT[i].GetComponent<unit_Manager>());
+            _unitsEM[i]._bgMan = this;
         }
     }
 
@@ -106,8 +121,7 @@ public class enem_battlegroupMan : OptimizedBehaviour
         {
             RecenterBattlegroup();
         }
-
-        UpdateThresholdLevels();
+        UpdateThresholds();
         UpdateOrders();
     }
 
@@ -121,6 +135,11 @@ public class enem_battlegroupMan : OptimizedBehaviour
         Gizmos.DrawWireSphere(CachedTransform.position, _checkRangeBandTwo);
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(CachedTransform.position, _checkRangeBandThree);
+        
+        Gizmos.color = Color.grey;
+        if(_closestTarget != null)
+            Gizmos.DrawSphere(_closestTarget.CachedTransform.position, _enemFriendsCheckRange);
+
 
         Gizmos.color = Color.cyan;
         Matrix4x4 prevMatrix = Gizmos.matrix;
@@ -139,19 +158,6 @@ public class enem_battlegroupMan : OptimizedBehaviour
         Gizmos.matrix = prevMatrix;
     }
 
-    private void UpdateOrders()
-    {
-        if (_ordersBeh == OrdersBeh.None && !_inFormation)
-        {
-            SetUnitFormation();
-        }
-        if(_ordersBeh == OrdersBeh.Engage)
-        {
-            Engage(_targetOB);
-        }
-
-    }
-
     //Battlegroup Management
     private void SetUnitFormation()
     {
@@ -166,7 +172,7 @@ public class enem_battlegroupMan : OptimizedBehaviour
             float y = 0f;
 
             Vector3 pos = new Vector3(x, y, z) + CachedTransform.position;
-            _unitsEM[i].UnitMove(pos);
+            _unitsEM[i].UnitForceMove(pos);
         }
         _inFormation = true;
     }
@@ -199,22 +205,79 @@ public class enem_battlegroupMan : OptimizedBehaviour
         return (meanVector / positions.Count);
     }
 
-
     //UPDATE FUNCTIONS
-    private void UpdateThresholdLevels()
+    private void UpdateThresholds()
     {
-        
+        _lvlEnemNear= 0;
 
+        if (_enemInZone)
+            _lvlEnemNear += _adjEnemNear * 0.2f;
+        if(_enemCountNear != 0)
+        {
+            float flankBAdj = Convert.ToInt16(_enemInFlankB) * 5f;
+            float flankRLAdj = Convert.ToInt16(_enemInFlankB) * 3f;
+
+            if (_inBand1)
+                _lvlEnemNear += _adjEnemNear * (_enemCountFar + flankBAdj + flankRLAdj) * 0.3f;
+            if (_inBand2)
+                _lvlEnemNear += _adjEnemNear * (_enemCountFar + flankBAdj + flankRLAdj) * 0.5f;
+            if (_inBand3)
+                _lvlEnemNear += _adjEnemNear * (_enemCountFar + flankBAdj + flankRLAdj);
+        }
+    }
+    
+    private void UpdateOrders()
+    {
+        int orderType = 0;
+        if(_lvlEnemNear + _lvlEnemFriends + _lvlEnemAlone >= _threshEngage)
+            _ordersBeh = OrdersBeh.Engage;
+
+        if (_lvlEnemNear >= _threshEnemNear)
+        {
+            orderType = (int)EngageBeh.Direct;
+        }
+        if (_lvlEnemFriends >= _threshEnemFriends)
+        {
+            orderType = (int)EngageBeh.Flank;
+        }
+
+        UpdateConfirmOrders(orderType);
+    }
+
+    private void UpdateConfirmOrders(int orderType)
+    {
+        if (_ordersBeh == OrdersBeh.None && !_inFormation)
+        {
+            SetUnitFormation();
+        }
+        if (_ordersBeh == OrdersBeh.Engage)
+        {
+            if(_targetOB != null)
+            {
+                Engage(_targetOB, orderType);
+            }
+        }
+        if(_ordersBeh == OrdersBeh.Route)
+        {
+
+        }
+        if(_ordersBeh == OrdersBeh.DistEngage)
+        {
+
+        }
     }
 
     private void UpdateBandRangeCheck()
     {
+        _enemCountNear = 0f;
         _inBand1 = false; 
         Collider[] hitColB1 = Physics.OverlapSphere(CachedTransform.position, _checkRangeBandOne, _checkLayer);
         if (hitColB1.Length > 0)
         {
             _inBand1 = true;
+            UpdateTargetChoice(hitColB1);
             _enemCountFar = hitColB1.Length;
+            _enemCountNear = hitColB1.Length;
 
             _enemCountMid = 0;
             _inBand2 = false;
@@ -223,12 +286,14 @@ public class enem_battlegroupMan : OptimizedBehaviour
             if (hitColB2.Length > 0)
             {
                 _inBand2 = true;
+                UpdateTargetChoice(hitColB2);
                 _enemCountMid = hitColB2.Length;
                 for (int i = 0; i < hitColB1.Length; i++)
                 {
-                    if (hitColB1[i].transform == hitColB2[i].transform)
+                    //if (hitColB1[i].transform == hitColB2[i].transform)
+                    if (hitColB2.Contains(hitColB1[i]))
                     {
-                        _enemCountFar -= 1;
+                        _enemCountFar --;
                         if(_enemCountFar == 0)
                         {
                             _inBand1 = false;
@@ -242,10 +307,12 @@ public class enem_battlegroupMan : OptimizedBehaviour
                 if (hitColB3.Length > 0)
                 {
                     _inBand3 = true;
+                    UpdateTargetChoice(hitColB3);
                     _enemCountClose = hitColB3.Length;
                     for (int i = 0; i < hitColB2.Length; i++)
                     {
-                        if (hitColB2[i].transform == hitColB3[i].transform)
+                        //if (hitColB2[i].transform == hitColB3[i].transform)
+                        if (hitColB3.Contains(hitColB2[i]))
                         {
                             _enemCountMid -= 1;
                             if (_enemCountMid == 0)
@@ -300,7 +367,6 @@ public class enem_battlegroupMan : OptimizedBehaviour
                         angle += 360;
 
 
-                    Debug.Log(angle);
                     if (angle > 45 && angle < 135)
                     {
                         _enemCountZoneR++;
@@ -322,6 +388,58 @@ public class enem_battlegroupMan : OptimizedBehaviour
         } 
     }
 
+    private void UpdateTargetChoice(Collider[] array)
+    {
+        if (_ifChangeTarget)
+        {
+            if (array.Length > 1)
+            {
+                float closestDistSqr = Mathf.Infinity;
+                Vector3 currentPos = CachedTransform.position;
+
+                List<unit_Manager> targetsM = new List<unit_Manager>();
+
+                for (int u = 0; u < array.Length; u++)
+                {
+                    targetsM.Add(array[u].transform.GetComponent<unit_Manager>());
+                }
+
+                for (int i = 0; i < array.Length; i++)
+                {
+                    Vector3 distanceToTarget = targetsM[i].CachedTransform.position - currentPos;
+
+                    float dSqrToTarget = distanceToTarget.sqrMagnitude;
+                    if (dSqrToTarget < closestDistSqr)
+                    {
+                        closestDistSqr = dSqrToTarget;
+                        _closestTarget = targetsM[i];
+                    }
+                }
+            }
+            else
+                _closestTarget = array[0].transform.GetComponent<unit_Manager>();
+
+            Collider[] hitCol = Physics.OverlapSphere(_closestTarget.CachedTransform.position, _enemFriendsCheckRange, _checkLayer);
+            if(hitCol.Length <= 0)
+            {
+                ChangeTarget(_closestTarget);
+            }
+            else
+            {
+                _lvlEnemFriends += _adjEnemFriends * hitCol.Length;
+                ChangeTarget(_closestTarget);
+            }
+        }
+        else
+            return;
+    }
+
+    private void ChangeTarget(OptimizedBehaviour targetOb)
+    {
+        _targetOB = targetOb;
+        _ifChangeTarget = false;
+    } 
+
     private void ResetFlank()
     {
         _enemCountZoneR = 0;
@@ -331,66 +449,79 @@ public class enem_battlegroupMan : OptimizedBehaviour
         _enemInFlankL = false;
         _enemInFlankB = false;
     }
-    
+
     //ORDERS
-    public void Engage(OptimizedBehaviour targetOB)
+    public void Engage(OptimizedBehaviour targetOB, int orderType)
     {
         for (int i = 0; i < _unitsEM.Count; i++)
         {
             _unitsEM[i].UpdateOrdersType(OrdersBeh.Engage);
         }
 
-        if (_engageBeh == EngageBeh.Direct)
+        switch (orderType)
         {
+            case 0: //None
+                break;
+            case 1: //Direct
+                for (int i = 0; i < _unitsEM.Count; i++)
+                {
+                    _unitsEM[i].Engage(targetOB, i, _unitsEM.Count, FlankState.None);
+                    
+                }
+                break;
 
-        }
+            case 2: //Flank
+                for (int i = 0; i < _unitsEM.Count; i++)
+                {
+                    _unitsEM[i].Engage(targetOB, i, _unitsEM.Count, FlankState.FlankMove);
+                }
+                orderType = 0;
+                _targetOB = null;
+                break;
 
+            case 3: //Fire Support
 
-        if (_engageBeh == EngageBeh.Flank)
-        {
-            for (int i = 0; i < _unitsEM.Count; i++)
-            {
-                _unitsEM[i].EngageFlank(targetOB);
-            }
-            _engageBeh = EngageBeh.None;
-        }
-
-
-        if (_engageBeh == EngageBeh.Fsup)
-        {
-
-        }
-    }
-
-    public void Route()
-    {
-        if (_engageBeh == EngageBeh.Direct)
-        {
-
-        }
-        if (_engageBeh == EngageBeh.Flank)
-        {
-
-        }
-        if (_engageBeh == EngageBeh.Fsup)
-        {
-
+                break;
         }
     }
 
-    public void DistEngage()
+    public void Route(int orderType)
     {
-        if (_engageBeh == EngageBeh.Direct)
+        switch (orderType)
         {
+            case 0: //None
+                break;
+            case 1: //To Point Common
+               
+                break;
 
+            case 2: //To Point Far
+                
+                break;
+
+            case 3: //To Fleet
+
+                break;
         }
-        if (_engageBeh == EngageBeh.Flank)
-        {
+    }
 
-        }
-        if (_engageBeh == EngageBeh.Fsup)
+    public void DistEngage(int orderType)
+    {
+        switch (orderType)
         {
+            case 0: //None
+                break;
+            case 1: //To Point Common
 
+                break;
+
+            case 2: //To Point Far
+
+                break;
+
+            case 3: //To Fleet
+
+                break;
         }
     }
 }

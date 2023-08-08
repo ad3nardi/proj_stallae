@@ -1,15 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class unit_subsystem : OptimizedBehaviour
 {
     [Header("Plugins")]
     [SerializeField] private unit_subSystemManager _subsystemM;
+    [SerializeField] public bool _activeSubsytem;
     [SerializeField] private bool _isDestroyed;
     [SerializeField] private bool _isDisabled;
+    [SerializeField] private bool _isSubscribed;
 
     [Header("Settings")]
     [SerializeField] public subsytemType _subsystem;
@@ -21,17 +22,31 @@ public class unit_subsystem : OptimizedBehaviour
     public static event Action<unit_subsystem> OnHealthAdded = delegate { };
     public static event Action<unit_subsystem> OnHealthRemoved = delegate { };
     public event Action<float> OnHealthPctChanged = delegate { };
+    public event Action<float> OnHealthChanged = delegate { };
     public event Action<bool> OnDestroyed = delegate { };
     public event Action<bool> OnDisabled = delegate { };
 
     //UNITY FUNCTIONS
     private void Awake()
     {
+        _isSubscribed = false;
         _subsystemM = GetComponentInParent<unit_subSystemManager>();
+    }
+    private void Start()
+    {
+        if (_activeSubsytem && !_isSubscribed)
+        {
+            _isSubscribed = true;
+            _subsystemM.SetMaxHealth += SetToMaxHP;
+        }
     }
     private void OnEnable()
     {
-        _subsystemM.SetMaxHealth += SetToMaxHP;
+        if(_activeSubsytem && !_isSubscribed)
+        {
+            _isSubscribed = true;
+            _subsystemM.SetMaxHealth += SetToMaxHP;
+        }
     }
 
 
@@ -42,8 +57,12 @@ public class unit_subsystem : OptimizedBehaviour
 
     private void OnDisable()
     {
-        _subsystemM.SetMaxHealth -= SetToMaxHP;
-        OnHealthRemoved(this);
+        if (_isSubscribed)
+        {
+            _subsystemM.SetMaxHealth -= SetToMaxHP;
+            OnHealthRemoved(this);
+        }
+        
     }
 
     //HEALTH & DAMAGE FUNCTIONS
@@ -62,7 +81,9 @@ public class unit_subsystem : OptimizedBehaviour
     {
         _curHP += amount;
         float currentHPpct = _curHP / _maxHP;
+        
         OnHealthPctChanged(currentHPpct);
+        OnHealthChanged(_curHP);
         if (_curHP >= 0)
         {
             OnDestroyed(false);
@@ -101,9 +122,10 @@ public class unit_subsystem : OptimizedBehaviour
 
 public enum subsytemType
 {
-    squadron,
     hull,
+    weapon1,
+    weapon2,
+    shield,
     engine,
-    weapon,
-    shield
+    special
 }

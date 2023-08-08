@@ -5,13 +5,14 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.VFX;
 using Pathfinding;
+using Pathfinding.ClipperLib;
 
-public class player_manager : MonoBehaviour
+public class player_manager : OptimizedBehaviour
 {
     [Header("Plugins")]
     [SerializeField] private Camera _cam;
-    [SerializeField] private EventSystem _eventSystem;
     [SerializeField] private LayerSet _layerSet;
+    [SerializeField] private ISelectable _selectable;
 
     [Header("Inputs (DO NOT SET IN EDITOR)")]
     [SerializeField] private Vector2 _mousePos;
@@ -26,10 +27,12 @@ public class player_manager : MonoBehaviour
     [SerializeField] private bool _boxSelectDragging;
 
     [Header("Input Modifications")]
+    [SerializeField] private pm_settings _settings;
     [SerializeField] private float _dragDelay;
     [SerializeField] private LayerMask _inputMask;
 
     [Header("UI")]
+    [SerializeField] private bool _isOverUI;
     [SerializeField] private RectTransform _selectionBoxUI;
     [SerializeField] private VisualEffect _moveVFX;
     [SerializeField] private GameObject _attackUI;
@@ -37,8 +40,6 @@ public class player_manager : MonoBehaviour
     [SerializeField] private gui_radialMenu _radialMenu;
 
     [Header("Units")]
-    [SerializeField] public List<unit_Manager> _allyUnits;
-    [SerializeField] public List<unit_Manager> _selectedUnits;
     [SerializeField] public Transform _targetUnitT;
     [SerializeField] public int _targetUnitSS;
 
@@ -47,7 +48,8 @@ public class player_manager : MonoBehaviour
     {
         _layerSet = Helpers.LayerSet;
         _cam = Helpers.Camera;
-        _eventSystem = Helpers.EventSystem;
+        _settings = settingsHolder.PMSettings;
+        _selectable = null;
         _isAttackInput = false;
         _isAttackDragging = false;
         _boxSelectDragging = false;
@@ -55,11 +57,11 @@ public class player_manager : MonoBehaviour
     private void Start()
     {
         _radialMenu = GetComponent<gui_radialMenu>();
-        _selectedUnits = new List<unit_Manager>();
-        _selectedUnits.Clear();
+
     }
     private void Update()
     {
+        _isOverUI = Helpers.EventSystem.IsPointerOverGameObject();
         if (_isAttackInput && _mouseDownTime > _dragDelay)
             _isAttackDragging = true;
         else if (_mouseDownTime > _dragDelay)
@@ -73,13 +75,8 @@ public class player_manager : MonoBehaviour
     //PLAYER INPUT FUNCTIONS
     public void InputSelect(bool inp)
     {
-        if (!_eventSystem.IsPointerOverGameObject())
-        {
-            Input_CheckSelection();
-            _isMouseDown = true;
-        }
-        else
-            return;
+        Input_CheckSelection();
+        _isMouseDown = true;
     }
     public void InputRelease(bool inp)
     {
@@ -99,6 +96,7 @@ public class player_manager : MonoBehaviour
         _mousePos = new Vector2(x, y);
         _selectPos = _cam.ScreenToViewportPoint(new Vector3(x, y, 0));
     }
+
     private void UpdateMouseDownTimer()
     {
         _mouseDownTime += Time.deltaTime;
@@ -109,39 +107,55 @@ public class player_manager : MonoBehaviour
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(_cam.ViewportPointToRay(_selectPos), out hit, _inputMask))
+        if (Physics.Raycast(_cam.ViewportPointToRay(_selectPos), out hit, Mathf.Infinity, _inputMask))
         {
-            if (hit.transform.gameObject.layer == _layerSet.layerPlayerUnit)
+            
+            _selectable = hit.transform.GetComponent<ISelectable>();
             {
-                Input_SelectBoxStart();
-                manage_deselectAll();
-                manage_addSelected(hit.transform.GetComponent<unit_Manager>());
-                return;
+                if(_selectable != null) { }
+
             }
-            else if (_selectedUnits.Count == 0 && hit.transform.gameObject.layer == _layerSet.layerNavigation)
-            {
-                Input_SelectBoxStart();
-                return;
-            }
-            else if (_selectedUnits.Count > 0 && hit.transform.gameObject.layer == _layerSet.layerNavigation)
-            {
-                command_moveSelected(hit.point);
-                return;
-            }
-            else if (_selectedUnits.Count > 0 && hit.transform.gameObject.layer == _layerSet.layerEnemyUnit)
-            {
-                _targetUnitT = hit.transform.GetComponent<Transform>();
-                Input_AttackDragStart();
-                return;
-            }
-            else
-            {
-                manage_deselectAll();
-                return;
-            }
+                if (hit.transform.gameObject.layer == _layerSet.layerUI)
+                {
+                    return;
+                }
+                else if (hit.transform.gameObject.layer == _layerSet.layerPlayerUnit)
+                {
+                    Input_SelectBoxStart();
+
+                    SelectionMan.Instance.DeselectAll();
+                    SelectionMan.Instance.Select(hit.transform.GetComponent<unit_Manager>());
+
+                    return;
+                }
+                else if (SelectionMan.Instance.SelectedUnits.Count == 0 && hit.transform.gameObject.layer == _layerSet.layerNavigation)
+                {
+                    Input_SelectBoxStart();
+                    _selectable = null;
+                    return;
+                }
+                else if (SelectionMan.Instance.SelectedUnits.Count > 0 && hit.transform.gameObject.layer == _layerSet.layerNavigation)
+                {
+                    command_moveSelected(hit.point);
+                    _selectable = null;
+                    return;
+                }
+                else if (SelectionMan.Instance.SelectedUnits.Count > 0 && hit.transform.gameObject.layer == _layerSet.layerEnemyUnit)
+                {
+                    _targetUnitT = hit.transform.GetComponent<OptimizedBehaviour>().CachedTransform;
+                    Input_AttackDragStart();
+                    _selectable = null;
+                    return;
+                }
+                else
+                {
+                    _selectable = null;
+                    SelectionMan.Instance.DeselectAll();
+                    return;
+                }
+            
         }
     }
-
     private void Input_SelectBoxStart()
     {
         _startMousePos = _mousePos;
@@ -158,18 +172,21 @@ public class player_manager : MonoBehaviour
         _selectionBoxUI.sizeDelta = new Vector2(Mathf.Abs(width), Mathf.Abs(height));
         Bounds bounds = new Bounds(_selectionBoxUI.anchoredPosition, _selectionBoxUI.sizeDelta);
 
-        manage_deselectAll();
-            for (int i = 0; i < _allyUnits.Count; i++)
+        SelectionMan.Instance.DeselectAll();        
+        for (int i = 0; i < SelectionMan.Instance.AvaliableUnits.Count; i++)
+        {
+            if (UnitsInSelectionBox(_cam.WorldToScreenPoint(SelectionMan.Instance.AvaliableUnits[i].transform.position), bounds))
             {
-                if (UnitsInSelectionBox(_cam.WorldToScreenPoint(_allyUnits[i].transform.position), bounds))
-                {
-                    manage_addSelected(_allyUnits[i].transform.GetComponent<unit_Manager>());
-                }
-            } 
+                SelectionMan.Instance.Select(SelectionMan.Instance.AvaliableUnits[i]);
+            }
+            else
+            {
+                SelectionMan.Instance.Deselect(SelectionMan.Instance.AvaliableUnits[i]);
+            }
+        }
     }
     private void Input_SelectBoxRelease()
     {
-        
         _mouseDownTime = 0f;
         _selectionBoxUI.sizeDelta = Vector2.zero;
         _selectionBoxUI.gameObject.SetActive(false);
@@ -188,7 +205,7 @@ public class player_manager : MonoBehaviour
     }
     private void Input_AttackDragging()
     {
-        _targetUnitSS = _radialMenu.CheckRadialMenu(_mousePos.x, _mousePos.y);
+        _targetUnitSS = _radialMenu.CheckRadialMenu(_targetUnitT.GetComponent<unit_Manager>(), _mousePos.x, _mousePos.y);
 
     }
     private void Input_AttackDragRelease()
@@ -198,86 +215,66 @@ public class player_manager : MonoBehaviour
         else
             command_autoTargetSubSystem(_targetUnitT);
 
-        _isAttackDragging = false;
         _isAttackInput = false;
+        _isAttackDragging = false;
         _attackUI.SetActive(false);
         _defaultUI.SetActive(true);
     }
     
-    //UNIT MANAGEMENT FUNCTIONS
-    public void manage_addSelected(unit_Manager unitM)
-    {
-        _selectedUnits.Add(unitM);
-
-        for (int i = 0; i < _selectedUnits.Count; i++)
-        {
-            _selectedUnits[i].UnitSelected();
-        }
-    }
-    public void manage_deselectAll()
-    {
-        if (_selectedUnits.Count == 0)
-            return;
-        else
-        {
-            for (int i = 0; i < _selectedUnits.Count; i++)
-            {
-                _selectedUnits[i].UnitDeselected();
-            }
-            _selectedUnits.Clear();
-        }
-    }
-
     //UNIT COMMAND FUNCTIONS
     private void command_moveSelected(Vector3 hitPoint)
     {
         //Move all selected units to target location
         _moveVFX.transform.position = hitPoint;
         _moveVFX.Play();
-
-        for (int i = 0; i < _selectedUnits.Count; i++)
+        
+        
+        for (int i = 0; i < SelectionMan.Instance.SelectedUnits.Count; i++)
         {
-            _selectedUnits[i].mission_move(command_moveMath(hitPoint, i));
-            
+            SelectionMan.Instance.SelectedUnits[i].mission_move(hitPoint, i, SelectionMan.Instance.SelectedUnits.Count);
         }
-        manage_deselectAll();  
+        
+        SelectionMan.Instance.DeselectAll();  
     }
     private void command_manualTargetSubSystem(Transform targetUnitT, int targetSS)
     {
         unit_Manager targetUnitM = targetUnitT.GetComponent<unit_Manager>();
-        for (int i = 0; i < _selectedUnits.Count; i++)
+
+        for (int i = 0; i < SelectionMan.Instance.SelectedUnits.Count; i++)
         {
-            _selectedUnits[i].mission_attack(targetUnitM, targetSS, command_moveMath(targetUnitT.position, i));
+            SelectionMan.Instance.SelectedUnits[i].mission_attack(targetUnitM, targetSS, targetUnitT.position, i, SelectionMan.Instance.SelectedUnits.Count);
         }
-        manage_deselectAll();
+
+        SelectionMan.Instance.DeselectAll();
     }
     private void command_autoTargetSubSystem(Transform targetUnitT)
     {
 
         //Choose random sub-system from target's list -ssi- if not designated
         unit_Manager targetUnitM = targetUnitT.GetComponent<unit_Manager>();
-        _targetUnitSS = UnityEngine.Random.Range(0, 2);
-        
-        for (int i = 0; i < _selectedUnits.Count; i++)
-        {
-            _selectedUnits[i].mission_attack(targetUnitM, _targetUnitSS, command_moveMath(targetUnitT.position, i));
-        }
-        manage_deselectAll();
+
+        targetUnitM.GetStatusSS += GetTargetInfo;
+        targetUnitM.GetInfoSS();
+
+        targetUnitM.GetStatusSS -= GetTargetInfo;
     }
-    private Vector3 command_moveMath(Vector3 hitPoint, int i)
+
+    public void GetTargetInfo(unit_Manager target, float shipHP, bool[] actSS, float[] ssHP)
     {
-        float radsum = 0;
-        for (int r = 0; r < _selectedUnits.Count; r++)
+        while (actSS[_targetUnitSS] != true)
         {
-            radsum += _selectedUnits[r].transform.GetComponent<RichAI>().radius;
+            _targetUnitSS = UnityEngine.Random.Range(0, 5);
+            if (actSS[_targetUnitSS] == true)
+            {
+                break;
+            }
+            else
+                continue;
         }
-
-        float radius = radsum / (Mathf.PI);
-        radius *= 2f;
-
-        float deg = 2 * Mathf.PI * i / _selectedUnits.Count;
-        Vector3 p = hitPoint + new Vector3(Mathf.Cos(deg), 0, Mathf.Sin(deg)) * radius;
-
-        return p;
+        for (int i = 0; i < SelectionMan.Instance.SelectedUnits.Count; i++)
+        {
+            SelectionMan.Instance.SelectedUnits[i].mission_attack(target, _targetUnitSS, target.CachedTransform.position, i, SelectionMan.Instance.SelectedUnits.Count);
+        }
+        SelectionMan.Instance.DeselectAll();
     }
 }

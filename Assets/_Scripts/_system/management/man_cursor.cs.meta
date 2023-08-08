@@ -3,7 +3,9 @@ guid: 855f0fb55fd0c574a943e87e91a92a62
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - _cursorTexMain: {fileID: 2800000, guid: 231d7a04ed536e540ac4dcbf09385f8c, type: 3}
+  - _cursorTexCrosshair: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

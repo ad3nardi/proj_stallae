@@ -1,3 +1,4 @@
+using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -89,5 +90,22 @@ public static class Helpers
         {
             return 1.0f;
         }
+    }
+
+    public static Vector3 command_moveMath(List<unit_Manager> units, Vector3 hitPoint, int i)
+    {
+        float radsum = 0;
+        for (int r = 0; r < units.Count; r++)
+        {
+            radsum += units[r].transform.GetComponent<RichAI>().radius;
+        }
+
+        float radius = radsum / (Mathf.PI);
+        radius *= 2f;
+
+        float deg = 2 * Mathf.PI * i / units.Count;
+        Vector3 p = hitPoint + new Vector3(Mathf.Cos(deg), 0, Mathf.Sin(deg)) * radius;
+
+        return p;
     }
 }

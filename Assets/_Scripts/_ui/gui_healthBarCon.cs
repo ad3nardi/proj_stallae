@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class gui_healthBarCon : MonoBehaviour
+public class gui_healthBarCon : OptimizedBehaviour
 {
     [SerializeField] private GameObject _objParent;
     private Transform _tParent;

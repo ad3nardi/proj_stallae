@@ -14,11 +14,24 @@ public class gui_radialMenu : OptimizedBehaviour
     [Header("Selection Behaviour")]
     public int _selectedOption;
     [SerializeField] List<TextMeshProUGUI> _options;
-    public Color normalColor, highlightedColor;
+    public Color normalColor, highlightedColor, unactiveColour;
+    private bool[] _activeOptions = new bool[6];
 
-
-    public int CheckRadialMenu(float x, float y)
+    private void GetInfo(unit_Manager targetUnitM)
     {
+        targetUnitM.GetStatusSS += GetTargetInfo;
+        targetUnitM.GetInfoSS();
+
+    }
+
+    public void GetTargetInfo(unit_Manager target, float shipHP, bool[] actSS, float[] ssHP)
+    {
+        _activeOptions = actSS;
+    }
+
+    public int CheckRadialMenu(unit_Manager targetUnitM, float x, float y)
+    {
+        GetInfo(targetUnitM);
         _mousePos = new Vector2(x - Screen.width / 2, y - Screen.height / 2);
         _mousePos.Normalize();
         int optionAmnt = _options.Count;
@@ -32,25 +45,50 @@ public class gui_radialMenu : OptimizedBehaviour
             {
                 angle += 360;
             }
-
             for (int i = 0; i < optionAmnt; i++)
             {
                 if (angle > i * (360 / optionAmnt) && angle < (i + 1) * (360 / optionAmnt))
                 {
                     _options[i].color = highlightedColor;
-                    _selectedOption = i;
-                    _highlightObj.transform.rotation = Quaternion.Euler(0, 0, i * -(360 / optionAmnt));
+                    
+                    if (_activeOptions[i] == false)
+                    {
+                        _options[i].color = unactiveColour;
+                        _selectedOption = i;
+                        for (int j = 0; j < 6; j++)
+                        {
+                            _selectedOption = j;
+                            if (_activeOptions[j] == false)
+                            {
+                                continue;
+                            }
+                            else
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        _selectedOption = i;
+                        _highlightObj.transform.rotation = Quaternion.Euler(0, 0, i * -(360 / optionAmnt));
+                    } 
                 }
                 else
                 {
                     _options[i].color = normalColor;
+                    if (_activeOptions[i] == false)
+                    {
+                        _options[i].color = unactiveColour;
+                    }
                 }
             }
+            targetUnitM.GetStatusSS -= GetTargetInfo;
             return _selectedOption;
-
         }
         else
+        {
+            targetUnitM.GetStatusSS -= GetTargetInfo;
             return 0;
+        }
 
         /*
         //INPUT ACTION HERE - i.e On Release
