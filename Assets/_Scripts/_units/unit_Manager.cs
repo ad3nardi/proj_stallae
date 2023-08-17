@@ -17,7 +17,6 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     [SerializeField] public TagSet tagSet;
     [SerializeField] public unit_settings _unit;
     [SerializeField] public int _sizeTag;
-    [SerializeField] public OptimizedBehaviour _highlightGO;
 
     [Header("Unit Plugins")]
     [Range (0 , 1)]
@@ -38,10 +37,11 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     [SerializeField] public bool _isIdle;
     [SerializeField] public bool _targetInRange;
     [SerializeField] public int _targetSS;
-    [SerializeField] public bool _isSelected;
 
     public static event Action<string, float, float, float, float, float, float, float> OnSelected = delegate { };
     public event Action<unit_Manager, float, bool[], float[]> GetStatusSS = delegate { };
+    public event Action Selected = delegate { };
+    public event Action Deselected = delegate { };
 
     //UNITY FUNCTIONS
     private void Awake()
@@ -61,7 +61,6 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         _sizeTag = ((int)_unit.sizeTag);
         _movement.SetDefaults();
         _radius = _AImovement.radius;
-        Deselect();
         //Set Unit to Idle on its spawn Position
         mission_none();
     }
@@ -77,13 +76,11 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     //ISELECTABLE
     public void Select()
     {
-        _isSelected = true;
-        _highlightGO.CachedGameObject.SetActive(true);
+        Selected();
     }
     public void Deselect()
     {
-        _isSelected = false;
-        _highlightGO.CachedGameObject.SetActive(false);
+        Deselected();
     }
     public void GetInfoShip()
     {

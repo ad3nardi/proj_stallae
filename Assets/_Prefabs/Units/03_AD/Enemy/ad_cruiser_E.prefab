@@ -625,19 +625,18 @@ MonoBehaviour:
   tagSet: {fileID: 0}
   _unit: {fileID: 11400000, guid: 66b240de9fe2d4e4f99ce1167e33a61c, type: 2}
   _sizeTag: 0
-  _highlightGO: {fileID: 27967010872691992}
   _idleMultiplier: 0.25
   _movement: {fileID: 2688272843042374706}
   _combat: {fileID: 5697958403810547939}
   _AImovement: {fileID: 7318125543239817735}
+  _radius: 0
   _hitPoints: 0
   _cMission: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _target: {fileID: 0}
   _isIdle: 0
   _targetInRange: 0
-  _targetUnitSS: 0
-  _isSelected: 0
+  _targetSS: 0
 --- !u!114 &5697958403810547939
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -671,7 +670,6 @@ MonoBehaviour:
   _targetSS: {fileID: 0}
   _firingTarget: 0
   _atkRange: 50
-  _weaponOrigin: {fileID: 0}
   _targetsInRange: []
   _weaponsSet:
   - {fileID: 11400000, guid: 20e232f38e3e09f4ab4282aad3ab0614, type: 2}
@@ -819,14 +817,18 @@ MonoBehaviour:
   tagSet: {fileID: 0}
   _unitM: {fileID: 0}
   _unit: {fileID: 0}
+  _bgMan: {fileID: 0}
   _sizeTag: 0
   _orders: 0
   _flankState: 0
   _targetT: {fileID: 0}
   _targetM: {fileID: 0}
+  _targetUnitSS: 0
   _targetP: {x: 0, y: 0, z: 0}
   _movePoint: {x: 0, y: 0, z: 0}
   _movePointCheckBuffer: 4
+  _id: 0
+  _count: 0
   _flankPointClose: 0.5
   _flankPointOffset: 15
   _flankOffsetSide: 1
@@ -1012,18 +1014,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 65f90eead524cc64daefc2470fda37ac, type: 3}
---- !u!114 &27967010872691992 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: -4512222090596081649, guid: 65f90eead524cc64daefc2470fda37ac,
-    type: 3}
-  m_PrefabInstance: {fileID: 4684313380446973207}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8675760e0e8a1cd47a94f502de2d2c1c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &5697958404549414718 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1013645033837437481, guid: 65f90eead524cc64daefc2470fda37ac,
@@ -1037,6 +1027,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5697958403810547937}
     m_Modifications:
+    - target: {fileID: 7613038465736316385, guid: fd552109f142181419b276d67d7bd29c,
+        type: 3}
+      propertyPath: _activeSubsytems.Array.data[1]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7613038465736316385, guid: fd552109f142181419b276d67d7bd29c,
+        type: 3}
+      propertyPath: _activeSubsytems.Array.data[5]
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7613038465736316386, guid: fd552109f142181419b276d67d7bd29c,
         type: 3}
       propertyPath: m_RootOrder

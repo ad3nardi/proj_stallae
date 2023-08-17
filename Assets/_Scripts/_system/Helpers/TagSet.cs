@@ -6,21 +6,21 @@ using UnityEngine;
 public class TagSet : ScriptableObject
 {
     [Header("Size Tag")]
-    public int tagProjectile = 0;
-    public int tagSquadron = 1;
-    public int tagSmalll = 2;
-    public int tagMedium = 3;
-    public int tagLarge = 4;
-    public int tagHuge = 5;
-    public int tagStation = 6;
+    public int tagSquadron = 0;
+    public int tagSmalll = 1;
+    public int tagMedium = 2;
+    public int tagLarge = 3;
+    public int tagHuge = 4;
+    public int tagStation = 5;
+    public int tagProjectile = 6;
 }
 public enum SizeTag
 {
-    tagProjectile,
     tagSquadron,
     tagSmalll,
     tagMedium,
     tagLarge,
     tagHuge,
-    tagStation
+    tagStation,
+    tagProjectile
 }

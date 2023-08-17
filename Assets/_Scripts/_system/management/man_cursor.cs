@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class man_cursor : Singleton<man_cursor>
 {
-    [SerializeField] private Texture2D _cursorTexMain, _cursorTexCrosshair;
+    [SerializeField] private so_cursorHolder _cursors;
     public void Awake()
     {
-        _cursorTexMain = Resources.Load<Texture2D>("UI_Sprites/curs_default");
+        _cursors = Resources.Load<so_cursorHolder>("UI_Sprites/cursorsDefault");
     }
 
     public void ActivateMainCursor()
     {
-        Cursor.SetCursor(_cursorTexMain, Vector2.zero, CursorMode.Auto);
+        Cursor.SetCursor(_cursors._defaultCursor, Vector2.zero, CursorMode.Auto);
     }
     public void ActivateCrosshairCursor()
     {
-        Cursor.SetCursor(_cursorTexMain, new Vector2(_cursorTexCrosshair.width/2, _cursorTexCrosshair.height/2), CursorMode.Auto);
+        Cursor.SetCursor(_cursors._crosshairCursor, new Vector2(_cursors._crosshairCursor.width/2, _cursors._crosshairCursor.height/2), CursorMode.Auto);
     }
 
     //man_cursor.instance.activate-xxxCursor-

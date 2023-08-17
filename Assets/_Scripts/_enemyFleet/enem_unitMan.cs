@@ -37,6 +37,8 @@ public class enem_unitMan : OptimizedBehaviour
     public void Awake()
     {
         _unitM = GetComponent<unit_Manager>();
+        EnemyFleetMan.Instance.AvaliableUnits.Add(this);
+
         _unit = _unitM._unit;
         layerSet = Helpers.LayerSet;
         tagSet = Helpers.TagSet;
@@ -59,9 +61,9 @@ public class enem_unitMan : OptimizedBehaviour
     {
         if (_orders == OrdersBeh.Engage)
         {
-            if (_unitM._targetInRange)
+            if (_flankState == FlankState.None)
             {
-                _flankState = FlankState.None;
+                
                 EngageDirect();
             }
             if (_flankState == FlankState.FlankMove)

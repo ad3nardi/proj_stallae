@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5522f2fa361ac564ca9977bb8c0aeed3, type: 3}
+  m_Name: Battlegroup-Basic
+  m_EditorClassIdentifier: 
+  _unitsList:
+  - {fileID: 5697958403810547942, guid: e2ed3f3fcb0d6744c8c5a89620d20d7a, type: 3}
+  - {fileID: 4617446465913876790, guid: 8aaf2f99ca953e04db93fe8d635b340d, type: 3}
+  _aggro: 0
+  _spread: 0
+  _enemCountZone: 0
+  _zoneOffsetPos: {x: 0, y: 0, z: 170}
+  _zonetOffsetRot: {x: 0, y: 0, z: 0}
+  _zoneOffsetScale: {x: 50, y: 5, z: 30}
+  _flankCheckSize: 0
+  _checkLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  _checkRangeBandOne: 150
+  _checkRangeBandTwo: 75
+  _checkRangeBandThree: 30
+  _enemFriendsCheckRange: 25
+  _enemIsolationCheckRange: 50
+  _spreadRadius: 20
+  _targetWeight: 0
+  _toCommonPoint: 0
+  _toFarPoint: 0
+  _toFleet: 0
+  _squadronns: 0
+  _outerRange: 0
+  _targets: 0
+  _range: 0
+  _hp: 0
+  _pwr: 0
+  _enemDist: 0
+  _enemCountNear: 0
+  _enemCountFar: 0
+  _enemCountMid: 0
+  _enemCountClose: 0
+  _distFleet: 0
+  _distObj: 0
+  _strVwk: 0
+  _adjEnemNear: 100
+  _adjEnemIsolate: 100
+  _adjEnemFriends: 100
+  _threshEngage: 100
+  _threshEnemNear: 30
+  _threshEnemIsolate: 100
+  _threshEnemFriends: 100

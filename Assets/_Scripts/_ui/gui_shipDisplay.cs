@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class gui_shipDisplay : MonoBehaviour
+public class gui_shipDisplay : Singleton<gui_shipDisplay>
 {
     [SerializeField] private GameObject _objDisplayPanel;
     [SerializeField] private ui_guiCon _guiCon;
