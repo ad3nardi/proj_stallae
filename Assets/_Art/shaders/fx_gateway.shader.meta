@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 9f79845d8358803419a2c70d2c14f13b
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _circleGrad_Mask: {fileID: 2800000, guid: 90ad2feee06f5e94380900ee52aa3978, type: 3}
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

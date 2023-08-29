@@ -92,12 +92,13 @@ public static class Helpers
         }
     }
 
-    public static Vector3 command_moveMath(List<unit_Manager> units, Vector3 hitPoint, int i)
+    public static Vector3 radialPoints(List<unit_Manager> units, Vector3 hitPoint, int i)
     {
         float radsum = 0;
         for (int r = 0; r < units.Count; r++)
         {
-            radsum += units[r].transform.GetComponent<RichAI>().radius;
+            //Radius of object
+            //radsum += units[r].transform.GetComponent<RichAI>().radius;
         }
 
         float radius = radsum / (Mathf.PI);

@@ -49,11 +49,14 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         //Cache
         layerSet = Helpers.LayerSet;
         tagSet = Helpers.TagSet;
-        SelectionMan.Instance.AvaliableUnits.Add(this);
         _AImovement = GetComponent<RichAI>();
         _movement = GetComponent<unit_movement>();
         _combat = GetComponent<unit_combat>();
         _subSystemMan = GetComponentInChildren<unit_subSystemManager>();
+        if(CachedGameObject.layer == layerSet.layerPlayerUnit)
+        {
+            SelectionMan.Instance.AvaliableUnits.Add(this);
+        }
     }   
     private void Start()
     {
@@ -63,6 +66,7 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         _radius = _AImovement.radius;
         //Set Unit to Idle on its spawn Position
         mission_none();
+        
     }
     private void LateUpdate()
     {
@@ -71,6 +75,10 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         
         if (_isIdle)
             IdleMove();
+        if (_AImovement.reachedDestination)
+        {
+            mission_none();
+        }
     }
 
     //ISELECTABLE
