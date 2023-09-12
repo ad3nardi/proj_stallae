@@ -33,6 +33,11 @@ public class unit_settings : ScriptableObject
     public float unitWallDist;
     public float unitEndReachedDistance;
     public float unitCheckDistance;
+
+    [Header("Combat and Ability Settings")]
+    public float abCooldownTime;
+    public float abActiveTime;
+    public bool abNeedsTarget;
 }
 public enum FactionType
 {

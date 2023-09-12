@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77d85e003abd7e141bf9d7a64957905f, type: 3}
+  m_Name: 0307_ad_cruiser_02
+  m_EditorClassIdentifier: 
+  id: 307
+  faction: 2
+  sizeTag: 3
+  canAttack: 1
+  hasSubSystems: 1
+  hasShields: 1
+  unitPointCost: 1
+  unitMaxHitPoints: 1500
+  untMaxShields: 0
+  unitAttackRange: 50
+  unitFireRate: 3
+  unitSubSystems: []
+  unitMaxSpeed: 30
+  unitAcceleration: 3
+  unitRotationSpeed: 30
+  unitSlowdownTime: 0.1
+  unitWallForce: 5
+  unitWallDist: 0.2
+  unitEndReachedDistance: 0.1
+  unitCheckDistance: 35

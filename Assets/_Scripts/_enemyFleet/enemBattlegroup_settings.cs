@@ -26,6 +26,7 @@ public class enemBattlegroup_settings : ScriptableObject
     public float _enemIsolationCheckRange;
 
     [Header("Spread Settings")]
+    public float _spawnOffset;
     public float _spreadRadius;
 
     [Header("Attack Target Choice")]
@@ -38,19 +39,6 @@ public class enemBattlegroup_settings : ScriptableObject
     public float _squadronns;
     public float _outerRange;
     public float _targets;
-
-    [Header("Threshold Inputs")]
-    public float _range;
-    public float _hp;
-    public float _pwr;
-    public float _enemDist;
-    public float _enemCountNear;
-    public float _enemCountFar;
-    public float _enemCountMid;
-    public float _enemCountClose;
-    public float _distFleet;
-    public float _distObj;
-    public float _strVwk;
 
     [Header("Threshold Adjustments")]
     public float _adjEnemNear;

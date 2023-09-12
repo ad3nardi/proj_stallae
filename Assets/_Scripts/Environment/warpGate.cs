@@ -34,7 +34,7 @@ public class warpGate : OptimizedBehaviour
 
     private void CheckProximityForWarp()
     {
-        Collider[] hitCol = Physics.OverlapSphere(CachedTransform.position, _checkScale);
+        Collider[] hitCol = Physics.OverlapSphere(CachedTransform.position, _checkScale, _checkLayers);
         if (hitCol.Length > 0)
         {
             for (int i = 0; i < hitCol.Length; i++)

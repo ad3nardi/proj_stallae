@@ -24,6 +24,7 @@ public class unit_combat : OptimizedBehaviour
     [Header("Targeting")]
     [SerializeField] private unit_Manager _bestTarget;
     [SerializeField] private unit_Manager _targetM;
+    [SerializeField] private ITargetable _Itarget;
     [SerializeField] private unit_subSystemManager _targetSS;
     [SerializeField] private int _firingTarget;
 
@@ -174,25 +175,43 @@ public class unit_combat : OptimizedBehaviour
     public void TargetEnemy(unit_Manager target, int firingTarget)
     {
         _targetM = target;
-        _targetSS = _targetM._subSystemMan;
+
+        _Itarget = _targetM._targetComp;
         _firingTarget = firingTarget;
     }
 
     private void Fire()
     {
         _curFireTime = 0f;
+        bool[] actives = _Itarget.GetActive();
+        float[] hps = _Itarget.GetHP();
+
+
+        if (actives[_firingTarget] != true)
+        {
+            for (int f = 0; f < 6; f++)
+            {
+                _firingTarget = f;
+                if (actives[_firingTarget] == true)
+                {
+                    break;
+                }
+            }
+        }
 
         if (_unitM._targetInRange == true)
         {
-            _isFiring = true;
-            for (int i = 0; i < _weaponVFX.Count; i++)
+            if (actives[_firingTarget] == true)
             {
-                _weaponVFX[i].Play();
-
-            }
-            for (int i = 0; i < _weaponsSet.Count; i++)
-            {
-                _targetSS.TakeDamage(_firingTarget, -_weaponsSet[i].weapon_damage);
+                _isFiring = true;
+                for (int i = 0; i < _weaponVFX.Count; i++)
+                {
+                    _weaponVFX[i].Play();
+                }
+                for (int i = 0; i < _weaponsSet.Count; i++)
+                {
+                    _Itarget.TakeDamage(_firingTarget, -_weaponsSet[i].weapon_damage);
+                }
             }
         }
         else

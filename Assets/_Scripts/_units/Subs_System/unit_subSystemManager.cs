@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class unit_subSystemManager : OptimizedBehaviour
+public class unit_subSystemManager : OptimizedBehaviour, ITargetable
 {
     [Header("Plugins")]
     private unit_Manager _unitM;
@@ -18,11 +18,15 @@ public class unit_subSystemManager : OptimizedBehaviour
 
     public float _activeSSCount;
     public event Action<float, float> SetMaxHealth = delegate { };
+    public event Action<bool> UnitDestoryed = delegate { };
+    public event Action<bool> SubSystemDestroyed = delegate { };
 
 
     private void Awake()
     {
         _unitM = GetComponentInParent<unit_Manager>();
+        _unitM._targetComp = this;
+        _unitM._subSystemMan = this;
         _maxHP = _unitM._unit.unitMaxHitPoints;
         for (int i = 0; i < 6; i++)
         {
@@ -51,7 +55,10 @@ public class unit_subSystemManager : OptimizedBehaviour
 
         }       
     }
-
+    public float GetUnitHealth()
+    {
+        return _curHP;
+    }
     public bool[] GetActive()
     {
         return _activeSubsytems;
@@ -76,7 +83,18 @@ public class unit_subSystemManager : OptimizedBehaviour
         {
             _subsystems[i].ModifyHealth(dmg);
             _subSystemHP[i] -= dmg;
+            if(_subSystemHP[i] <= 0)
+            {
+                _activeSubsytems[i] = false;
+                _activeSSCount--;
+                SubSystemDestroyed(true);
+                if (_activeSSCount == 0)
+                {
+                    UnitDestoryed(true);
+                }
+            }
         }
+
     }
 
     public void MoveSpeedChange(float pct)

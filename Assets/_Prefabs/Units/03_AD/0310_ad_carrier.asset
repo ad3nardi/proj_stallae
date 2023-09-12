@@ -19,16 +19,19 @@ MonoBehaviour:
   hasSubSystems: 1
   hasShields: 0
   unitPointCost: 2
-  unitMaxHitPoints: 50
+  unitMaxHitPoints: 300
   untMaxShields: 2
   unitAttackRange: 100
   unitFireRate: 2
   unitSubSystems: []
   unitMaxSpeed: 5
   unitAcceleration: 30
-  unitRotationSpeed: 30
+  unitRotationSpeed: 10
   unitSlowdownTime: 1
-  unitWallForce: 2
-  unitWallDist: 0.2
+  unitWallForce: 100
+  unitWallDist: 50
   unitEndReachedDistance: 0.1
   unitCheckDistance: 10
+  abCooldownTime: 0
+  abActiveTime: 0
+  abNeedsTarget: 0

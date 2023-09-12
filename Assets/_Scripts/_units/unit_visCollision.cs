@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class unit_visCollision : OptimizedBehaviour
+public class unit_visCollision : OptimizedBehaviour, IVisualElement
 {
 
     [Header("Plugins")]
@@ -56,20 +56,27 @@ public class unit_visCollision : OptimizedBehaviour
 
     private void FixedUpdate()
     {
+
+        CheckCol();
+    }
+
+    private void CheckCol()
+    {
         Collider[] colliders = Physics.OverlapSphere(CachedTransform.position, _checkDistance, _moveCheckLayers);
 
+        if (colliders.Length <= 0) return;
+
         for (int i = 0; i < colliders.Length; i++)
-        {
+            {
             if (colliders[i] != _unitCol)
             {
-                
                 if (_sizeTag < colliders[i].GetComponent<unit_visCollision>()._sizeTag)
                 {
                     _colliding = true;
                     return;
                 }
                 else
-                    return;
+                    continue;
             }
             else
             {
@@ -77,7 +84,7 @@ public class unit_visCollision : OptimizedBehaviour
                 return;
             }
         }
-    }
+}
 
     #region Update Functions
     private void UpdateTimers()

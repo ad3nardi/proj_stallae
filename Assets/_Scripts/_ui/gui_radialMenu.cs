@@ -21,7 +21,6 @@ public class gui_radialMenu : OptimizedBehaviour
     {
         targetUnitM.GetStatusSS += GetTargetInfo;
         targetUnitM.GetInfoSS();
-
     }
 
     public void GetTargetInfo(unit_Manager target, float shipHP, bool[] actSS, float[] ssHP)

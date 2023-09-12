@@ -19,7 +19,7 @@ MonoBehaviour:
   hasSubSystems: 0
   hasShields: 0
   unitPointCost: 1
-  unitMaxHitPoints: 100
+  unitMaxHitPoints: 1000
   untMaxShields: 0
   unitAttackRange: 80
   unitFireRate: 3.69
@@ -32,3 +32,6 @@ MonoBehaviour:
   unitWallDist: 10
   unitEndReachedDistance: 0.1
   unitCheckDistance: 10
+  abCooldownTime: 0
+  abActiveTime: 0
+  abNeedsTarget: 0

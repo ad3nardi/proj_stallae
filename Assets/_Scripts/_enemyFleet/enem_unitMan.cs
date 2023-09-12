@@ -61,15 +61,17 @@ public class enem_unitMan : OptimizedBehaviour
     {
         if (_orders == OrdersBeh.Engage)
         {
-            if (_flankState == FlankState.None)
+            if(_targetM!= null)
             {
-                
-                EngageDirect();
-            }
-            if (_flankState == FlankState.FlankMove)
-            {
-                UpdateOffsetSide();
-                EngageFlankMove();
+                if (_flankState == FlankState.None)
+                {
+                    EngageDirect();
+                }
+                if (_flankState == FlankState.FlankMove)
+                {
+                    UpdateOffsetSide();
+                    EngageFlankMove();
+                }
             }
         }
     }
@@ -111,20 +113,26 @@ public class enem_unitMan : OptimizedBehaviour
 
     public void EngageDirect()
     {
+
         _unitM.mission_attack(_targetM, _targetUnitSS, _targetP, _id, _count);
     }
 
     public void GetTargetInfo(unit_Manager target, float shipHP, bool[] actSS, float[] ssHP)
     {
-        while (actSS[_targetUnitSS] != true)
+        _targetUnitSS = UnityEngine.Random.Range(0, 5);
+        if(actSS[_targetUnitSS] != true)
         {
-            _targetUnitSS = UnityEngine.Random.Range(0, 5);
-            if (actSS[_targetUnitSS] == true)
+            for (int i = _targetUnitSS; i < 6; i++)
             {
-                break;
+                if (i > 6)
+                {
+                    i = 0;
+                }
+                if (actSS[_targetUnitSS] == true)
+                {
+                    break;
+                }
             }
-            else
-                continue;
         }
     }
 

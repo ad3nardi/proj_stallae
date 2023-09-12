@@ -21,6 +21,7 @@ public class enem_battlegroupMan : OptimizedBehaviour
     [SerializeField] private float _aggro;
     [SerializeField] private float _spread;
     [SerializeField] private bool _ifChangeTarget;
+    [SerializeField] private bool _spawnOnAwake;
     [SerializeField] private OptimizedBehaviour _targetOB;
     [SerializeField] private OptimizedBehaviour _closestTarget;
 
@@ -75,14 +76,11 @@ public class enem_battlegroupMan : OptimizedBehaviour
         _checkLayer = _bgSettings._checkLayer;
         _unitsEM.Clear();
 
-        GameObject fleetHold = Instantiate(new GameObject("fleetHolder"), CachedTransform.parent);
-        for (int i = 0; i < _bgSettings._unitsList.Count; i++)
+        if (_spawnOnAwake)
         {
-            GameObject go = Instantiate(_bgSettings._unitsList[i], fleetHold.transform, true);
-            _unitsEM.Add(go.GetComponent<enem_unitMan>());
-            _unitsM.Add(go.GetComponent<unit_Manager>());
-            _unitsEM[i]._bgMan = this;
+            SpawnBattlegroup();
         }
+
         _ifChangeTarget = true;
         _inFormation = false;
         _inBand1 = false;
@@ -146,12 +144,21 @@ public class enem_battlegroupMan : OptimizedBehaviour
         Gizmos.matrix = prevMatrix;
     }
 
+    public void SpawnBattlegroup()
+    {
+        GameObject fleetHold = Instantiate(new GameObject("fleetHolder"), CachedTransform.parent);
+        for (int i = 0; i < _bgSettings._unitsList.Count; i++)
+        {
+            GameObject go = Instantiate(_bgSettings._unitsList[i], fleetHold.transform.position + new Vector3(CachedTransform.position.x, 0, CachedTransform.position.z + _bgSettings._spawnOffset * i), Quaternion.identity, fleetHold.transform);
+            _unitsEM.Add(go.GetComponent<enem_unitMan>());
+            _unitsM.Add(go.GetComponent<unit_Manager>());
+            _unitsEM[i]._bgMan = this;
+        }
+    }
+
     //Battlegroup Self Functions
     public void ChangeTarget(OptimizedBehaviour targetOb)
     {
-        Debug.Log("TRYING TO CHANGE TARGET");
-        Debug.Log(_lvlEnemIsolate);
-        Debug.Log(_lvlEnemFriends);
         _targetOB = targetOb;
         _ifChangeTarget = false;
     } 

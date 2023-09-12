@@ -348,10 +348,10 @@ Material:
     - _OutlineOffset: {r: 0, g: 0, b: 0, a: 1}
     - _OverallShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _PTCol: {r: 0, g: 0, b: 0, a: 1}
-    - _RimCutoff: {r: 0.16, g: 0.47, b: 0, a: 0}
+    - _RimCutoff: {r: 0.3, g: 0.5, b: 0, a: 0}
     - _RimCutoffOuter: {r: 0.6, g: 0.5, b: 0, a: 0}
     - _RimLightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _RimTint: {r: 2.572549, g: 0.080813065, b: 0, a: 1}
+    - _RimTint: {r: 1.5921569, g: 0.39215687, b: 0.3529412, a: 1}
     - _SSAOColor: {r: 0, g: 0, b: 0, a: 0}
     - _SelfLitColor: {r: 1, g: 1, b: 1, a: 1}
     - _SelfShadowRealTimeShadowColor: {r: 1, g: 1, b: 1, a: 1}

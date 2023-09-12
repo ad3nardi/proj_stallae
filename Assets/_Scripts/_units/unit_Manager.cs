@@ -16,15 +16,18 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     [SerializeField] public LayerSet layerSet;
     [SerializeField] public TagSet tagSet;
     [SerializeField] public unit_settings _unit;
+    [SerializeField] public OptimizedBehaviour _debrisHolder;
+    [SerializeField] public OptimizedBehaviour _prefabDebris;
+    [SerializeField] public OptimizedBehaviour _prefabfloatHull;
     [SerializeField] public int _sizeTag;
 
     [Header("Unit Plugins")]
-    [Range (0 , 1)]
+    [Range(0, 1)]
     [SerializeField] private float _idleMultiplier;
     [SerializeField] private unit_movement _movement;
     [SerializeField] private unit_combat _combat;
-    [SerializeField] public unit_subSystemManager _subSystemMan { get; private set;}
-    [SerializeField] private RichAI _AImovement;
+    [SerializeField] public unit_subSystemManager _subSystemMan;
+    [SerializeField] public RichAI _AImovement { get; private set; }
     [SerializeField] private float _radius;
 
     [Header("Unit Sub-Sysetms")]
@@ -34,9 +37,11 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     [SerializeField] public currentMission _cMission;
     [SerializeField] public Vector3 _targetPosition;
     [SerializeField] public unit_Manager _target;
+    [SerializeField] public ITargetable _targetComp;
     [SerializeField] public bool _isIdle;
     [SerializeField] public bool _targetInRange;
     [SerializeField] public int _targetSS;
+    [SerializeField] private int _index, _group;
 
     public static event Action<string, float, float, float, float, float, float, float> OnSelected = delegate { };
     public event Action<unit_Manager, float, bool[], float[]> GetStatusSS = delegate { };
@@ -52,6 +57,7 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         _AImovement = GetComponent<RichAI>();
         _movement = GetComponent<unit_movement>();
         _combat = GetComponent<unit_combat>();
+        _targetComp = GetComponent<ITargetable>();
         _subSystemMan = GetComponentInChildren<unit_subSystemManager>();
         if(CachedGameObject.layer == layerSet.layerPlayerUnit)
         {
@@ -79,6 +85,38 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         {
             mission_none();
         }
+        
+    }
+
+    private void OnEnable()
+    {
+        if (_subSystemMan != null)
+        {
+            _subSystemMan.SubSystemDestroyed += SubsystemDestory;
+            _subSystemMan.UnitDestoryed += UnitDestroy;
+        }
+    }
+    private void OnDisable()
+    {
+        if (_subSystemMan != null)
+        {
+            _subSystemMan.SubSystemDestroyed -= SubsystemDestory;
+            _subSystemMan.UnitDestoryed -= UnitDestroy;
+        }
+    }
+    private void SubsystemDestory(bool trig)
+    {
+        if (CachedGameObject.layer == layerSet.layerPlayerUnit)
+        {
+            SelectionMan.Instance.AvaliableUnits.Remove(this);
+        }
+        _AImovement.canMove= false;
+        GameObject go = Instantiate(_prefabDebris.CachedGameObject, CachedTransform.position, Quaternion.identity, _debrisHolder.CachedTransform);
+        CachedGameObject.SetActive(false);
+    }
+    private void UnitDestroy(bool trig)
+    {
+        GameObject go = Instantiate(_prefabfloatHull.CachedGameObject, CachedTransform.position, Quaternion.identity, _debrisHolder.CachedTransform);
     }
 
     //ISELECTABLE
@@ -96,9 +134,9 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     }
     public void GetInfoSS()
     {
-        float shipHP = _subSystemMan._curHP;
-        bool[] ssActive = _subSystemMan._activeSubsytems;
-        float[] ssHP = _subSystemMan._subSystemHP;
+        float shipHP = _targetComp.GetUnitHealth();
+        bool[] ssActive = _targetComp.GetActive();
+        float[] ssHP = _targetComp.GetHP();
         GetStatusSS(this, shipHP, ssActive, ssHP);
     }
     
@@ -123,7 +161,9 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         _cMission = currentMission.mMove;
         _isIdle = false;
         _movement.SetIsStop(false);
-        _AImovement.destination = command_moveMath(moveP, i, c);
+        _index = i;
+        _group = c;
+        _AImovement.destination = command_moveMath(moveP);
     }
     public void mission_forceMove(Vector3 moveP)
     {
@@ -138,9 +178,14 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         _isIdle  = false;
         _target = target;
         _targetSS = targetSS;
+        _index = i;
+        _group = c;
         _movement.SetIsStop(false);
-        _AImovement.destination = command_moveMath(target.CachedTransform.position, i, c);
         _combat.TargetEnemy(_target, _targetSS);
+        
+        _AImovement.destination = command_moveMath(target.CachedTransform.position);
+        
+
     }
     public void mission_retreat()
     {
@@ -206,10 +251,12 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
                 break;
             case currentMission.mAttack:
                 if (_targetInRange)
+                {
                     _movement.SetIsStop(true);
+                }
                 else
                 {
-                    _AImovement.destination = _target.CachedTransform.position;
+                    _AImovement.destination = command_moveMath(_target.CachedTransform.position);
                     _movement.SetIsStop(false);
                 }
                 break;
@@ -245,12 +292,12 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     }
 
     //Movement Functions
-    private Vector3 command_moveMath(Vector3 hitPoint, int i, int c)
+    private Vector3 command_moveMath(Vector3 hitPoint)
     {
         float radius = _radius / (Mathf.PI);
         radius *= 2f;
 
-        float deg = 2 * Mathf.PI * i / c;
+        float deg = 2 * Mathf.PI * _index / _group;
         Vector3 p = hitPoint + new Vector3(Mathf.Cos(deg), 0, Mathf.Sin(deg)) * radius;
 
         return p;

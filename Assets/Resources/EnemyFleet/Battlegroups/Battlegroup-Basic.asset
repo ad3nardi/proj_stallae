@@ -15,7 +15,8 @@ MonoBehaviour:
   _unitsList:
   - {fileID: 5697958403810547942, guid: e2ed3f3fcb0d6744c8c5a89620d20d7a, type: 3}
   - {fileID: 4617446465913876790, guid: 8aaf2f99ca953e04db93fe8d635b340d, type: 3}
-  _aggro: 0
+  - {fileID: 625997721258300752, guid: 754c188a634d14741b113ff96dd18254, type: 3}
+  _aggro: 10
   _spread: 0
   _enemCountZone: 0
   _zoneOffsetPos: {x: 0, y: 0, z: 170}
@@ -30,7 +31,8 @@ MonoBehaviour:
   _checkRangeBandThree: 30
   _enemFriendsCheckRange: 25
   _enemIsolationCheckRange: 50
-  _spreadRadius: 20
+  _spawnOffset: 30
+  _spreadRadius: 30
   _targetWeight: 0
   _toCommonPoint: 0
   _toFarPoint: 0
@@ -38,17 +40,6 @@ MonoBehaviour:
   _squadronns: 0
   _outerRange: 0
   _targets: 0
-  _range: 0
-  _hp: 0
-  _pwr: 0
-  _enemDist: 0
-  _enemCountNear: 0
-  _enemCountFar: 0
-  _enemCountMid: 0
-  _enemCountClose: 0
-  _distFleet: 0
-  _distObj: 0
-  _strVwk: 0
   _adjEnemNear: 100
   _adjEnemIsolate: 100
   _adjEnemFriends: 100

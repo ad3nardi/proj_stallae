@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class ui_guiCon : OptimizedBehaviour
@@ -11,7 +12,10 @@ public class ui_guiCon : OptimizedBehaviour
     [SerializeField] private GameObject _objGUI;
     [SerializeField] private GameObject _objSelectionBox;
     [SerializeField] private GameObject _objAttackUI;
+    [SerializeField] private GameObject _objTimer;
     [SerializeField] private camera_con _cameraController;
+
+    private TextMeshProUGUI _tmpTimer;
 
     private GameObject _pauseMenuGO;
     private bool _isPaused;
@@ -21,6 +25,9 @@ public class ui_guiCon : OptimizedBehaviour
         layerSet = Helpers.LayerSet;
         tagSet = Helpers.TagSet;
         _isPaused = false;
+
+
+        _tmpTimer = _objTimer.GetComponent<TextMeshProUGUI>();
 
     }
 
@@ -34,6 +41,16 @@ public class ui_guiCon : OptimizedBehaviour
         man_cursor.Instance.ActivateMainCursor();
 
         _pauseMenuGO.gameObject.SetActive(false);
+    }
+    private void Update()
+    {
+        UpdateTimer();
+    }
+
+    public void UpdateTimer()
+    {
+
+        _tmpTimer.text = Mathf.Floor(Time.time).ToString();
     }
 
     public void PauseMenuToggle()

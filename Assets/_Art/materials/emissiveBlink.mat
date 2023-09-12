@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: emissiveBlink
-  m_Shader: {fileID: 4800000, guid: c5b020128b7519e40b20c8166986c565, type: 3}
+  m_Name: EmissiveBlink
+  m_Shader: {fileID: 4800000, guid: 8f79742aac1d4224b9cd198fc31551fb, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 0
@@ -138,6 +138,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _TextureSample0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _albedo:
         m_Texture: {fileID: 2800000, guid: b44d7de70c476bd4b829973d56bdbf67, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -189,6 +193,7 @@ Material:
     - _EnvironmentReflections: 1
     - _EnvironmentalLightingIntensity: 1
     - _FarDistanceMaxWidth: 10
+    - _Float0: 0
     - _GIFlatShade: 0
     - _GIShadeThreshold: 0
     - _GlossColorPower: 10
@@ -352,6 +357,7 @@ Material:
     - _SelfShadowRealTimeShadowColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowTColor: {r: 1, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _Tint: {r: 0, g: 2, b: 0.41568628, a: 0.56078434}
     - _XYZPosition: {r: 0, g: 0, b: 0, a: 0}
     - _albedoTint: {r: 1, g: 1, b: 1, a: 0}
     - _smoothstepDark: {r: 1.15, g: 1, b: 0, a: 0}

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3624549684439995179}
   - component: {fileID: 956477622}
   m_Layer: 1
-  m_Name: visual
+  m_Name: vfx_visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,8 +31,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2003825447757107540}
+  m_Children: []
   m_Father: {fileID: 8956750045213975716}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -392,7 +391,7 @@ GameObject:
   - component: {fileID: 2649722849380977920}
   - component: {fileID: 7286599307140605808}
   m_Layer: 1
-  m_Name: GameObject
+  m_Name: turret_vis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -405,15 +404,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8143082844761492720}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4256495344225421096}
   - {fileID: 4052428817545308348}
-  m_Father: {fileID: 3944875515534157571}
-  m_RootOrder: 0
+  m_Father: {fileID: 8956750045213975716}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2649722849380977920
 MeshFilter:
@@ -494,6 +493,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3944875515534157571}
+  - {fileID: 2003825447757107540}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

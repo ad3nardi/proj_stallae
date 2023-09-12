@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 9754d0d44d1bc5b44a3bf20046f6b171
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Teuton Mager
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 379f41b06b0cddb449cbee49ae78e97a, type: 3}
+  - {fileID: 12800000, guid: 712501e0936f7d643b3f579f1c3921dc, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
