@@ -59,6 +59,10 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         _combat = GetComponent<unit_combat>();
         _targetComp = GetComponent<ITargetable>();
         _subSystemMan = GetComponentInChildren<unit_subSystemManager>();
+        if(_subSystemMan != null)
+        {
+            _targetComp = _subSystemMan;
+        }
         if(CachedGameObject.layer == layerSet.layerPlayerUnit)
         {
             SelectionMan.Instance.AvaliableUnits.Add(this);
