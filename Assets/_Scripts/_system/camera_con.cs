@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Cinemachine;
 
 public class camera_con : OptimizedBehaviour
 {
     [Header("Plugins")]
+    [SerializeField] private CinemachineVirtualCamera _cvc;
     [SerializeField] private Camera _cam;
     [SerializeField] private Transform camTrans;
     [SerializeField] private PlayerInput _playerInput;
@@ -59,12 +61,9 @@ public class camera_con : OptimizedBehaviour
     private void Awake()
     {
         _cam = Helpers.Camera;
-        camTrans = _cam.transform;
+        _cvc = GetComponentInChildren<CinemachineVirtualCamera>();
+        camTrans = _cvc.transform;
         _playerInput.GetComponent<PlayerInput>();
-    }
-
-    private void Start()
-    {
     }
 
     private void OnEnable()
@@ -235,6 +234,11 @@ public class camera_con : OptimizedBehaviour
             else if (_zoomHeight > _maxHeight)
                 _zoomHeight = _maxHeight;
         }
+    }
+
+    public void FrameCamera(Vector3 pos)
+    {
+        _targetPos = pos;
     }
 
 }

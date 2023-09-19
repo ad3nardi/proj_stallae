@@ -33,7 +33,7 @@ public class ui_guiCon : OptimizedBehaviour
 
     private void Start()
     {
-        _objGUI.SetActive(true);
+        _objGUI.SetActive(false);
         _objSelectionBox.SetActive(true);
         _objAttackUI.SetActive(false);
         _cameraController = _cameraController.GetComponent<camera_con>();

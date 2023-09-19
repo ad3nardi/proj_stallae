@@ -39,6 +39,8 @@ public class unit_movement : OptimizedBehaviour
     public void SetDefaults()
 	{
         _sizeTag = _unitM._sizeTag;
+        _aiCon.radius = _unitM._unit.unitRadius;
+        _aiCon.height = _unitM._unit.unitHeight;
         _aiCon.maxSpeed = _unitM._unit.unitMaxSpeed;
 		_aiCon.acceleration = _unitM._unit.unitAcceleration;
 		_aiCon.rotationSpeed = _unitM._unit.unitRotationSpeed;

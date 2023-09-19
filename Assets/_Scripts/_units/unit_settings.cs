@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 [CreateAssetMenu(menuName ="Units/Unit Settings")]
 public class unit_settings : ScriptableObject
@@ -25,6 +26,8 @@ public class unit_settings : ScriptableObject
     public List<unit_subsystem> unitSubSystems;
 
     [Header("Movement Settings")]
+    public float unitRadius;
+    public float unitHeight;
     public float unitMaxSpeed;
     public float unitAcceleration;
     public float unitRotationSpeed;
@@ -38,6 +41,11 @@ public class unit_settings : ScriptableObject
     public float abCooldownTime;
     public float abActiveTime;
     public bool abNeedsTarget;
+
+    [Header("Combat Damage")]
+    public OptimizedBehaviour debris;
+    public OptimizedBehaviour debrisHull;
+    public OptimizedBehaviour vfx_subExplosion;
 }
 public enum FactionType
 {

@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class unit_subSystemManager : OptimizedBehaviour, ITargetable
 {
-    [Header("Plugins")]
-    private unit_Manager _unitM;
+    public unit_Manager _unitM { get; private set; }
     public float _maxHP { get; private set; }
     public float _curHP { get; private set; }
 

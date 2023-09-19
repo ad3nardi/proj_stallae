@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class unit_subsystem : OptimizedBehaviour
 {
@@ -11,6 +12,8 @@ public class unit_subsystem : OptimizedBehaviour
     [SerializeField] private bool _isDestroyed;
     [SerializeField] private bool _isDisabled;
     [SerializeField] private bool _isSubscribed;
+    [SerializeField] private GameObject _goExpolosion;
+    [SerializeField] private VisualEffect _vfxExpolosion;
 
     [Header("Settings")]
     [SerializeField] public subsytemType _subsystem;
@@ -31,6 +34,7 @@ public class unit_subsystem : OptimizedBehaviour
     {
         _isSubscribed = false;
         _subsystemM = GetComponentInParent<unit_subSystemManager>();
+        _goExpolosion = null;
     }
     private void Start()
     {
@@ -38,6 +42,13 @@ public class unit_subsystem : OptimizedBehaviour
         {
             _isSubscribed = true;
             _subsystemM.SetMaxHealth += SetToMaxHP;
+        }
+        if (_activeSubsytem && _subsystemM._unitM._unit.vfx_subExplosion != null)
+        {
+            _goExpolosion = Instantiate(_subsystemM._unitM._unit.vfx_subExplosion.gameObject, CachedTransform);
+            _vfxExpolosion = _goExpolosion.GetComponent<VisualEffect>();
+            _goExpolosion.SetActive(false);
+            _vfxExpolosion.Stop();
         }
     }
     private void OnEnable()
@@ -62,7 +73,6 @@ public class unit_subsystem : OptimizedBehaviour
             _subsystemM.SetMaxHealth -= SetToMaxHP;
             OnHealthRemoved(this);
         }
-        
     }
 
     //HEALTH & DAMAGE FUNCTIONS
@@ -89,7 +99,9 @@ public class unit_subsystem : OptimizedBehaviour
             OnDestroyed(false);
         }
         else
-            OnDestroyed(true);   
+        {
+            SystemDestroy();
+        }
     }
 
     public void SystemDisable(bool isDisabled)
@@ -100,6 +112,8 @@ public class unit_subsystem : OptimizedBehaviour
 
     public void SystemDestroy()
     {
+        _goExpolosion.SetActive(true);
+        _vfxExpolosion.Play();
         _isDestroyed = true;
         OnDestroyed(_isDestroyed);
     }

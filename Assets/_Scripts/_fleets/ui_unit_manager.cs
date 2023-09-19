@@ -5,6 +5,7 @@ using UnityEngine;
 public class ui_unit_manager : OptimizedBehaviour
 {
     private SelectionMan _selectionMan;
+    [SerializeField] private camera_con _camCon;
     //UI FUNCTIONS
     private void Awake()
     {
@@ -55,5 +56,13 @@ public class ui_unit_manager : OptimizedBehaviour
         }
         else
             return;
+    }
+
+    public void uiFrameCameraOnTarget()
+    {
+        if(SelectionMan.Instance.SelectedUnits.Count < 0)
+        {
+            _camCon.FrameCamera(SelectionMan.Instance.SelectedUnits[0].CachedTransform.position);
+        }
     }
 }

@@ -17,8 +17,6 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     [SerializeField] public TagSet tagSet;
     [SerializeField] public unit_settings _unit;
     [SerializeField] public OptimizedBehaviour _debrisHolder;
-    [SerializeField] public OptimizedBehaviour _prefabDebris;
-    [SerializeField] public OptimizedBehaviour _prefabfloatHull;
     [SerializeField] public int _sizeTag;
 
     [Header("Unit Plugins")]
@@ -74,6 +72,7 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         _sizeTag = ((int)_unit.sizeTag);
         _movement.SetDefaults();
         _radius = _AImovement.radius;
+        _debrisHolder = DebrisHolder.Instance.HolderGO;
         //Set Unit to Idle on its spawn Position
         mission_none();
         
@@ -110,17 +109,23 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     }
     private void SubsystemDestory(bool trig)
     {
+        if(_unit.debris != null)
+        {
+            GameObject go = Instantiate(_unit.debris.CachedGameObject, CachedTransform.position, Quaternion.identity, _debrisHolder.CachedTransform);
+        }
+    }
+    private void UnitDestroy(bool trig)
+    {
         if (CachedGameObject.layer == layerSet.layerPlayerUnit)
         {
             SelectionMan.Instance.AvaliableUnits.Remove(this);
         }
         _AImovement.canMove= false;
-        GameObject go = Instantiate(_prefabDebris.CachedGameObject, CachedTransform.position, Quaternion.identity, _debrisHolder.CachedTransform);
+        if (_unit.debrisHull != null)
+        {
+            GameObject go = Instantiate(_unit.debrisHull.CachedGameObject, CachedTransform.position, Quaternion.identity, _debrisHolder.CachedTransform);
+        }
         CachedGameObject.SetActive(false);
-    }
-    private void UnitDestroy(bool trig)
-    {
-        GameObject go = Instantiate(_prefabfloatHull.CachedGameObject, CachedTransform.position, Quaternion.identity, _debrisHolder.CachedTransform);
     }
 
     //ISELECTABLE
