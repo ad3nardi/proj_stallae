@@ -13,6 +13,14 @@ public interface ITargetable
     {
 
     }
+    public Transform GetTransfrom()
+    {
+        return null;
+    }
+    public GameObject GetGameObject()
+    {
+        return null;
+    }
     public float GetUnitHealth()
     {
         return 0f;

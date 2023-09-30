@@ -17,20 +17,20 @@ public class gui_radialMenu : OptimizedBehaviour
     public Color normalColor, highlightedColor, unactiveColour;
     private bool[] _activeOptions = new bool[6];
 
-    private void GetInfo(unit_Manager targetUnitM)
+    private void GetInfo(ITargetable iTarget)
     {
-        targetUnitM.GetStatusSS += GetTargetInfo;
-        targetUnitM.GetInfoSS();
+
+        GetTargetInfo(iTarget, iTarget.GetUnitHealth(), iTarget.GetActive(), iTarget.GetHP());
     }
 
-    public void GetTargetInfo(unit_Manager target, float shipHP, bool[] actSS, float[] ssHP)
+    public void GetTargetInfo(ITargetable target, float shipHP, bool[] actSS, float[] ssHP)
     {
         _activeOptions = actSS;
     }
 
-    public int CheckRadialMenu(unit_Manager targetUnitM, float x, float y)
+    public int CheckRadialMenu(ITargetable iTarget, float x, float y)
     {
-        GetInfo(targetUnitM);
+        GetInfo(iTarget);
         _mousePos = new Vector2(x - Screen.width / 2, y - Screen.height / 2);
         _mousePos.Normalize();
         int optionAmnt = _options.Count;
@@ -80,12 +80,10 @@ public class gui_radialMenu : OptimizedBehaviour
                     }
                 }
             }
-            targetUnitM.GetStatusSS -= GetTargetInfo;
             return _selectedOption;
         }
         else
         {
-            targetUnitM.GetStatusSS -= GetTargetInfo;
             return 0;
         }
 

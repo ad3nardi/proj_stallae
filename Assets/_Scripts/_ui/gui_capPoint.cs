@@ -12,7 +12,7 @@ public class gui_capPoint : OptimizedBehaviour
     [SerializeField] private float _updateSpeedSeconds = 0.5f;
     [SerializeField] private float _posOffset;
 
-    private ms_capPoints _capPoint;
+    public ms_capPoints _capPoint;
 
     private void OnEnable()
     {

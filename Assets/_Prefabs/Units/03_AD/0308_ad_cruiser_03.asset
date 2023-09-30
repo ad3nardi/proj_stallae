@@ -16,12 +16,13 @@ MonoBehaviour:
   faction: 2
   sizeTag: 3
   canAttack: 1
+  _isSquadron: 0
   hasSubSystems: 1
   hasShields: 1
   unitPointCost: 1
   unitMaxHitPoints: 1500
   untMaxShields: 0
-  unitAttackRange: 50
+  unitAttackRange: 100
   unitFireRate: 3
   unitSubSystems: []
   unitRadius: 7

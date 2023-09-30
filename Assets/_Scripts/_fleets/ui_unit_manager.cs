@@ -60,9 +60,17 @@ public class ui_unit_manager : OptimizedBehaviour
 
     public void uiFrameCameraOnTarget()
     {
-        if(SelectionMan.Instance.SelectedUnits.Count < 0)
+        if(SelectionMan.Instance.SelectedUnits.Count > 0)
         {
-            _camCon.FrameCamera(SelectionMan.Instance.SelectedUnits[0].CachedTransform.position);
+            _camCon.FrameCamera(SelectionMan.Instance.SelectedUnits[0]);
+        }
+    }
+
+    public void uiAbilityActivate()
+    {
+        if (SelectionMan.Instance.SelectedUnits.Count > 0)
+        {
+            SelectionMan.Instance.SelectedUnits[0].ActivateAbility();
         }
     }
 }

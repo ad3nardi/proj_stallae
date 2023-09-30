@@ -13,11 +13,14 @@ public class ui_guiCon : OptimizedBehaviour
     [SerializeField] private GameObject _objSelectionBox;
     [SerializeField] private GameObject _objAttackUI;
     [SerializeField] private GameObject _objTimer;
+    [SerializeField] private GameObject _objCommandCon;
     [SerializeField] private camera_con _cameraController;
 
     private TextMeshProUGUI _tmpTimer;
 
     private GameObject _pauseMenuGO;
+
+    private OptimizedBehaviour _commandCon;
     private bool _isPaused;
 
     private void Awake()
@@ -28,7 +31,7 @@ public class ui_guiCon : OptimizedBehaviour
 
 
         _tmpTimer = _objTimer.GetComponent<TextMeshProUGUI>();
-
+        _commandCon = _objCommandCon.GetComponent<OptimizedBehaviour>();
     }
 
     private void Start()
@@ -41,10 +44,24 @@ public class ui_guiCon : OptimizedBehaviour
         man_cursor.Instance.ActivateMainCursor();
 
         _pauseMenuGO.gameObject.SetActive(false);
+
+        _commandCon.CachedGameObject.SetActive(false);
     }
     private void Update()
     {
         UpdateTimer();
+        
+        if(SelectionMan.Instance.SelectedUnits.Count > 0)
+        {
+            if(!_commandCon.CachedGameObject.activeSelf)
+                _commandCon.CachedGameObject.SetActive(true);
+        }
+        if (SelectionMan.Instance.SelectedUnits.Count <= 0)
+        {
+            if (_commandCon.CachedGameObject.activeSelf)
+                _commandCon.CachedGameObject.SetActive(false);
+        }
+
     }
 
     public void UpdateTimer()

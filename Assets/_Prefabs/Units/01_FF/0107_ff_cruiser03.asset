@@ -16,26 +16,27 @@ MonoBehaviour:
   faction: 0
   sizeTag: 2
   canAttack: 1
+  _isSquadron: 0
   hasSubSystems: 0
   hasShields: 0
   unitPointCost: 1
   unitMaxHitPoints: 1000
   untMaxShields: 0
-  unitAttackRange: 80
+  unitAttackRange: 125
   unitFireRate: 3.69
   unitSubSystems: []
-  unitRadius: 6
+  unitRadius: 12
   unitHeight: 2
   unitMaxSpeed: 80
   unitAcceleration: 15
   unitRotationSpeed: 360
-  unitSlowdownTime: 0.2
+  unitSlowdownTime: 0.1
   unitWallForce: 10
   unitWallDist: 10
   unitEndReachedDistance: 0.1
   unitCheckDistance: 10
-  abCooldownTime: 0
-  abActiveTime: 0
+  abCooldownTime: 10
+  abActiveTime: 5
   abNeedsTarget: 0
   debris: {fileID: 8830631683938474719, guid: 150bf4454b26ef0458ec26be1e6c890f, type: 3}
   debrisHull: {fileID: 8830631683938474719, guid: 150bf4454b26ef0458ec26be1e6c890f,

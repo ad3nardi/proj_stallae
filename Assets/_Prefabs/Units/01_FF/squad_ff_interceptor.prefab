@@ -94,7 +94,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _unitVisual: {fileID: 7548683767434050407, guid: d53aa24e04c72434b9792faabb292a20,
     type: 3}
-  _unitCount: 6
+  _unitCount: 4
   _unitSpeed: 2
 --- !u!114 &906431138560932052
 MonoBehaviour:
@@ -110,7 +110,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _noise: 0.398
   Spread: 1.2
-  _amount: 6
+  _amount: 4
   _radius: 1.66
   _radiusGrowthMultiplier: 0.15
   _rotations: 1
@@ -189,11 +189,11 @@ GameObject:
   - component: {fileID: 5512473330710837065}
   - component: {fileID: 5512473330710837064}
   - component: {fileID: 906431137473557436}
-  - component: {fileID: 906431137473557412}
   - component: {fileID: 5512473330710837066}
   - component: {fileID: 5512473330710837067}
   - component: {fileID: 906431137473557439}
   - component: {fileID: 5512473330710837062}
+  - component: {fileID: 1206331056}
   m_Layer: 6
   m_Name: squad_ff_interceptor
   m_TagString: PlayerUnit
@@ -213,7 +213,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7641498277924380546}
+  - {fileID: 8291867738784826709}
   - {fileID: 5384611598230274519}
   - {fileID: 8450524804482196215}
   m_Father: {fileID: 0}
@@ -234,24 +234,22 @@ MonoBehaviour:
   layerSet: {fileID: 11400000, guid: 94fd8df2a235c474f88db6e3c04ac5ec, type: 2}
   tagSet: {fileID: 0}
   _unit: {fileID: 11400000, guid: dd7ead24265b45b4a91901401870fecc, type: 2}
+  _debrisHolder: {fileID: 0}
   _sizeTag: 0
-  _highlightGO: {fileID: 2701142803245735332}
   _idleMultiplier: 0.186
   _movement: {fileID: 906431137473557436}
   _combat: {fileID: 5512473330710837064}
-  _AImovement: {fileID: 5512473330710837067}
-  _subsytems:
-  - {fileID: 906431137473557412}
+  _subSystemMan: {fileID: 0}
+  _radius: 0
   _hitPoints: 0
-  _shieldHitPoints: 0
-  _hasShields: 0
-  _isShielded: 0
   _cMission: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _target: {fileID: 0}
   _isIdle: 0
-  _targetUnitSS: 0
-  _isSelected: 0
+  _targetInRange: 0
+  _targetSS: 0
+  _index: 0
+  _group: 0
 --- !u!114 &5512473330710837064
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -279,17 +277,16 @@ MonoBehaviour:
   _curDamageDelay: 0
   _maxColliders: 0
   _isFiring: 0
-  _rotSpeed: 0
-  _atkRange: 7
   _bestTarget: {fileID: 0}
-  _targetTransform: {fileID: 0}
   _target: {fileID: 0}
   _firingTarget: 0
-  _weaponOrigin: {fileID: 4046003163532492302}
+  _atkRange: 7
   _targetsInRange: []
   _weaponsSet:
   - {fileID: 11400000, guid: 20e232f38e3e09f4ab4282aad3ab0614, type: 2}
   _weaponsPos: []
+  _weaponAlign:
+  - {x: 0, y: 0}
   _weaponVFX: []
 --- !u!114 &906431137473557436
 MonoBehaviour:
@@ -310,24 +307,6 @@ MonoBehaviour:
   _seeker: {fileID: 0}
   _aiCon: {fileID: 0}
   _attackRange: 4.04
---- !u!114 &906431137473557412
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5512473330710837063}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76711f468e8325f429d87aa92fff8aac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _unitManager: {fileID: 0}
-  _isDestroyed: 0
-  _isDisabled: 0
-  _subsystem: 0
-  _maxHP: 0
-  _disableTimer: 0
 --- !u!114 &5512473330710837066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -433,7 +412,28 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1001 &7213991426634890667
+--- !u!114 &1206331056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5512473330710837063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 638ab76967019124bb1a42240af4e15c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _activeSquad: 010101010101
+  _hpSquad:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  _activeSquadCount: 0
+--- !u!1001 &9008203173767325564
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -443,7 +443,7 @@ PrefabInstance:
     - target: {fileID: 1013645033837437480, guid: 65f90eead524cc64daefc2470fda37ac,
         type: 3}
       propertyPath: m_Name
-      value: highlight
+      value: unit_highlight
       objectReference: {fileID: 0}
     - target: {fileID: 1013645033837437481, guid: 65f90eead524cc64daefc2470fda37ac,
         type: 3}
@@ -502,21 +502,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 65f90eead524cc64daefc2470fda37ac, type: 3}
---- !u!114 &2701142803245735332 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: -4512222090596081649, guid: 65f90eead524cc64daefc2470fda37ac,
-    type: 3}
-  m_PrefabInstance: {fileID: 7213991426634890667}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8675760e0e8a1cd47a94f502de2d2c1c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &7641498277924380546 stripped
+--- !u!4 &8291867738784826709 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1013645033837437481, guid: 65f90eead524cc64daefc2470fda37ac,
     type: 3}
-  m_PrefabInstance: {fileID: 7213991426634890667}
+  m_PrefabInstance: {fileID: 9008203173767325564}
   m_PrefabAsset: {fileID: 0}

@@ -8,6 +8,8 @@ TagManager:
   - EnemyUnit
   - Navigation
   - NavObstacles
+  - vfxUI
+  - Systems
   layers:
   - Default
   - TransparentFX

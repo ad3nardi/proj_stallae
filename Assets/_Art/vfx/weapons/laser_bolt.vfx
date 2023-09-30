@@ -899,7 +899,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614940}
   m_ExposedName: TrailsRate
   m_Exposed: 1
-  m_Order: 0
+  m_Order: 1
   m_Category: 
   m_Min:
     m_Type:
@@ -971,7 +971,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614942}
   m_ExposedName: Colour
   m_Exposed: 1
-  m_Order: 0
+  m_Order: 2
   m_Category: 
   m_Min:
     m_Type:
@@ -1187,7 +1187,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614948}
   m_ExposedName: TrailsLifetime
   m_Exposed: 1
-  m_Order: 0
+  m_Order: 3
   m_Category: 
   m_Min:
     m_Type:
@@ -1259,7 +1259,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614950}
   m_ExposedName: Spawn Rate
   m_Exposed: 1
-  m_Order: 0
+  m_Order: 4
   m_Category: 
   m_Min:
     m_Type:
@@ -2001,7 +2001,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615057}
   m_ExposedName: FireSpeed
   m_Exposed: 1
-  m_Order: 1
+  m_Order: 5
   m_Category: 
   m_Min:
     m_Type:

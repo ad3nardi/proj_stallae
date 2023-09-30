@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.VFX;
 using Pathfinding;
 using Pathfinding.ClipperLib;
+using UnityEngine.InputSystem.UI;
+using UnityEngine.UI;
 
 public class player_manager : OptimizedBehaviour
 {
@@ -13,6 +15,13 @@ public class player_manager : OptimizedBehaviour
     [SerializeField] private Camera _cam;
     [SerializeField] private LayerSet _layerSet;
     [SerializeField] private ISelectable _selectable;
+
+    [SerializeField] private GameObject _gui;
+    [SerializeField] private GraphicRaycaster _uiRaycaster;
+    [SerializeField] private PointerEventData _clickData;
+    [SerializeField] private List<RaycastResult> _clickResult = new List<RaycastResult>();
+    
+
 
     [Header("Inputs (DO NOT SET IN EDITOR)")]
     [SerializeField] private Vector2 _mousePos;
@@ -58,6 +67,8 @@ public class player_manager : OptimizedBehaviour
     {
         _radialMenu = GetComponent<gui_radialMenu>();
 
+        _clickData = new PointerEventData(EventSystem.current);
+        _uiRaycaster = _gui.GetComponent<GraphicRaycaster>();
     }
     private void Update()
     {
@@ -102,6 +113,20 @@ public class player_manager : OptimizedBehaviour
         _mouseDownTime += Time.deltaTime;
     }
 
+    private bool CheckUIhit()
+    {
+        _clickData.position = _mousePos;
+        _clickResult.Clear();
+
+        _uiRaycaster.Raycast(_clickData, _clickResult);
+        if (_clickResult.Count > 0)
+        {
+            return true;
+        }
+        else
+            return false;
+    }
+
     //UNIT INPUT SELECTION FUNCTIONS
     private void Input_CheckSelection()
     {
@@ -115,7 +140,7 @@ public class player_manager : OptimizedBehaviour
                 if(_selectable != null) { }
 
             }
-                if (hit.transform.gameObject.layer == _layerSet.layerUI)
+                if (CheckUIhit())
                 {
                     return;
                 }
@@ -205,7 +230,9 @@ public class player_manager : OptimizedBehaviour
     }
     private void Input_AttackDragging()
     {
-        _targetUnitSS = _radialMenu.CheckRadialMenu(_targetUnitT.GetComponent<unit_Manager>(), _mousePos.x, _mousePos.y);
+        ITargetable iTarget = (ITargetable)_targetUnitT.GetComponent(typeof(ITargetable)) as ITargetable;
+
+        _targetUnitSS = _radialMenu.CheckRadialMenu(iTarget, _mousePos.x, _mousePos.y);
 
     }
     private void Input_AttackDragRelease()
@@ -238,11 +265,9 @@ public class player_manager : OptimizedBehaviour
     }
     private void command_manualTargetSubSystem(Transform targetUnitT, int targetSS)
     {
-        unit_Manager targetUnitM = targetUnitT.GetComponent<unit_Manager>();
-
         for (int i = 0; i < SelectionMan.Instance.SelectedUnits.Count; i++)
         {
-            SelectionMan.Instance.SelectedUnits[i].mission_attack(targetUnitM, targetSS, targetUnitT.position, i, SelectionMan.Instance.SelectedUnits.Count);
+            SelectionMan.Instance.SelectedUnits[i].mission_attack(targetUnitT, targetSS, targetUnitT.position, i, SelectionMan.Instance.SelectedUnits.Count);
         }
 
         SelectionMan.Instance.DeselectAll();
@@ -251,15 +276,12 @@ public class player_manager : OptimizedBehaviour
     {
 
         //Choose random sub-system from target's list -ssi- if not designated
-        unit_Manager targetUnitM = targetUnitT.GetComponent<unit_Manager>();
+        ITargetable iTarget = (ITargetable)targetUnitT.GetComponent(typeof(ITargetable)) as ITargetable;
 
-        targetUnitM.GetStatusSS += GetTargetInfo;
-        targetUnitM.GetInfoSS();
-
-        targetUnitM.GetStatusSS -= GetTargetInfo;
+        GetTargetInfo(targetUnitT, iTarget.GetUnitHealth(), iTarget.GetActive(), iTarget.GetHP());
     }
 
-    public void GetTargetInfo(unit_Manager target, float shipHP, bool[] actSS, float[] ssHP)
+    public void GetTargetInfo(Transform targetUnitT, float shipHP, bool[] actSS, float[] ssHP)
     {
         while (actSS[_targetUnitSS] != true)
         {
@@ -273,7 +295,7 @@ public class player_manager : OptimizedBehaviour
         }
         for (int i = 0; i < SelectionMan.Instance.SelectedUnits.Count; i++)
         {
-            SelectionMan.Instance.SelectedUnits[i].mission_attack(target, _targetUnitSS, target.CachedTransform.position, i, SelectionMan.Instance.SelectedUnits.Count);
+            SelectionMan.Instance.SelectedUnits[i].mission_attack(targetUnitT, _targetUnitSS, targetUnitT.position, i, SelectionMan.Instance.SelectedUnits.Count);
         }
         SelectionMan.Instance.DeselectAll();
     }

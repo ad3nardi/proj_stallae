@@ -20,7 +20,7 @@ public class unit_squadTarget : OptimizedBehaviour, ITargetable
     private void Awake()
     {
         _unitM = GetComponent<unit_Manager>();
-        _unitM._targetComp = this;
+        _unitM._iThisTarget = this;
         _unitM._subSystemMan = null;
         _maxHP = _unitM._unit.unitMaxHitPoints;
         for (int i = 0; i < 6; i++)
@@ -73,6 +73,15 @@ public class unit_squadTarget : OptimizedBehaviour, ITargetable
     {
         _curHP -= curHP;
     } 
+    
+    public Transform GetTransform()
+    {
+        return CachedTransform;
+    }
+    public GameObject GetGameObject()
+    {
+        return CachedGameObject;
+    }
     public float GetUnitHealth()
     {
         return _curHP;

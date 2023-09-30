@@ -24,6 +24,8 @@ MonoBehaviour:
   unitAttackRange: 3
   unitFireRate: 3.69
   unitSubSystems: []
+  unitRadius: 4
+  unitHeight: 2
   unitMaxSpeed: 10
   unitAcceleration: 5
   unitRotationSpeed: 360
@@ -32,3 +34,9 @@ MonoBehaviour:
   unitWallDist: 0.2
   unitEndReachedDistance: 0.1
   unitCheckDistance: 5
+  abCooldownTime: 0
+  abActiveTime: 0
+  abNeedsTarget: 0
+  debris: {fileID: 0}
+  debrisHull: {fileID: 0}
+  vfx_subExplosion: {fileID: 0}

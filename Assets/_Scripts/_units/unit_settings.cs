@@ -14,6 +14,7 @@ public class unit_settings : ScriptableObject
     public FactionType faction;
     public SizeTag sizeTag;
     public bool canAttack;
+    public bool _isSquadron;
     public bool hasSubSystems;
     public bool hasShields;
 

@@ -17,7 +17,6 @@ public class enem_unitMan : OptimizedBehaviour
     [SerializeField] private OrdersBeh _orders;
     [SerializeField] private FlankState _flankState;
     [SerializeField] public Transform _targetT;
-    [SerializeField] private unit_Manager _targetM;
     [SerializeField] private int _targetUnitSS;
     [SerializeField] private Vector3 _targetP;
     [SerializeField] private Vector3 _movePoint;
@@ -61,7 +60,7 @@ public class enem_unitMan : OptimizedBehaviour
     {
         if (_orders == OrdersBeh.Engage)
         {
-            if(_targetM!= null)
+            if(_targetT!= null)
             {
                 if (_flankState == FlankState.None)
                 {
@@ -79,13 +78,12 @@ public class enem_unitMan : OptimizedBehaviour
     public void SelectTarget(OptimizedBehaviour t)
     {
         _targetT = t.CachedTransform;
-        _targetM = _targetT.GetComponent<unit_Manager>();
+
         _targetP = _targetT.position;
     }
     public void ClearTarget()
     {
         _targetT = null;
-        _targetM = null;
         _targetP = Vector3.zero;
     }
 
@@ -104,20 +102,17 @@ public class enem_unitMan : OptimizedBehaviour
         _count = c;
         _flankState = flankQ;
         //Choose random sub-system from target's list -ssi- if not designated
-        unit_Manager targetUnitM = target.GetComponent<unit_Manager>();
+        ITargetable iTarget = target.CachedGameObject.GetComponent(typeof(ITargetable)) as ITargetable;
 
-        targetUnitM.GetStatusSS += GetTargetInfo;
-        targetUnitM.GetInfoSS();
-        targetUnitM.GetStatusSS -= GetTargetInfo;
+        GetTargetInfo(iTarget, iTarget.GetUnitHealth(), iTarget.GetActive(), iTarget.GetHP());
     }
 
     public void EngageDirect()
     {
-
-        _unitM.mission_attack(_targetM, _targetUnitSS, _targetP, _id, _count);
+        _unitM.mission_attack(_targetT, _targetUnitSS, _targetP, _id, _count);
     }
 
-    public void GetTargetInfo(unit_Manager target, float shipHP, bool[] actSS, float[] ssHP)
+    public void GetTargetInfo(ITargetable target, float shipHP, bool[] actSS, float[] ssHP)
     {
         _targetUnitSS = UnityEngine.Random.Range(0, 5);
         if(actSS[_targetUnitSS] != true)
@@ -151,11 +146,10 @@ public class enem_unitMan : OptimizedBehaviour
         _id = i;
         _count = c;
 
-        unit_Manager targetUnitM = target.GetComponent<unit_Manager>();
 
-        targetUnitM.GetStatusSS += GetTargetInfo;
-        targetUnitM.GetInfoSS();
-        targetUnitM.GetStatusSS -= GetTargetInfo;
+        ITargetable iTarget = (ITargetable)target.CachedGameObject.GetComponent(typeof(ITargetable)) as ITargetable;
+
+        GetTargetInfo(iTarget, iTarget.GetUnitHealth(), iTarget.GetActive(), iTarget.GetHP());
     }
 
     private void EngageFlankMove()
@@ -182,8 +176,8 @@ public class enem_unitMan : OptimizedBehaviour
     {
         if(_flankState == FlankState.FlankAttack)
         {
-            _targetP = _targetM.CachedTransform.position;
-            _unitM.mission_attack(_targetM, _targetUnitSS, _targetP, _id, _count);
+            _targetP = _targetT.position;
+            _unitM.mission_attack(_targetT, _targetUnitSS, _targetP, _id, _count);
             if (_unitM._cMission == currentMission.mAttack)
                 _flankState = FlankState.Attack;
         }

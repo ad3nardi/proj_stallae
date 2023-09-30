@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7576535792885656256}
   - component: {fileID: 4915108494295556432}
   - component: {fileID: 4451300229805163700}
+  - component: {fileID: 2656382848754198314}
   m_Layer: 0
   m_Name: wpn_laser_cannon_02
   m_TagString: Untagged
@@ -85,6 +86,18 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &2656382848754198314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2149885688931256754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8675760e0e8a1cd47a94f502de2d2c1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4198551092723270911
 GameObject:
   m_ObjectHideFlags: 0

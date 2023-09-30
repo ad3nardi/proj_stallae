@@ -27,6 +27,8 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     [SerializeField] public unit_subSystemManager _subSystemMan;
     [SerializeField] public RichAI _AImovement { get; private set; }
     [SerializeField] private float _radius;
+    [SerializeField] public bool _isSquadronType { get; private set; }
+    private Quaternion _lockRot;
 
     [Header("Unit Sub-Sysetms")]
     [SerializeField] private float _hitPoints;
@@ -34,12 +36,15 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     [Header("Unit Status")]
     [SerializeField] public currentMission _cMission;
     [SerializeField] public Vector3 _targetPosition;
-    [SerializeField] public unit_Manager _target;
-    [SerializeField] public ITargetable _targetComp;
+    [SerializeField] public Transform _target;
+    [SerializeField] public ITargetable _iThisTarget;
+    [SerializeField] public IAbility _iThisAbility;
     [SerializeField] public bool _isIdle;
     [SerializeField] public bool _targetInRange;
     [SerializeField] public int _targetSS;
     [SerializeField] private int _index, _group;
+    public OptimizedBehaviour _fleetHolder { get; private set; }
+    private OptimizedBehaviour _movePoint;
 
     public static event Action<string, float, float, float, float, float, float, float> OnSelected = delegate { };
     public event Action<unit_Manager, float, bool[], float[]> GetStatusSS = delegate { };
@@ -55,23 +60,27 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         _AImovement = GetComponent<RichAI>();
         _movement = GetComponent<unit_movement>();
         _combat = GetComponent<unit_combat>();
-        _targetComp = GetComponent<ITargetable>();
-        _subSystemMan = GetComponentInChildren<unit_subSystemManager>();
-        if(_subSystemMan != null)
-        {
-            _targetComp = _subSystemMan;
-        }
-        if(CachedGameObject.layer == layerSet.layerPlayerUnit)
+        _subSystemMan = GetComponent<unit_subSystemManager>();
+        _isSquadronType = _unit._isSquadron;
+
+        GameObject mp = Instantiate(OnFly_manager.Instance._onFlyResources._PFonMoveUI, OnFly_manager.Instance.CachedTransform);
+        _movePoint = mp.GetComponent<OptimizedBehaviour>();
+        _movePoint.CachedGameObject.SetActive(false);
+
+        if (CachedGameObject.layer == layerSet.layerPlayerUnit)
         {
             SelectionMan.Instance.AvaliableUnits.Add(this);
         }
-    }   
+    }  
+
     private void Start()
     {
         _target = null;
         _sizeTag = ((int)_unit.sizeTag);
         _movement.SetDefaults();
         _radius = _AImovement.radius;
+
+        _fleetHolder = GetComponentInParent<OptimizedBehaviour>();
         _debrisHolder = DebrisHolder.Instance.HolderGO;
         //Set Unit to Idle on its spawn Position
         mission_none();
@@ -83,7 +92,10 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         UpdateCurrentMission();
         
         if (_isIdle)
+        {
             IdleMove();
+
+        }
         if (_AImovement.reachedDestination)
         {
             mission_none();
@@ -132,10 +144,14 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     public void Select()
     {
         Selected();
+        _movePoint.CachedGameObject.SetActive(true);
+
     }
     public void Deselect()
     {
         Deselected();
+        _movePoint.CachedGameObject.SetActive(false);
+
     }
     public void GetInfoShip()
     {
@@ -143,10 +159,16 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     }
     public void GetInfoSS()
     {
-        float shipHP = _targetComp.GetUnitHealth();
-        bool[] ssActive = _targetComp.GetActive();
-        float[] ssHP = _targetComp.GetHP();
+        float shipHP = _iThisTarget.GetUnitHealth();
+        bool[] ssActive = _iThisTarget.GetActive();
+        float[] ssHP = _iThisTarget.GetHP();
         GetStatusSS(this, shipHP, ssActive, ssHP);
+    }
+
+    //IAbility
+    public void ActivateAbility()
+    {
+        _iThisAbility.Activate();
     }
     
     //UNIT SUB-SYSTEM FUNCTIONS
@@ -154,16 +176,13 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     {
         CachedTransform.position += CachedTransform.forward * _idleMultiplier * Time.deltaTime;
     }
-    public void MoveSpeedChange(float mveSpd)
-    {
-        _AImovement.maxSpeed = _unit.unitMaxSpeed * mveSpd;
-    }
 
     //UNIT MISSIONS
     public void mission_none()
     {
         _cMission = currentMission.mNone;
         _isIdle = true;
+        _movePoint.CachedGameObject.SetActive(false);
     }
     public void mission_move(Vector3 moveP, int i, int c)
     {
@@ -173,6 +192,8 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         _index = i;
         _group = c;
         _AImovement.destination = command_moveMath(moveP);
+        _movePoint.CachedTransform.position = moveP;
+
     }
     public void mission_forceMove(Vector3 moveP)
     {
@@ -180,8 +201,9 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         _isIdle = false;
         _movement.SetIsStop(false);
         _AImovement.destination = moveP;
+        _movePoint.CachedTransform.position = moveP;
     }
-    public void mission_attack(unit_Manager target, int targetSS, Vector3 targetPos, int i, int c)
+    public void mission_attack(Transform target, int targetSS, Vector3 targetPos, int i, int c)
     {
         _cMission = currentMission.mAttack;
         _isIdle  = false;
@@ -190,9 +212,10 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         _index = i;
         _group = c;
         _movement.SetIsStop(false);
-        _combat.TargetEnemy(_target, _targetSS);
+
+        _combat.TargetEnemy(target, _targetSS);
         
-        _AImovement.destination = command_moveMath(target.CachedTransform.position);
+        _AImovement.destination = command_moveMath(_target.position);
         
 
     }
@@ -265,7 +288,7 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
                 }
                 else
                 {
-                    _AImovement.destination = command_moveMath(_target.CachedTransform.position);
+                    _AImovement.destination = command_moveMath(_target.position);
                     _movement.SetIsStop(false);
                 }
                 break;

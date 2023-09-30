@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09a3f2a97a4978646ae0b3eefd8dc70a, type: 3}
+  m_Name: onFlyResources
+  m_EditorClassIdentifier: 
+  _PFonMoveUI: {fileID: 8368662809284594766, guid: 7b9b77543171856499abafb4b0e486bf,
+    type: 3}

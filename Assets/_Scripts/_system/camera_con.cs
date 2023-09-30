@@ -21,6 +21,9 @@ public class camera_con : OptimizedBehaviour
     [SerializeField] private InputAction camZoomAct;
     [SerializeField] private InputAction camDragAct;
 
+    [Header("Framing")]
+    [SerializeField] private bool _framelock;
+    [SerializeField] private OptimizedBehaviour _framedObject;
 
     [Header("Horizontal Motion")]
     [SerializeField] private float _maxSpeed;
@@ -45,6 +48,10 @@ public class camera_con : OptimizedBehaviour
     [SerializeField] [Range(0f, 0.1f)] private float edgeTolerance;
     [SerializeField] private bool _enableScreenEdge;
 
+    [Header("Max Positions")]
+    [SerializeField] private float _maxXpos;
+    [SerializeField] private float _maxYpos;
+
     //DNT = do not touch
     [Header("- DNT - Dynamic")]
     [SerializeField] private Vector3 _targetPos;
@@ -62,8 +69,10 @@ public class camera_con : OptimizedBehaviour
     {
         _cam = Helpers.Camera;
         _cvc = GetComponentInChildren<CinemachineVirtualCamera>();
-        camTrans = _cvc.transform;
+        camTrans = _cvc.GetComponent<Transform>();
         _playerInput.GetComponent<PlayerInput>();
+
+        _framelock = false;
     }
 
     private void OnEnable()
@@ -103,18 +112,33 @@ public class camera_con : OptimizedBehaviour
 
     private void Update()
     {
-        GetKeyboardMovement();
-        if(_enableScreenEdge)
+        if (_enableScreenEdge)
             CheckMouseAtScreenEdge();
 
         DragCamera();
-
         UpdateVelocity();
         UpdateCameraPosition();
+
+        if (_framelock)
+        {
+            UpdateFramePosition();
+            return;
+        }
+        GetKeyboardMovement();
+        
         UpdateBasePosition();
+        UpdateBounds();
     }
 
     //UPDATE FUNCTONS
+    private void UpdateFramePosition()
+    {
+        if(_framedObject!= null)
+        {
+            CachedTransform.position = _framedObject.CachedTransform.position;
+        }
+    }
+
     private void UpdateCameraPosition()
     {
         Vector3 zoomTarget = new Vector3(camTrans.localPosition.x, _zoomHeight, camTrans.localPosition.z);
@@ -134,13 +158,15 @@ public class camera_con : OptimizedBehaviour
         Vector3 inpVal = camMovementAct.ReadValue<Vector2>().x * GetCameraRight()
             + camMovementAct.ReadValue<Vector2>().y * GetCameraForward();
 
+        inpVal = inpVal.normalized;
+
         if (inpVal.sqrMagnitude > 0.1f)
             _targetPos += inpVal;
 
     }
     private void UpdateBasePosition()
     {
-        if (_targetPos.sqrMagnitude > 0.05f)
+        if (_targetPos.sqrMagnitude > 0.1f)
         {
             _speed = Mathf.Lerp(_speed, _maxSpeed, Time.deltaTime * _acceleration);
             CachedTransform.position += _targetPos * _speed * Time.deltaTime;
@@ -150,11 +176,35 @@ public class camera_con : OptimizedBehaviour
             _horizontalVelocity = Vector3.Lerp(_horizontalVelocity, Vector3.zero, Time.deltaTime * _damping);
             CachedTransform.position += _horizontalVelocity * Time.deltaTime;
         }
+
         _targetPos = Vector3.zero;
     }
+    private void UpdateBounds()
+    {
+        if (CachedTransform.position.x < -_maxXpos)
+        {
+            CachedTransform.position = new Vector3(-_maxXpos, 0, CachedTransform.position.z);
+        }
+
+        if (CachedTransform.position.x > _maxXpos)
+        {
+            CachedTransform.position = new Vector3(_maxXpos, 0, CachedTransform.position.z);
+        }
+
+        if (CachedTransform.position.z < -_maxYpos)
+        {
+            CachedTransform.position = new Vector3(CachedTransform.position.x, 0, -_maxYpos);
+        }
+
+        if (CachedTransform.position.z > _maxYpos)
+        {
+            CachedTransform.position = new Vector3(CachedTransform.position.x, 0, _maxYpos);
+        }
+    }
+
     private void CheckMouseAtScreenEdge()
     {
-        Vector2 mousePos = camDragAct.ReadValue<Vector2>();
+        Vector2 mousePos = camDragPos.ReadValue<Vector2>();
         Vector3 moveDirection = Vector3.zero;
 
         if (mousePos.x < edgeTolerance * Screen.width)
@@ -188,6 +238,7 @@ public class camera_con : OptimizedBehaviour
     //Camera Dragging
     private void dragCameraInp(InputAction.CallbackContext context)
     {
+        FrameUnlock();
         _draggingCam = context.ReadValueAsButton();
     }
     private void DragCamera()
@@ -219,7 +270,7 @@ public class camera_con : OptimizedBehaviour
             return;
 
         float value = context.ReadValue<Vector2>().x;
-        transform.rotation = Quaternion.Euler(0f, value * _maxRotationSpeed + CachedTransform.rotation.eulerAngles.y, 0f);
+        CachedTransform.rotation = Quaternion.Euler(0f, value * _maxRotationSpeed + CachedTransform.rotation.eulerAngles.y, 0f);
     }
 
     //Camera Zoom
@@ -236,9 +287,29 @@ public class camera_con : OptimizedBehaviour
         }
     }
 
-    public void FrameCamera(Vector3 pos)
+    public void FrameCamera(OptimizedBehaviour ob)
     {
-        _targetPos = pos;
+        _framelock = true;
+        _framedObject = ob;    
     }
 
+    public void FrameFreeCamera()
+    {
+        _framelock = true;
+        if(SelectionMan.Instance.AvaliableUnits.Count > 0)
+        {
+            int rand = UnityEngine.Random.Range(0, SelectionMan.Instance.AvaliableUnits.Count);
+            _framedObject = SelectionMan.Instance.AvaliableUnits[rand];
+        }
+    }
+    public void FrameValeria()
+    {
+
+    }
+    public void FrameUnlock()
+    {
+        _framelock = false;
+        _framedObject = null;
+
+    }
 }
