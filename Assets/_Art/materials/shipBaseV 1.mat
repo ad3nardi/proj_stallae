@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: shipBaseV
+  m_Name: shipBaseV 1
   m_Shader: {fileID: 4800000, guid: 254d230e08c93e449ad00f07029563bd, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -194,7 +194,7 @@ Material:
     - _DoubleSidedOutline: 1
     - _DstBlend: 0
     - _DynamicNoisyOutline: 0
-    - _EmissiveStrength: 1.73
+    - _EmissiveStrength: 1.44
     - _EnvironmentReflections: 1
     - _EnvironmentalLightingIntensity: 1
     - _FarDistanceMaxWidth: 10
@@ -351,7 +351,7 @@ Material:
     - _RimCutoff: {r: 0.3, g: 0.35, b: 0, a: 0}
     - _RimCutoffOuter: {r: 0.6, g: 0.5, b: 0, a: 0}
     - _RimLightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _RimTint: {r: 2.572549, g: 0.59607846, b: 0, a: 1}
+    - _RimTint: {r: 2.5597155, g: 0, b: 0.76593053, a: 1}
     - _SSAOColor: {r: 0, g: 0, b: 0, a: 0}
     - _SelfLitColor: {r: 1, g: 1, b: 1, a: 1}
     - _SelfShadowRealTimeShadowColor: {r: 1, g: 1, b: 1, a: 1}
@@ -360,7 +360,7 @@ Material:
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecSheenTileOffset: {r: 1, g: 0, b: 0, a: 0}
     - _XYZPosition: {r: 0, g: 0, b: 0, a: 0}
-    - _albedoTint: {r: 1, g: 1, b: 1, a: 1}
+    - _albedoTint: {r: 0.4528302, g: 0.4528302, b: 0.4528302, a: 1}
     - _smoothStepDark: {r: 0.98, g: 1, b: 0, a: 0}
     - _smoothstepDark: {r: 0, g: 1, b: 0, a: 0}
     - _smoothstepLight: {r: 0.95, g: 1, b: 0, a: 0}

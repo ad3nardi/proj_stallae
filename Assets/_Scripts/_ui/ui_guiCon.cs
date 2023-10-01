@@ -29,7 +29,6 @@ public class ui_guiCon : OptimizedBehaviour
         tagSet = Helpers.TagSet;
         _isPaused = false;
 
-
         _tmpTimer = _objTimer.GetComponent<TextMeshProUGUI>();
         _commandCon = _objCommandCon.GetComponent<OptimizedBehaviour>();
     }
@@ -50,24 +49,33 @@ public class ui_guiCon : OptimizedBehaviour
     private void Update()
     {
         UpdateTimer();
-        
-        if(SelectionMan.Instance.SelectedUnits.Count > 0)
-        {
-            if(!_commandCon.CachedGameObject.activeSelf)
-                _commandCon.CachedGameObject.SetActive(true);
-        }
-        if (SelectionMan.Instance.SelectedUnits.Count <= 0)
-        {
-            if (_commandCon.CachedGameObject.activeSelf)
-                _commandCon.CachedGameObject.SetActive(false);
-        }
-
+        UpdateCommandConsole();
     }
 
     public void UpdateTimer()
     {
 
         _tmpTimer.text = Mathf.Floor(Time.time).ToString();
+    }
+
+    private void UpdateCommandConsole()
+    {
+        if (SelectionMan.Instance.SelectedUnits.Count > 0)
+        {
+            if (!_commandCon.CachedGameObject.activeSelf)
+            {
+                _commandCon.CachedGameObject.SetActive(true);
+            }
+            else
+                return;
+        }
+        if (SelectionMan.Instance.SelectedUnits.Count <= 0)
+        {
+            if (_commandCon.CachedGameObject.activeSelf)
+            {
+                _commandCon.CachedGameObject.SetActive(false);
+            }
+        }
     }
 
     public void PauseMenuToggle()
@@ -85,7 +93,7 @@ public class ui_guiCon : OptimizedBehaviour
         if (_isPaused)
         {
             _cameraController.enabled = false;
-            Time.timeScale= 0.0f;
+            Time.timeScale = 0.0f;
 
         }
 
@@ -94,15 +102,5 @@ public class ui_guiCon : OptimizedBehaviour
             _cameraController.enabled = true;
             Time.timeScale = 1.0f;
         }
-    }
-
-    public void SelectedCard()
-    {
-
-    }
-
-    public void CardSelect()
-    {
-
     }
 }

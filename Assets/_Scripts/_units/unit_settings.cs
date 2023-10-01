@@ -9,6 +9,7 @@ public class unit_settings : ScriptableObject
 {
     [Header("Unit Identifier")]
     public int id;
+    public string title;
 
     [Header("Unit Attributes")]
     public FactionType faction;
@@ -39,6 +40,7 @@ public class unit_settings : ScriptableObject
     public float unitCheckDistance;
 
     [Header("Combat and Ability Settings")]
+    public string _abilityName;
     public float abCooldownTime;
     public float abActiveTime;
     public bool abNeedsTarget;

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: 0107_ff_cruiser03
   m_EditorClassIdentifier: 
   id: 103
+  title: Royal Assault Cruiser
   faction: 0
   sizeTag: 2
   canAttack: 1
@@ -35,6 +36,7 @@ MonoBehaviour:
   unitWallDist: 10
   unitEndReachedDistance: 0.1
   unitCheckDistance: 10
+  _abilityName: Overcharge Engines
   abCooldownTime: 10
   abActiveTime: 5
   abNeedsTarget: 0

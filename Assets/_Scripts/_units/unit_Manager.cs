@@ -39,6 +39,7 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     [SerializeField] public Transform _target;
     [SerializeField] public ITargetable _iThisTarget;
     [SerializeField] public IAbility _iThisAbility;
+    [SerializeField] public string _abilityName;
     [SerializeField] public bool _isIdle;
     [SerializeField] public bool _targetInRange;
     [SerializeField] public int _targetSS;
@@ -46,8 +47,6 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     public OptimizedBehaviour _fleetHolder { get; private set; }
     private OptimizedBehaviour _movePoint;
 
-    public static event Action<string, float, float, float, float, float, float, float> OnSelected = delegate { };
-    public event Action<unit_Manager, float, bool[], float[]> GetStatusSS = delegate { };
     public event Action Selected = delegate { };
     public event Action Deselected = delegate { };
 
@@ -62,6 +61,7 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         _combat = GetComponent<unit_combat>();
         _subSystemMan = GetComponent<unit_subSystemManager>();
         _isSquadronType = _unit._isSquadron;
+        _abilityName = _unit._abilityName;
 
         GameObject mp = Instantiate(OnFly_manager.Instance._onFlyResources._PFonMoveUI, OnFly_manager.Instance.CachedTransform);
         _movePoint = mp.GetComponent<OptimizedBehaviour>();
@@ -152,17 +152,6 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         Deselected();
         _movePoint.CachedGameObject.SetActive(false);
 
-    }
-    public void GetInfoShip()
-    {
-        
-    }
-    public void GetInfoSS()
-    {
-        float shipHP = _iThisTarget.GetUnitHealth();
-        bool[] ssActive = _iThisTarget.GetActive();
-        float[] ssHP = _iThisTarget.GetHP();
-        GetStatusSS(this, shipHP, ssActive, ssHP);
     }
 
     //IAbility

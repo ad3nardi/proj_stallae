@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
-using UnityEditor.Timeline;
-
 public class camera_manager : OptimizedBehaviour
 {
     public List<CinemachineVirtualCamera> Cameras = new List<CinemachineVirtualCamera>();

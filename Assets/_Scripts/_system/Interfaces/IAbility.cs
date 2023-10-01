@@ -19,4 +19,14 @@ public interface IAbility
 
     }
 
+    public float GetCooldownTime()
+    {
+        return 0;
+    }
+
+    public float GetCooldownTimer()
+    {
+        return 0;
+    }
+
 }
