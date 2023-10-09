@@ -13,16 +13,18 @@ MonoBehaviour:
   m_Name: 0303_ad_interceptor
   m_EditorClassIdentifier: 
   id: 303
+  title: 
   faction: 2
   sizeTag: 1
   canAttack: 1
-  hasSubSystems: 1
+  _isSquadron: 1
+  hasSubSystems: 0
   hasShields: 0
-  unitPointCost: 2
-  unitMaxHitPoints: 2
+  unitPointCost: 50
+  unitMaxHitPoints: 10
   untMaxShields: 2
   unitAttackRange: 2
-  unitFireRate: 2
+  unitFireRate: 0.2
   unitSubSystems: []
   unitRadius: 4
   unitHeight: 2
@@ -34,8 +36,9 @@ MonoBehaviour:
   unitWallDist: 0.2
   unitEndReachedDistance: 0.1
   unitCheckDistance: 10
-  abCooldownTime: 0
-  abActiveTime: 0
+  _abilityName: Speed Boost
+  abCooldownTime: 10
+  abActiveTime: 3
   abNeedsTarget: 0
   debris: {fileID: 8830631683938474719, guid: 150bf4454b26ef0458ec26be1e6c890f, type: 3}
   debrisHull: {fileID: 8830631683938474719, guid: 150bf4454b26ef0458ec26be1e6c890f,

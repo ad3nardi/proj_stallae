@@ -16,11 +16,18 @@ MonoBehaviour:
   convoID: 0
   useInputs: 0
   _text:
-  - Welcome to the Rogue Nova Demo
-  - Please Enjoy
+  - We should be safe here
+  - It's the old foundry, it should have shut down years ago
+  - If we can stay by the relay station I might be able to send a signal from my
+    ship
+  - and my father might be able to send us help.
   _image:
-  - {fileID: 21300000, guid: 491c594c32deba0458191ae0d5b9e59f, type: 3}
-  - {fileID: 21300000, guid: 491c594c32deba0458191ae0d5b9e59f, type: 3}
+  - {fileID: 21300000, guid: 6d54d72be08229846b1ebf55dbb9fa72, type: 3}
+  - {fileID: 21300000, guid: 6d54d72be08229846b1ebf55dbb9fa72, type: 3}
+  - {fileID: 21300000, guid: d4e4d0d46a7d05b43a83f773be27c440, type: 3}
+  - {fileID: 21300000, guid: 6d54d72be08229846b1ebf55dbb9fa72, type: 3}
   _displayTime:
   - 4
+  - 5
+  - 5
   - 4

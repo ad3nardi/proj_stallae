@@ -50,7 +50,9 @@ public class camera_con : OptimizedBehaviour
 
     [Header("Max Positions")]
     [SerializeField] private float _maxXpos;
+    [SerializeField] private float _minXpos;
     [SerializeField] private float _maxYpos;
+    [SerializeField] private float _minYpos;
 
     //DNT = do not touch
     [Header("- DNT - Dynamic")]
@@ -181,9 +183,9 @@ public class camera_con : OptimizedBehaviour
     }
     private void UpdateBounds()
     {
-        if (CachedTransform.position.x < -_maxXpos)
+        if (CachedTransform.position.x < _minXpos)
         {
-            CachedTransform.position = new Vector3(-_maxXpos, 0, CachedTransform.position.z);
+            CachedTransform.position = new Vector3(_minXpos, 0, CachedTransform.position.z);
         }
 
         if (CachedTransform.position.x > _maxXpos)
@@ -191,9 +193,9 @@ public class camera_con : OptimizedBehaviour
             CachedTransform.position = new Vector3(_maxXpos, 0, CachedTransform.position.z);
         }
 
-        if (CachedTransform.position.z < -_maxYpos)
+        if (CachedTransform.position.z < _minYpos)
         {
-            CachedTransform.position = new Vector3(CachedTransform.position.x, 0, -_maxYpos);
+            CachedTransform.position = new Vector3(CachedTransform.position.x, 0, _minYpos);
         }
 
         if (CachedTransform.position.z > _maxYpos)

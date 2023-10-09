@@ -17,6 +17,8 @@ public class LayerSet : ScriptableObject
     public int layerNavigation = 8;
     public int layerNavObstacles = 9;
     public int layerVisualElement = 10;
-    public int layerWeaponCol = 11;
+    public int layerWeaponColEnem = 11;
+    public int miniMapPos = 12;
+    public int layerWeaponColPC = 13;
 
 }

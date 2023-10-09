@@ -8,7 +8,9 @@ Shader "ui_unitAtkRange"
 		[HideInInspector] _EmissionColor("Emission Color", Color) = (1,1,1,1)
 		[ASEBegin]_Color0("Color 0", Color) = (0.4009434,0.9149761,1,0)
 		_circleGradient("circleGradient", 2D) = "white" {}
-		[ASEEnd]_AlphaAdd("AlphaAdd", Range( 0 , 1)) = 0
+		_AlphaAdd("AlphaAdd", Range( -1 , 1)) = 0
+		_DitherSize("DitherSize", Float) = 0
+		[ASEEnd]_AlphaClip("Alpha Clip", Range( 0 , 1)) = 0
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 
 
@@ -220,6 +222,7 @@ Shader "ui_unitAtkRange"
 					float fogFactor : TEXCOORD2;
 				#endif
 				float4 ase_texcoord3 : TEXCOORD3;
+				float4 ase_texcoord4 : TEXCOORD4;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -228,6 +231,8 @@ Shader "ui_unitAtkRange"
 			float4 _circleGradient_ST;
 			float4 _Color0;
 			float _AlphaAdd;
+			float _DitherSize;
+			float _AlphaClip;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -241,7 +246,22 @@ Shader "ui_unitAtkRange"
 			sampler2D _circleGradient;
 
 
+			inline float Dither8x8Bayer( int x, int y )
+			{
+				const float dither[ 64 ] = {
+			 1, 49, 13, 61,  4, 52, 16, 64,
+			33, 17, 45, 29, 36, 20, 48, 32,
+			 9, 57,  5, 53, 12, 60,  8, 56,
+			41, 25, 37, 21, 44, 28, 40, 24,
+			 3, 51, 15, 63,  2, 50, 14, 62,
+			35, 19, 47, 31, 34, 18, 46, 30,
+			11, 59,  7, 55, 10, 58,  6, 54,
+			43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[r] / 64; // same # of instructions as pre-dividing due to compiler magic
+			}
 			
+
 			VertexOutput VertexFunction ( VertexInput v  )
 			{
 				VertexOutput o = (VertexOutput)0;
@@ -249,6 +269,10 @@ Shader "ui_unitAtkRange"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
+				float4 ase_clipPos = TransformObjectToHClip((v.vertex).xyz);
+				float4 screenPos = ComputeScreenPos(ase_clipPos);
+				o.ase_texcoord4 = screenPos;
+				
 				o.ase_texcoord3.xy = v.ase_texcoord.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
@@ -395,11 +419,18 @@ Shader "ui_unitAtkRange"
 				float2 uv_circleGradient = IN.ase_texcoord3.xy * _circleGradient_ST.xy + _circleGradient_ST.zw;
 				float4 tex2DNode35 = tex2D( _circleGradient, uv_circleGradient );
 				
+				float4 screenPos = IN.ase_texcoord4;
+				float4 ase_screenPosNorm = screenPos / screenPos.w;
+				ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
+				float2 clipScreen38 = ase_screenPosNorm.xy * _ScreenParams.xy;
+				float dither38 = Dither8x8Bayer( fmod(clipScreen38.x, 8), fmod(clipScreen38.y, 8) );
+				dither38 = step( dither38, _DitherSize );
+				
 				float3 BakedAlbedo = 0;
 				float3 BakedEmission = 0;
 				float3 Color = ( tex2DNode35 * _Color0 ).rgb;
-				float Alpha = ( tex2DNode35.a + _AlphaAdd );
-				float AlphaClipThreshold = 0.0;
+				float Alpha = ( ( tex2DNode35.a + _AlphaAdd ) * dither38 );
+				float AlphaClipThreshold = _AlphaClip;
 				float AlphaClipThresholdShadow = 0.5;
 
 				#ifdef _ALPHATEST_ON
@@ -475,6 +506,7 @@ Shader "ui_unitAtkRange"
 				float4 shadowCoord : TEXCOORD1;
 				#endif
 				float4 ase_texcoord2 : TEXCOORD2;
+				float4 ase_texcoord3 : TEXCOORD3;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -483,6 +515,8 @@ Shader "ui_unitAtkRange"
 			float4 _circleGradient_ST;
 			float4 _Color0;
 			float _AlphaAdd;
+			float _DitherSize;
+			float _AlphaClip;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -496,7 +530,22 @@ Shader "ui_unitAtkRange"
 			sampler2D _circleGradient;
 
 
+			inline float Dither8x8Bayer( int x, int y )
+			{
+				const float dither[ 64 ] = {
+			 1, 49, 13, 61,  4, 52, 16, 64,
+			33, 17, 45, 29, 36, 20, 48, 32,
+			 9, 57,  5, 53, 12, 60,  8, 56,
+			41, 25, 37, 21, 44, 28, 40, 24,
+			 3, 51, 15, 63,  2, 50, 14, 62,
+			35, 19, 47, 31, 34, 18, 46, 30,
+			11, 59,  7, 55, 10, 58,  6, 54,
+			43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[r] / 64; // same # of instructions as pre-dividing due to compiler magic
+			}
 			
+
 			VertexOutput VertexFunction( VertexInput v  )
 			{
 				VertexOutput o = (VertexOutput)0;
@@ -504,6 +553,10 @@ Shader "ui_unitAtkRange"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
+				float4 ase_clipPos = TransformObjectToHClip((v.vertex).xyz);
+				float4 screenPos = ComputeScreenPos(ase_clipPos);
+				o.ase_texcoord3 = screenPos;
+				
 				o.ase_texcoord2.xy = v.ase_texcoord.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
@@ -643,10 +696,16 @@ Shader "ui_unitAtkRange"
 
 				float2 uv_circleGradient = IN.ase_texcoord2.xy * _circleGradient_ST.xy + _circleGradient_ST.zw;
 				float4 tex2DNode35 = tex2D( _circleGradient, uv_circleGradient );
+				float4 screenPos = IN.ase_texcoord3;
+				float4 ase_screenPosNorm = screenPos / screenPos.w;
+				ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
+				float2 clipScreen38 = ase_screenPosNorm.xy * _ScreenParams.xy;
+				float dither38 = Dither8x8Bayer( fmod(clipScreen38.x, 8), fmod(clipScreen38.y, 8) );
+				dither38 = step( dither38, _DitherSize );
 				
 
-				float Alpha = ( tex2DNode35.a + _AlphaAdd );
-				float AlphaClipThreshold = 0.0;
+				float Alpha = ( ( tex2DNode35.a + _AlphaAdd ) * dither38 );
+				float AlphaClipThreshold = _AlphaClip;
 
 				#ifdef _ALPHATEST_ON
 					clip(Alpha - AlphaClipThreshold);
@@ -707,6 +766,7 @@ Shader "ui_unitAtkRange"
 			{
 				float4 clipPos : SV_POSITION;
 				float4 ase_texcoord : TEXCOORD0;
+				float4 ase_texcoord1 : TEXCOORD1;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -715,6 +775,8 @@ Shader "ui_unitAtkRange"
 			float4 _circleGradient_ST;
 			float4 _Color0;
 			float _AlphaAdd;
+			float _DitherSize;
+			float _AlphaClip;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -728,7 +790,22 @@ Shader "ui_unitAtkRange"
 			sampler2D _circleGradient;
 
 
+			inline float Dither8x8Bayer( int x, int y )
+			{
+				const float dither[ 64 ] = {
+			 1, 49, 13, 61,  4, 52, 16, 64,
+			33, 17, 45, 29, 36, 20, 48, 32,
+			 9, 57,  5, 53, 12, 60,  8, 56,
+			41, 25, 37, 21, 44, 28, 40, 24,
+			 3, 51, 15, 63,  2, 50, 14, 62,
+			35, 19, 47, 31, 34, 18, 46, 30,
+			11, 59,  7, 55, 10, 58,  6, 54,
+			43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[r] / 64; // same # of instructions as pre-dividing due to compiler magic
+			}
 			
+
 			int _ObjectId;
 			int _PassValue;
 
@@ -747,6 +824,10 @@ Shader "ui_unitAtkRange"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
+				float4 ase_clipPos = TransformObjectToHClip((v.vertex).xyz);
+				float4 screenPos = ComputeScreenPos(ase_clipPos);
+				o.ase_texcoord1 = screenPos;
+				
 				o.ase_texcoord.xy = v.ase_texcoord.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
@@ -860,10 +941,16 @@ Shader "ui_unitAtkRange"
 
 				float2 uv_circleGradient = IN.ase_texcoord.xy * _circleGradient_ST.xy + _circleGradient_ST.zw;
 				float4 tex2DNode35 = tex2D( _circleGradient, uv_circleGradient );
+				float4 screenPos = IN.ase_texcoord1;
+				float4 ase_screenPosNorm = screenPos / screenPos.w;
+				ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
+				float2 clipScreen38 = ase_screenPosNorm.xy * _ScreenParams.xy;
+				float dither38 = Dither8x8Bayer( fmod(clipScreen38.x, 8), fmod(clipScreen38.y, 8) );
+				dither38 = step( dither38, _DitherSize );
 				
 
-				surfaceDescription.Alpha = ( tex2DNode35.a + _AlphaAdd );
-				surfaceDescription.AlphaClipThreshold = 0.0;
+				surfaceDescription.Alpha = ( ( tex2DNode35.a + _AlphaAdd ) * dither38 );
+				surfaceDescription.AlphaClipThreshold = _AlphaClip;
 
 				#if _ALPHATEST_ON
 					float alphaClipThreshold = 0.01f;
@@ -924,6 +1011,7 @@ Shader "ui_unitAtkRange"
 			{
 				float4 clipPos : SV_POSITION;
 				float4 ase_texcoord : TEXCOORD0;
+				float4 ase_texcoord1 : TEXCOORD1;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -932,6 +1020,8 @@ Shader "ui_unitAtkRange"
 			float4 _circleGradient_ST;
 			float4 _Color0;
 			float _AlphaAdd;
+			float _DitherSize;
+			float _AlphaClip;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -945,7 +1035,22 @@ Shader "ui_unitAtkRange"
 			sampler2D _circleGradient;
 
 
+			inline float Dither8x8Bayer( int x, int y )
+			{
+				const float dither[ 64 ] = {
+			 1, 49, 13, 61,  4, 52, 16, 64,
+			33, 17, 45, 29, 36, 20, 48, 32,
+			 9, 57,  5, 53, 12, 60,  8, 56,
+			41, 25, 37, 21, 44, 28, 40, 24,
+			 3, 51, 15, 63,  2, 50, 14, 62,
+			35, 19, 47, 31, 34, 18, 46, 30,
+			11, 59,  7, 55, 10, 58,  6, 54,
+			43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[r] / 64; // same # of instructions as pre-dividing due to compiler magic
+			}
 			
+
 			float4 _SelectionID;
 
 
@@ -964,6 +1069,10 @@ Shader "ui_unitAtkRange"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
+				float4 ase_clipPos = TransformObjectToHClip((v.vertex).xyz);
+				float4 screenPos = ComputeScreenPos(ase_clipPos);
+				o.ase_texcoord1 = screenPos;
+				
 				o.ase_texcoord.xy = v.ase_texcoord.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
@@ -1072,10 +1181,16 @@ Shader "ui_unitAtkRange"
 
 				float2 uv_circleGradient = IN.ase_texcoord.xy * _circleGradient_ST.xy + _circleGradient_ST.zw;
 				float4 tex2DNode35 = tex2D( _circleGradient, uv_circleGradient );
+				float4 screenPos = IN.ase_texcoord1;
+				float4 ase_screenPosNorm = screenPos / screenPos.w;
+				ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
+				float2 clipScreen38 = ase_screenPosNorm.xy * _ScreenParams.xy;
+				float dither38 = Dither8x8Bayer( fmod(clipScreen38.x, 8), fmod(clipScreen38.y, 8) );
+				dither38 = step( dither38, _DitherSize );
 				
 
-				surfaceDescription.Alpha = ( tex2DNode35.a + _AlphaAdd );
-				surfaceDescription.AlphaClipThreshold = 0.0;
+				surfaceDescription.Alpha = ( ( tex2DNode35.a + _AlphaAdd ) * dither38 );
+				surfaceDescription.AlphaClipThreshold = _AlphaClip;
 
 				#if _ALPHATEST_ON
 					float alphaClipThreshold = 0.01f;
@@ -1146,6 +1261,7 @@ Shader "ui_unitAtkRange"
 				float4 clipPos : SV_POSITION;
 				float3 normalWS : TEXCOORD0;
 				float4 ase_texcoord1 : TEXCOORD1;
+				float4 ase_texcoord2 : TEXCOORD2;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -1154,6 +1270,8 @@ Shader "ui_unitAtkRange"
 			float4 _circleGradient_ST;
 			float4 _Color0;
 			float _AlphaAdd;
+			float _DitherSize;
+			float _AlphaClip;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -1167,7 +1285,22 @@ Shader "ui_unitAtkRange"
 			sampler2D _circleGradient;
 
 
+			inline float Dither8x8Bayer( int x, int y )
+			{
+				const float dither[ 64 ] = {
+			 1, 49, 13, 61,  4, 52, 16, 64,
+			33, 17, 45, 29, 36, 20, 48, 32,
+			 9, 57,  5, 53, 12, 60,  8, 56,
+			41, 25, 37, 21, 44, 28, 40, 24,
+			 3, 51, 15, 63,  2, 50, 14, 62,
+			35, 19, 47, 31, 34, 18, 46, 30,
+			11, 59,  7, 55, 10, 58,  6, 54,
+			43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[r] / 64; // same # of instructions as pre-dividing due to compiler magic
+			}
 			
+
 			struct SurfaceDescription
 			{
 				float Alpha;
@@ -1183,6 +1316,10 @@ Shader "ui_unitAtkRange"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
+				float4 ase_clipPos = TransformObjectToHClip((v.vertex).xyz);
+				float4 screenPos = ComputeScreenPos(ase_clipPos);
+				o.ase_texcoord2 = screenPos;
+				
 				o.ase_texcoord1.xy = v.ase_texcoord.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
@@ -1298,10 +1435,16 @@ Shader "ui_unitAtkRange"
 
 				float2 uv_circleGradient = IN.ase_texcoord1.xy * _circleGradient_ST.xy + _circleGradient_ST.zw;
 				float4 tex2DNode35 = tex2D( _circleGradient, uv_circleGradient );
+				float4 screenPos = IN.ase_texcoord2;
+				float4 ase_screenPosNorm = screenPos / screenPos.w;
+				ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
+				float2 clipScreen38 = ase_screenPosNorm.xy * _ScreenParams.xy;
+				float dither38 = Dither8x8Bayer( fmod(clipScreen38.x, 8), fmod(clipScreen38.y, 8) );
+				dither38 = step( dither38, _DitherSize );
 				
 
-				surfaceDescription.Alpha = ( tex2DNode35.a + _AlphaAdd );
-				surfaceDescription.AlphaClipThreshold = 0.0;
+				surfaceDescription.Alpha = ( ( tex2DNode35.a + _AlphaAdd ) * dither38 );
+				surfaceDescription.AlphaClipThreshold = _AlphaClip;
 
 				#if _ALPHATEST_ON
 					clip(surfaceDescription.Alpha - surfaceDescription.AlphaClipThreshold);
@@ -1373,6 +1516,7 @@ Shader "ui_unitAtkRange"
 				float4 clipPos : SV_POSITION;
 				float3 normalWS : TEXCOORD0;
 				float4 ase_texcoord1 : TEXCOORD1;
+				float4 ase_texcoord2 : TEXCOORD2;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -1381,6 +1525,8 @@ Shader "ui_unitAtkRange"
 			float4 _circleGradient_ST;
 			float4 _Color0;
 			float _AlphaAdd;
+			float _DitherSize;
+			float _AlphaClip;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -1393,7 +1539,22 @@ Shader "ui_unitAtkRange"
 			sampler2D _circleGradient;
 
 
+			inline float Dither8x8Bayer( int x, int y )
+			{
+				const float dither[ 64 ] = {
+			 1, 49, 13, 61,  4, 52, 16, 64,
+			33, 17, 45, 29, 36, 20, 48, 32,
+			 9, 57,  5, 53, 12, 60,  8, 56,
+			41, 25, 37, 21, 44, 28, 40, 24,
+			 3, 51, 15, 63,  2, 50, 14, 62,
+			35, 19, 47, 31, 34, 18, 46, 30,
+			11, 59,  7, 55, 10, 58,  6, 54,
+			43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[r] / 64; // same # of instructions as pre-dividing due to compiler magic
+			}
 			
+
 			struct SurfaceDescription
 			{
 				float Alpha;
@@ -1409,6 +1570,10 @@ Shader "ui_unitAtkRange"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
+				float4 ase_clipPos = TransformObjectToHClip((v.vertex).xyz);
+				float4 screenPos = ComputeScreenPos(ase_clipPos);
+				o.ase_texcoord2 = screenPos;
+				
 				o.ase_texcoord1.xy = v.ase_texcoord.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
@@ -1524,10 +1689,16 @@ Shader "ui_unitAtkRange"
 
 				float2 uv_circleGradient = IN.ase_texcoord1.xy * _circleGradient_ST.xy + _circleGradient_ST.zw;
 				float4 tex2DNode35 = tex2D( _circleGradient, uv_circleGradient );
+				float4 screenPos = IN.ase_texcoord2;
+				float4 ase_screenPosNorm = screenPos / screenPos.w;
+				ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
+				float2 clipScreen38 = ase_screenPosNorm.xy * _ScreenParams.xy;
+				float dither38 = Dither8x8Bayer( fmod(clipScreen38.x, 8), fmod(clipScreen38.y, 8) );
+				dither38 = step( dither38, _DitherSize );
 				
 
-				surfaceDescription.Alpha = ( tex2DNode35.a + _AlphaAdd );
-				surfaceDescription.AlphaClipThreshold = 0.0;
+				surfaceDescription.Alpha = ( ( tex2DNode35.a + _AlphaAdd ) * dither38 );
+				surfaceDescription.AlphaClipThreshold = _AlphaClip;
 
 				#if _ALPHATEST_ON
 					clip(surfaceDescription.Alpha - surfaceDescription.AlphaClipThreshold);
@@ -1577,12 +1748,15 @@ Node;AmplifyShaderEditor.RangedFloatNode;16;-1803.622,510.1002;Inherit;False;Pro
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;15;-1630.339,433.0852;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RotatorNode;14;-1452.929,364.3218;Inherit;False;3;0;FLOAT2;0,0;False;1;FLOAT2;0,0;False;2;FLOAT;1;False;1;FLOAT2;0
 Node;AmplifyShaderEditor.TextureCoordinatesNode;13;-1697.27,231.6949;Inherit;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;1;210.5208,-21.05207;Float;False;True;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;ui_unitAtkRange;2992e84f91cbeb14eab234972e07ea9d;True;Forward;0;1;Forward;8;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;3;RenderPipeline=UniversalPipeline;RenderType=Transparent=RenderType;Queue=Transparent=Queue=0;True;5;True;12;all;0;False;True;1;1;False;;1;False;;1;1;False;;10;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;2;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForwardOnly;False;False;0;;0;0;Standard;23;Surface;1;638312006896521580;  Blend;2;638312006923011096;Two Sided;1;0;Forward Only;0;0;Cast Shadows;0;638312006942190945;  Use Shadow Threshold;0;0;Receive Shadows;0;638312006950854976;GPU Instancing;1;0;LOD CrossFade;0;0;Built-in Fog;0;0;DOTS Instancing;0;0;Meta Pass;0;0;Extra Pre Pass;0;0;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Vertex Position,InvertActionOnDeselection;1;0;0;10;False;True;False;True;False;False;True;True;True;True;False;;False;0
 Node;AmplifyShaderEditor.SamplerNode;35;-510.1881,-310.9403;Inherit;True;Property;_circleGradient;circleGradient;2;0;Create;True;0;0;0;False;0;False;-1;e0b41a2e56a721744ae4027490ddf707;e0b41a2e56a721744ae4027490ddf707;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.ColorNode;10;-418.7829,-119.6334;Inherit;False;Property;_Color0;Color 0;1;0;Create;True;0;0;0;False;0;False;0.4009434,0.9149761,1,0;0.4009434,0.9149761,1,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.SimpleAddOpNode;37;-39.63882,7.693492;Inherit;True;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;36;-460.4371,62.44019;Inherit;False;Property;_AlphaAdd;AlphaAdd;3;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;20;21.03216,218.9569;Inherit;False;Constant;_AlphaClip;AlphaClip;2;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.ColorNode;10;-418.7829,-119.6334;Inherit;False;Property;_Color0;Color 0;1;0;Create;True;0;0;0;False;0;False;0.4009434,0.9149761,1,0;0.4009432,0.9149761,1,1;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SimpleAddOpNode;37;-156.6465,-15.92274;Inherit;True;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;40;83.27293,40.97099;Inherit;True;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;39;-295.6602,182.6684;Inherit;False;Property;_DitherSize;DitherSize;4;0;Create;True;0;0;0;False;0;False;0;0.02;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.DitheringNode;38;-122.8323,204.1377;Inherit;False;1;False;4;0;FLOAT;0;False;1;SAMPLER2D;;False;2;FLOAT4;0,0,0,0;False;3;SAMPLERSTATE;;False;1;FLOAT;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;1;528.2664,-16.75821;Float;False;True;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;ui_unitAtkRange;2992e84f91cbeb14eab234972e07ea9d;True;Forward;0;1;Forward;8;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;3;RenderPipeline=UniversalPipeline;RenderType=Transparent=RenderType;Queue=Transparent=Queue=0;True;5;True;12;all;0;False;True;1;1;False;;1;False;;1;1;False;;10;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;2;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForwardOnly;False;False;0;;0;0;Standard;23;Surface;1;638312006896521580;  Blend;2;638312006923011096;Two Sided;1;0;Forward Only;0;0;Cast Shadows;0;638312006942190945;  Use Shadow Threshold;0;0;Receive Shadows;0;638312006950854976;GPU Instancing;1;0;LOD CrossFade;0;0;Built-in Fog;0;0;DOTS Instancing;0;0;Meta Pass;0;0;Extra Pre Pass;0;0;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Vertex Position,InvertActionOnDeselection;1;0;0;10;False;True;False;True;False;False;True;True;True;True;False;;False;0
+Node;AmplifyShaderEditor.RangedFloatNode;36;-460.4371,62.44019;Inherit;False;Property;_AlphaAdd;AlphaAdd;3;0;Create;True;0;0;0;False;0;False;0;-0.57;-1;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;44;322.6556,305.0434;Inherit;False;Property;_AlphaClip;Alpha Clip;5;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
 WireConnection;18;0;35;0
 WireConnection;18;1;10;0
 WireConnection;22;0;14;0
@@ -1599,10 +1773,13 @@ WireConnection;15;0;12;0
 WireConnection;15;1;16;0
 WireConnection;14;0;13;0
 WireConnection;14;2;15;0
-WireConnection;1;2;18;0
-WireConnection;1;3;37;0
-WireConnection;1;4;20;0
 WireConnection;37;0;35;4
 WireConnection;37;1;36;0
+WireConnection;40;0;37;0
+WireConnection;40;1;38;0
+WireConnection;38;0;39;0
+WireConnection;1;2;18;0
+WireConnection;1;3;40;0
+WireConnection;1;4;44;0
 ASEEND*/
-//CHKSM=3EA8A423390361EA08E1AA43B59369CF3969AEAA
+//CHKSM=A54CBCA27742D334C89874E78B3C30DE34A0DF52

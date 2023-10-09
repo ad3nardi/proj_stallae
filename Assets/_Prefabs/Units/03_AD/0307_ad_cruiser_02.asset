@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: 0307_ad_cruiser_02
   m_EditorClassIdentifier: 
   id: 307
+  title: 
   faction: 2
   sizeTag: 3
   canAttack: 1
@@ -20,10 +21,10 @@ MonoBehaviour:
   hasSubSystems: 1
   hasShields: 1
   unitPointCost: 1
-  unitMaxHitPoints: 1500
+  unitMaxHitPoints: 100
   untMaxShields: 0
-  unitAttackRange: 150
-  unitFireRate: 3
+  unitAttackRange: 100
+  unitFireRate: 2
   unitSubSystems: []
   unitRadius: 7
   unitHeight: 2
@@ -35,8 +36,9 @@ MonoBehaviour:
   unitWallDist: 0.2
   unitEndReachedDistance: 0.1
   unitCheckDistance: 35
-  abCooldownTime: 0
-  abActiveTime: 0
+  _abilityName: Speed Boost
+  abCooldownTime: 20
+  abActiveTime: 5
   abNeedsTarget: 0
   debris: {fileID: 8830631683938474719, guid: 150bf4454b26ef0458ec26be1e6c890f, type: 3}
   debrisHull: {fileID: 8830631683938474719, guid: 150bf4454b26ef0458ec26be1e6c890f,

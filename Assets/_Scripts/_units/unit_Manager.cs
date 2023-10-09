@@ -5,6 +5,8 @@ using UnityEngine.Events;
 using Pathfinding;
 using System;
 using Pathfinding.ClipperLib;
+using TMPro;
+using DG.Tweening;
 
 [RequireComponent(typeof(RichAI))]
 [RequireComponent(typeof(unit_combat))]
@@ -25,6 +27,7 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     [SerializeField] private unit_movement _movement;
     [SerializeField] private unit_combat _combat;
     [SerializeField] public unit_subSystemManager _subSystemMan;
+    [SerializeField] public unit_squadTarget _squadMan;
     [SerializeField] public RichAI _AImovement { get; private set; }
     [SerializeField] private float _radius;
     [SerializeField] public bool _isSquadronType { get; private set; }
@@ -44,46 +47,35 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     [SerializeField] public bool _targetInRange;
     [SerializeField] public int _targetSS;
     [SerializeField] private int _index, _group;
-    public OptimizedBehaviour _fleetHolder { get; private set; }
+    [SerializeField] private TextMeshProUGUI _talkBubble;
+    [SerializeField] private OptimizedBehaviour _talkUI;
+    [SerializeField] private RectTransform _cachedTalkUI;
+
+    [SerializeField] private float _talkAnimTime;
+    [SerializeField] private float _talkTime;
+    private float _talkTimer;
+    private bool _talkAnimActive;
+
+    public OptimizedBehaviour _fleetHolder;
     private OptimizedBehaviour _movePoint;
 
     public event Action Selected = delegate { };
     public event Action Deselected = delegate { };
 
+    public bool _isDestoryed;
+
     //UNITY FUNCTIONS
     private void Awake()
     {
-        //Cache
-        layerSet = Helpers.LayerSet;
-        tagSet = Helpers.TagSet;
-        _AImovement = GetComponent<RichAI>();
-        _movement = GetComponent<unit_movement>();
-        _combat = GetComponent<unit_combat>();
-        _subSystemMan = GetComponent<unit_subSystemManager>();
-        _isSquadronType = _unit._isSquadron;
-        _abilityName = _unit._abilityName;
-
-        GameObject mp = Instantiate(OnFly_manager.Instance._onFlyResources._PFonMoveUI, OnFly_manager.Instance.CachedTransform);
-        _movePoint = mp.GetComponent<OptimizedBehaviour>();
-        _movePoint.CachedGameObject.SetActive(false);
-
-        if (CachedGameObject.layer == layerSet.layerPlayerUnit)
-        {
-            SelectionMan.Instance.AvaliableUnits.Add(this);
-        }
-    }  
+        
+    }
+    private void Update()
+    {
+        UpdateTimer();
+    }
 
     private void Start()
     {
-        _target = null;
-        _sizeTag = ((int)_unit.sizeTag);
-        _movement.SetDefaults();
-        _radius = _AImovement.radius;
-
-        _fleetHolder = GetComponentInParent<OptimizedBehaviour>();
-        _debrisHolder = DebrisHolder.Instance.HolderGO;
-        //Set Unit to Idle on its spawn Position
-        mission_none();
         
     }
     private void LateUpdate()
@@ -105,11 +97,52 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
 
     private void OnEnable()
     {
+        //Cache
+        layerSet = Helpers.LayerSet;
+        tagSet = Helpers.TagSet;
+        _AImovement = GetComponent<RichAI>();
+        _movement = GetComponent<unit_movement>();
+        _combat = GetComponent<unit_combat>();
+        _subSystemMan = GetComponent<unit_subSystemManager>();
+        _isSquadronType = _unit._isSquadron;
+        _abilityName = _unit._abilityName;
+
+        _isDestoryed = false;
+
+        _talkAnimActive = false;
+        _talkTimer = 0;
+
+        GameObject mp = Instantiate(OnFly_manager.Instance._onFlyResources._PFonMoveUI, OnFly_manager.Instance.CachedTransform);
+        _movePoint = mp.GetComponent<OptimizedBehaviour>();
+        _movePoint.CachedGameObject.SetActive(false);
+
+        if (CachedGameObject.layer == layerSet.layerPlayerUnit)
+        {
+            SelectionMan.Instance.AvaliableUnits.Add(this);
+        }
+        _movement.SetDefaults();
+
         if (_subSystemMan != null)
         {
             _subSystemMan.SubSystemDestroyed += SubsystemDestory;
             _subSystemMan.UnitDestoryed += UnitDestroy;
         }
+        if(_squadMan != null)
+        {
+            _squadMan.SquadMembDestroyed += SubsystemDestory;
+            _squadMan.UnitDestoryed += UnitDestroy;
+        }
+        _target = null;
+        _sizeTag = ((int)_unit.sizeTag);
+        _radius = _unit.unitRadius;
+
+        _fleetHolder = GetComponentInParent<OptimizedBehaviour>();
+        _debrisHolder = DebrisHolder.Instance.HolderGO;
+        //Set Unit to Idle on its spawn Position
+        mission_none();
+
+        _cachedTalkUI = _talkUI.CachedTransform.GetComponent<RectTransform>();
+        _cachedTalkUI.localScale = Vector3.zero;
     }
     private void OnDisable()
     {
@@ -128,6 +161,7 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
     }
     private void UnitDestroy(bool trig)
     {
+        _isDestoryed = true;
         if (CachedGameObject.layer == layerSet.layerPlayerUnit)
         {
             SelectionMan.Instance.AvaliableUnits.Remove(this);
@@ -166,6 +200,35 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         CachedTransform.position += CachedTransform.forward * _idleMultiplier * Time.deltaTime;
     }
 
+    //Unit Speach
+    public void Talk(string str)
+    {
+        _cachedTalkUI.DOScale(Vector3.one, _talkAnimTime);
+        _talkBubble.text = str;
+        _talkAnimActive = true;
+        _talkTimer = _talkTime;
+    }
+    private void TalkOut()
+    {
+        _cachedTalkUI.DOScale(Vector3.zero, _talkAnimTime);
+
+    }
+    private void UpdateTimer()
+    {
+        if (!_talkAnimActive)
+            return;
+        else
+        {
+            _talkTimer -= Time.deltaTime;
+            if (_talkTimer <= 0)
+            {
+                _talkAnimActive = false;
+                TalkOut();
+            }
+        }
+            
+    }
+
     //UNIT MISSIONS
     public void mission_none()
     {
@@ -182,7 +245,7 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         _group = c;
         _AImovement.destination = command_moveMath(moveP);
         _movePoint.CachedTransform.position = moveP;
-
+        Talk("Moving Out");
     }
     public void mission_forceMove(Vector3 moveP)
     {
@@ -205,7 +268,7 @@ public class unit_Manager : OptimizedBehaviour, ISelectable
         _combat.TargetEnemy(target, _targetSS);
         
         _AImovement.destination = command_moveMath(_target.position);
-        
+        Talk("We're going after them");
 
     }
     public void mission_retreat()

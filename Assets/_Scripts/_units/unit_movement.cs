@@ -20,15 +20,14 @@ public class unit_movement : OptimizedBehaviour
 	[SerializeField] private float _attackRange;
 
 	// UNITY FUNCTIONS
-	public void Awake()
-	{
-		_unitM = GetComponent<unit_Manager>();
-		_seeker = GetComponent<Seeker>();
-		_aiCon = GetComponent<RichAI>();
-
+    public void OnEnable()
+    {
+        _unitM = GetComponent<unit_Manager>();
+        _seeker = GetComponent<Seeker>();
+        _aiCon = GetComponent<RichAI>();
     }
 
-	public void Start()
+    public void Start()
 	{
 		layerSet = Helpers.LayerSet;
 		tagSet = Helpers.TagSet;

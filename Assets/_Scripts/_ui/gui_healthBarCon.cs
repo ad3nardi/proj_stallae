@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class gui_healthBarCon : OptimizedBehaviour
 {
+    /*
     [SerializeField] private GameObject _objParent;
     private Transform _tParent;
     
@@ -32,9 +33,9 @@ public class gui_healthBarCon : OptimizedBehaviour
     {
         if (_healthBars.ContainsKey(health))
         {
-            Destroy(_healthBars[health].gameObject);
             _healthBars.Remove(health);
+            Destroy(_healthBars[health].gameObject);
         }
     }
-
+    */
 }

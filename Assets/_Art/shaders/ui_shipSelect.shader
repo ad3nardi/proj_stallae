@@ -33,7 +33,7 @@ Shader "selectWheel"
 
 		
 
-		Tags { "RenderPipeline"="UniversalPipeline" "RenderType"="Opaque" "Queue"="Geometry" }
+		Tags { "RenderPipeline"="UniversalPipeline" "RenderType"="Transparent" "Queue"="Transparent" }
 
 		Cull Back
 		AlphaToMask Off
@@ -155,8 +155,8 @@ Shader "selectWheel"
 			Name "Forward"
 			Tags { "LightMode"="UniversalForwardOnly" }
 
-			Blend One Zero, One Zero
-			ZWrite On
+			Blend SrcAlpha OneMinusSrcAlpha, One OneMinusSrcAlpha
+			ZWrite Off
 			ZTest LEqual
 			Offset 0 , 0
 			ColorMask RGBA
@@ -167,6 +167,7 @@ Shader "selectWheel"
 
 			#pragma multi_compile_instancing
 			#define _RECEIVE_SHADOWS_OFF 1
+			#define _SURFACE_TYPE_TRANSPARENT 1
 			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 120111
 
@@ -225,6 +226,7 @@ Shader "selectWheel"
 
 			CBUFFER_START(UnityPerMaterial)
 			float4 _tint;
+			float4 _albedo_ST;
 			float _speed;
 			float _alphaClip;
 			#ifdef ASE_TESSELLATION
@@ -391,10 +393,10 @@ Shader "selectWheel"
 					#endif
 				#endif
 
-				float2 texCoord21 = IN.ase_texcoord3.xy * float2( 0.9,0.9 ) + float2( 0.05,0.05 );
+				float2 uv_albedo = IN.ase_texcoord3.xy * _albedo_ST.xy + _albedo_ST.zw;
 				float cos19 = cos( sin( ( _TimeParameters.x * _speed ) ) );
 				float sin19 = sin( sin( ( _TimeParameters.x * _speed ) ) );
-				float2 rotator19 = mul( texCoord21 - float2( 0.5,0.5 ) , float2x2( cos19 , -sin19 , sin19 , cos19 )) + float2( 0.5,0.5 );
+				float2 rotator19 = mul( uv_albedo - float2( 0.5,0.5 ) , float2x2( cos19 , -sin19 , sin19 , cos19 )) + float2( 0.5,0.5 );
 				float4 tex2DNode10 = tex2D( _albedo, rotator19 );
 				
 				float3 BakedAlbedo = 0;
@@ -444,6 +446,7 @@ Shader "selectWheel"
 
 			#pragma multi_compile_instancing
 			#define _RECEIVE_SHADOWS_OFF 1
+			#define _SURFACE_TYPE_TRANSPARENT 1
 			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 120111
 
@@ -482,6 +485,7 @@ Shader "selectWheel"
 
 			CBUFFER_START(UnityPerMaterial)
 			float4 _tint;
+			float4 _albedo_ST;
 			float _speed;
 			float _alphaClip;
 			#ifdef ASE_TESSELLATION
@@ -642,10 +646,10 @@ Shader "selectWheel"
 					#endif
 				#endif
 
-				float2 texCoord21 = IN.ase_texcoord2.xy * float2( 0.9,0.9 ) + float2( 0.05,0.05 );
+				float2 uv_albedo = IN.ase_texcoord2.xy * _albedo_ST.xy + _albedo_ST.zw;
 				float cos19 = cos( sin( ( _TimeParameters.x * _speed ) ) );
 				float sin19 = sin( sin( ( _TimeParameters.x * _speed ) ) );
-				float2 rotator19 = mul( texCoord21 - float2( 0.5,0.5 ) , float2x2( cos19 , -sin19 , sin19 , cos19 )) + float2( 0.5,0.5 );
+				float2 rotator19 = mul( uv_albedo - float2( 0.5,0.5 ) , float2x2( cos19 , -sin19 , sin19 , cos19 )) + float2( 0.5,0.5 );
 				float4 tex2DNode10 = tex2D( _albedo, rotator19 );
 				
 
@@ -677,6 +681,7 @@ Shader "selectWheel"
 
 			#pragma multi_compile_instancing
 			#define _RECEIVE_SHADOWS_OFF 1
+			#define _SURFACE_TYPE_TRANSPARENT 1
 			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 120111
 
@@ -716,6 +721,7 @@ Shader "selectWheel"
 
 			CBUFFER_START(UnityPerMaterial)
 			float4 _tint;
+			float4 _albedo_ST;
 			float _speed;
 			float _alphaClip;
 			#ifdef ASE_TESSELLATION
@@ -861,10 +867,10 @@ Shader "selectWheel"
 			{
 				SurfaceDescription surfaceDescription = (SurfaceDescription)0;
 
-				float2 texCoord21 = IN.ase_texcoord.xy * float2( 0.9,0.9 ) + float2( 0.05,0.05 );
+				float2 uv_albedo = IN.ase_texcoord.xy * _albedo_ST.xy + _albedo_ST.zw;
 				float cos19 = cos( sin( ( _TimeParameters.x * _speed ) ) );
 				float sin19 = sin( sin( ( _TimeParameters.x * _speed ) ) );
-				float2 rotator19 = mul( texCoord21 - float2( 0.5,0.5 ) , float2x2( cos19 , -sin19 , sin19 , cos19 )) + float2( 0.5,0.5 );
+				float2 rotator19 = mul( uv_albedo - float2( 0.5,0.5 ) , float2x2( cos19 , -sin19 , sin19 , cos19 )) + float2( 0.5,0.5 );
 				float4 tex2DNode10 = tex2D( _albedo, rotator19 );
 				
 
@@ -896,6 +902,7 @@ Shader "selectWheel"
 
 			#pragma multi_compile_instancing
 			#define _RECEIVE_SHADOWS_OFF 1
+			#define _SURFACE_TYPE_TRANSPARENT 1
 			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 120111
 
@@ -935,6 +942,7 @@ Shader "selectWheel"
 
 			CBUFFER_START(UnityPerMaterial)
 			float4 _tint;
+			float4 _albedo_ST;
 			float _speed;
 			float _alphaClip;
 			#ifdef ASE_TESSELLATION
@@ -1075,10 +1083,10 @@ Shader "selectWheel"
 			{
 				SurfaceDescription surfaceDescription = (SurfaceDescription)0;
 
-				float2 texCoord21 = IN.ase_texcoord.xy * float2( 0.9,0.9 ) + float2( 0.05,0.05 );
+				float2 uv_albedo = IN.ase_texcoord.xy * _albedo_ST.xy + _albedo_ST.zw;
 				float cos19 = cos( sin( ( _TimeParameters.x * _speed ) ) );
 				float sin19 = sin( sin( ( _TimeParameters.x * _speed ) ) );
-				float2 rotator19 = mul( texCoord21 - float2( 0.5,0.5 ) , float2x2( cos19 , -sin19 , sin19 , cos19 )) + float2( 0.5,0.5 );
+				float2 rotator19 = mul( uv_albedo - float2( 0.5,0.5 ) , float2x2( cos19 , -sin19 , sin19 , cos19 )) + float2( 0.5,0.5 );
 				float4 tex2DNode10 = tex2D( _albedo, rotator19 );
 				
 
@@ -1117,6 +1125,7 @@ Shader "selectWheel"
 
 			#pragma multi_compile_instancing
 			#define _RECEIVE_SHADOWS_OFF 1
+			#define _SURFACE_TYPE_TRANSPARENT 1
 			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 120111
 
@@ -1159,6 +1168,7 @@ Shader "selectWheel"
 
 			CBUFFER_START(UnityPerMaterial)
 			float4 _tint;
+			float4 _albedo_ST;
 			float _speed;
 			float _alphaClip;
 			#ifdef ASE_TESSELLATION
@@ -1303,10 +1313,10 @@ Shader "selectWheel"
 			{
 				SurfaceDescription surfaceDescription = (SurfaceDescription)0;
 
-				float2 texCoord21 = IN.ase_texcoord1.xy * float2( 0.9,0.9 ) + float2( 0.05,0.05 );
+				float2 uv_albedo = IN.ase_texcoord1.xy * _albedo_ST.xy + _albedo_ST.zw;
 				float cos19 = cos( sin( ( _TimeParameters.x * _speed ) ) );
 				float sin19 = sin( sin( ( _TimeParameters.x * _speed ) ) );
-				float2 rotator19 = mul( texCoord21 - float2( 0.5,0.5 ) , float2x2( cos19 , -sin19 , sin19 , cos19 )) + float2( 0.5,0.5 );
+				float2 rotator19 = mul( uv_albedo - float2( 0.5,0.5 ) , float2x2( cos19 , -sin19 , sin19 , cos19 )) + float2( 0.5,0.5 );
 				float4 tex2DNode10 = tex2D( _albedo, rotator19 );
 				
 
@@ -1343,6 +1353,7 @@ Shader "selectWheel"
 
 			#pragma multi_compile_instancing
 			#define _RECEIVE_SHADOWS_OFF 1
+			#define _SURFACE_TYPE_TRANSPARENT 1
 			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 120111
 
@@ -1388,6 +1399,7 @@ Shader "selectWheel"
 
 			CBUFFER_START(UnityPerMaterial)
 			float4 _tint;
+			float4 _albedo_ST;
 			float _speed;
 			float _alphaClip;
 			#ifdef ASE_TESSELLATION
@@ -1531,10 +1543,10 @@ Shader "selectWheel"
 			{
 				SurfaceDescription surfaceDescription = (SurfaceDescription)0;
 
-				float2 texCoord21 = IN.ase_texcoord1.xy * float2( 0.9,0.9 ) + float2( 0.05,0.05 );
+				float2 uv_albedo = IN.ase_texcoord1.xy * _albedo_ST.xy + _albedo_ST.zw;
 				float cos19 = cos( sin( ( _TimeParameters.x * _speed ) ) );
 				float sin19 = sin( sin( ( _TimeParameters.x * _speed ) ) );
-				float2 rotator19 = mul( texCoord21 - float2( 0.5,0.5 ) , float2x2( cos19 , -sin19 , sin19 , cos19 )) + float2( 0.5,0.5 );
+				float2 rotator19 = mul( uv_albedo - float2( 0.5,0.5 ) , float2x2( cos19 , -sin19 , sin19 , cos19 )) + float2( 0.5,0.5 );
 				float4 tex2DNode10 = tex2D( _albedo, rotator19 );
 				
 
@@ -1575,27 +1587,27 @@ Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;6;0,0;Float;False;False;-1;
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;7;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;ScenePickingPass;0;7;ScenePickingPass;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;3;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=Picking;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;8;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;DepthNormals;0;8;DepthNormals;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;3;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=DepthNormalsOnly;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;9;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;DepthNormalsOnly;0;9;DepthNormalsOnly;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;3;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=DepthNormalsOnly;False;True;9;d3d11;metal;vulkan;xboxone;xboxseries;playstation;ps4;ps5;switch;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.SamplerNode;10;-341.4588,-77.83948;Inherit;True;Property;_albedo;_albedo;0;0;Create;True;0;0;0;False;0;False;-1;eaeffed0577de7e44ab5ca71d790a7e8;eaeffed0577de7e44ab5ca71d790a7e8;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.ColorNode;12;-246.9369,-257.6427;Inherit;False;Property;_tint;_tint;1;1;[HDR];Create;True;0;0;0;False;0;False;0.04060721,1,0,0;0.02094241,0.4999999,0,0;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.ColorNode;12;-246.9369,-257.6427;Inherit;False;Property;_tint;_tint;1;1;[HDR];Create;True;0;0;0;False;0;False;0.04060721,1,0,0;0.07843138,1.992157,0,0;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;14;-956.6447,212.7331;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SinOpNode;17;-802.298,213.7395;Inherit;False;1;0;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleTimeNode;23;-1140.949,212.902;Inherit;False;1;0;FLOAT;1;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;15;-1107.365,286.4477;Inherit;False;Property;_speed;_speed;2;0;Create;True;0;0;0;False;0;False;1;2.92;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RotatorNode;19;-612.5978,-49.66043;Inherit;True;3;0;FLOAT2;0.5,0.5;False;1;FLOAT2;0.5,0.5;False;2;FLOAT;1;False;1;FLOAT2;0
-Node;AmplifyShaderEditor.TextureCoordinatesNode;21;-893.3416,-51.58578;Inherit;True;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;0.9,0.9;False;1;FLOAT2;0.05,0.05;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.RangedFloatNode;15;-1107.365,286.4477;Inherit;False;Property;_speed;_speed;2;0;Create;True;0;0;0;False;0;False;1;2;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;11;-42.486,-162.0711;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;1;145.5062,0.2819581;Float;False;True;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;selectWheel;2992e84f91cbeb14eab234972e07ea9d;True;Forward;0;1;Forward;8;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;3;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;True;12;all;0;False;True;1;1;False;;0;False;;1;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForwardOnly;False;False;0;;0;0;Standard;23;Surface;0;0;  Blend;0;0;Two Sided;1;0;Forward Only;0;0;Cast Shadows;0;638279717271695555;  Use Shadow Threshold;0;0;Receive Shadows;0;638279717294342490;GPU Instancing;1;0;LOD CrossFade;0;0;Built-in Fog;0;0;DOTS Instancing;0;0;Meta Pass;0;0;Extra Pre Pass;0;0;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Vertex Position,InvertActionOnDeselection;1;0;0;10;False;True;False;True;False;False;True;True;True;True;False;;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;1;145.5062,0.2819581;Float;False;True;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;selectWheel;2992e84f91cbeb14eab234972e07ea9d;True;Forward;0;1;Forward;8;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;3;RenderPipeline=UniversalPipeline;RenderType=Transparent=RenderType;Queue=Transparent=Queue=0;True;5;True;12;all;0;False;True;1;5;False;;10;False;;1;1;False;;10;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;2;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForwardOnly;False;False;0;;0;0;Standard;23;Surface;1;638320522944988965;  Blend;0;0;Two Sided;1;0;Forward Only;0;0;Cast Shadows;0;638279717271695555;  Use Shadow Threshold;0;0;Receive Shadows;0;638279717294342490;GPU Instancing;1;0;LOD CrossFade;0;0;Built-in Fog;0;0;DOTS Instancing;0;0;Meta Pass;0;0;Extra Pre Pass;0;0;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Vertex Position,InvertActionOnDeselection;1;0;0;10;False;True;False;True;False;False;True;True;True;True;False;;False;0
 Node;AmplifyShaderEditor.RangedFloatNode;25;-197.4435,127.1818;Inherit;False;Property;_alphaClip;_alphaClip;3;0;Create;True;0;0;0;False;0;False;0.5;0.5;0;0;0;1;FLOAT;0
-WireConnection;10;1;19;0
+Node;AmplifyShaderEditor.SamplerNode;10;-341.4588,-77.83948;Inherit;True;Property;_albedo;_albedo;0;0;Create;True;0;0;0;False;0;False;-1;eaeffed0577de7e44ab5ca71d790a7e8;aec8e2a9bb13ade4d8a9a968f8b2e951;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.RotatorNode;19;-612.5978,-49.66043;Inherit;True;3;0;FLOAT2;0.5,0.5;False;1;FLOAT2;0.5,0.5;False;2;FLOAT;1;False;1;FLOAT2;0
+Node;AmplifyShaderEditor.TextureCoordinatesNode;21;-893.3416,-51.58578;Inherit;True;0;10;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 WireConnection;14;0;23;0
 WireConnection;14;1;15;0
 WireConnection;17;0;14;0
-WireConnection;19;0;21;0
-WireConnection;19;2;17;0
 WireConnection;11;0;12;0
 WireConnection;11;1;10;0
 WireConnection;1;2;11;0
 WireConnection;1;3;10;4
 WireConnection;1;4;25;0
+WireConnection;10;1;19;0
+WireConnection;19;0;21;0
+WireConnection;19;2;17;0
 ASEEND*/
-//CHKSM=E2302B4EAB28D111F1A4033CCC2F3F303AB644A1
+//CHKSM=6B6A8609FBF51E6431553F9ACC175B991BEED18E

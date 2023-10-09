@@ -34,4 +34,8 @@ public interface ITargetable
     {
         return null;
     }
+    public float GetMaxHP()
+    {
+        return 0;
+    }
 }

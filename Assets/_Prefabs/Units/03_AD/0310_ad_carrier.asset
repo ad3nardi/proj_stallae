@@ -21,13 +21,13 @@ MonoBehaviour:
   hasSubSystems: 1
   hasShields: 0
   unitPointCost: 2
-  unitMaxHitPoints: 1000
+  unitMaxHitPoints: 10000
   untMaxShields: 2
-  unitAttackRange: 100
+  unitAttackRange: 300
   unitFireRate: 2
   unitSubSystems: []
-  unitRadius: 10
-  unitHeight: 2
+  unitRadius: 50
+  unitHeight: 5
   unitMaxSpeed: 5
   unitAcceleration: 30
   unitRotationSpeed: 10

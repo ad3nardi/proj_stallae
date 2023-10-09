@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
+using System;
+using DG.Tweening;
 
 public class StorylineManager : OptimizedBehaviour
 {
@@ -21,12 +23,14 @@ public class StorylineManager : OptimizedBehaviour
 
     [Header("UI Elements")]
     [SerializeField] private OptimizedBehaviour _convoObj;
+    [SerializeField] private RectTransform _convoRT;
     [SerializeField] private TextMeshProUGUI _convoTextBox;
     [SerializeField] private Image _convoImage;
 
     private void Awake()
     {
         _convoObj.CachedGameObject.SetActive(true);
+        _convoRT = _convoObj.CachedGameObject.GetComponent<RectTransform>();
         _convoTextBox.text = string.Empty;
         _convoTime = 0f;
 
@@ -77,6 +81,8 @@ public class StorylineManager : OptimizedBehaviour
     public void PlayConvo(so_storylines convo)
     {
         _convoObj.CachedGameObject.SetActive(true);
+        _convoRT.localScale= Vector3.zero;
+        _convoRT.DOScale(Vector3.one, 0.5f);
         _lineIndex = 0;
         _curConvo = convo;
         _convoImage.sprite = convo._image[_lineIndex];

@@ -68,6 +68,10 @@ public class enem_battlegroupMan : OptimizedBehaviour
     [SerializeField] private float _lvlEnemIsolate;
     [SerializeField] private float _lvlEnemFriends;
 
+    public float changeTarTime;
+    public float changeTarTimer;
+    public bool readySpawn;
+
     private void Awake()
     {
         layerSet = Helpers.LayerSet;
@@ -95,16 +99,22 @@ public class enem_battlegroupMan : OptimizedBehaviour
 
     private void Update()
     {
-        UpdateBandRangeCheck();
-        UpdateZoneFrontCheck();
-        UpdateZoneFlankCheck();
-
-        if (_moveOut)
+        if (readySpawn)
         {
-            RecenterBattlegroup();
+            UpdateBandRangeCheck();
+            UpdateZoneFrontCheck();
+            UpdateZoneFlankCheck();
+
+            if (_moveOut)
+            {
+                RecenterBattlegroup();
+            }
+            UpdateThresholds();
+            UpdateOrders();
         }
-        UpdateThresholds();
-        UpdateOrders();
+        else
+            return;
+        
     }
 
     private void OnDrawGizmos()
@@ -154,6 +164,7 @@ public class enem_battlegroupMan : OptimizedBehaviour
             _unitsM.Add(go.GetComponent<unit_Manager>());
             _unitsEM[i]._bgMan = this;
         }
+        readySpawn = true;
     }
 
     //Battlegroup Self Functions

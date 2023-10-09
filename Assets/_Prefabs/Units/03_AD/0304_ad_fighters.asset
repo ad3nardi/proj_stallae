@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77d85e003abd7e141bf9d7a64957905f, type: 3}
+  m_Name: 0304_ad_fighters
+  m_EditorClassIdentifier: 
+  id: 304
+  title: 
+  faction: 2
+  sizeTag: 1
+  canAttack: 1
+  _isSquadron: 1
+  hasSubSystems: 0
+  hasShields: 0
+  unitPointCost: 100
+  unitMaxHitPoints: 2
+  untMaxShields: 2
+  unitAttackRange: 2
+  unitFireRate: 2
+  unitSubSystems: []
+  unitRadius: 4
+  unitHeight: 2
+  unitMaxSpeed: 30
+  unitAcceleration: 40
+  unitRotationSpeed: 100
+  unitSlowdownTime: 0.5
+  unitWallForce: 2
+  unitWallDist: 0.2
+  unitEndReachedDistance: 0.1
+  unitCheckDistance: 10
+  _abilityName: Blink Forward
+  abCooldownTime: 20
+  abActiveTime: 1
+  abNeedsTarget: 0
+  debris: {fileID: 8830631683938474719, guid: 150bf4454b26ef0458ec26be1e6c890f, type: 3}
+  debrisHull: {fileID: 8830631683938474719, guid: 150bf4454b26ef0458ec26be1e6c890f,
+    type: 3}
+  vfx_subExplosion: {fileID: 4419560186194554993, guid: a1716ce5f65c5ff46904d51f0b1714cb,
+    type: 3}

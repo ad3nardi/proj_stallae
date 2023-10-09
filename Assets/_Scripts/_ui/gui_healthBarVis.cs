@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class gui_healthBarVis : OptimizedBehaviour
 {
+    /*
     [SerializeField] private Camera _cam;
     [SerializeField] private Image _foregroundImage; 
     [SerializeField] private float _updateSpeedSeconds = 0.5f; 
@@ -25,9 +26,12 @@ public class gui_healthBarVis : OptimizedBehaviour
 
     private void HandleHealthChanged(float pct)
     {
-        StartCoroutine(ChangeToPct(pct));
-    }
+        //StartCoroutine(ChangeToPct(pct));
 
+        _foregroundImage.fillAmount = pct;
+
+    }
+    /*
     private IEnumerator ChangeToPct(float pct)
     {
         float preChangePct = _foregroundImage.fillAmount;
@@ -40,16 +44,17 @@ public class gui_healthBarVis : OptimizedBehaviour
             yield return null;
         }
         _foregroundImage.fillAmount = pct;
-        Debug.Log(pct);
     }
+    
 
     private void LateUpdate()
     {
-        CachedTransform.position = _cam.WorldToScreenPoint(_health.CachedTransform.position + Vector3.up * _posOffset);
+        //CachedTransform.position = _cam.WorldToScreenPoint(_health.CachedTransform.position + Vector3.up * _posOffset);
     }
 
     private void OnDestroy()
     {
         _health.OnHealthPctChanged -= HandleHealthChanged;
     }
+    */
 }

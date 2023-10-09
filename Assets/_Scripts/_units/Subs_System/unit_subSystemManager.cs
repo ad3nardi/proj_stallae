@@ -14,6 +14,7 @@ public class unit_subSystemManager : OptimizedBehaviour, ITargetable
 
     public bool[] _activeSubsytems = new bool[6];
     public float[] _subSystemHP = new float[6];
+    private float _totalSubsytems;
 
     public float _activeSSCount;
     public event Action<float, float> SetMaxHealth = delegate { };
@@ -36,6 +37,7 @@ public class unit_subSystemManager : OptimizedBehaviour, ITargetable
                 _subsystems[i]._activeSubsytem = true;
             }
         }
+        _totalSubsytems = _activeSSCount;
     }
     private void OnEnable()
     {
@@ -104,8 +106,8 @@ public class unit_subSystemManager : OptimizedBehaviour, ITargetable
 
     }
 
-    public void MoveSpeedChange(float pct)
+    public float GetMaxHP()
     {
-        pct = pct;
+        return _maxHP/ _totalSubsytems;
     }
 }

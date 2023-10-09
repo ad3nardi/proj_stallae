@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5522f2fa361ac564ca9977bb8c0aeed3, type: 3}
+  m_Name: Battlegroup-SuperCarrier
+  m_EditorClassIdentifier: 
+  _unitsList:
+  - {fileID: 295633647114440648, guid: a6ee23c5b7e10bc42a0e5213ee6a0142, type: 3}
+  _aggro: 10
+  _spread: 30
+  _enemCountZone: 0
+  _zoneOffsetPos: {x: 0, y: 0, z: 170}
+  _zonetOffsetRot: {x: 0, y: 0, z: 0}
+  _zoneOffsetScale: {x: 50, y: 5, z: 30}
+  _flankCheckSize: 0
+  _checkLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  _checkRangeBandOne: 150
+  _checkRangeBandTwo: 75
+  _checkRangeBandThree: 30
+  _enemFriendsCheckRange: 25
+  _enemIsolationCheckRange: 50
+  _spawnOffset: 30
+  _spreadRadius: 100
+  _targetWeight: 0
+  _toCommonPoint: 0
+  _toFarPoint: 0
+  _toFleet: 0
+  _squadronns: 0
+  _outerRange: 0
+  _targets: 0
+  _adjEnemNear: 100
+  _adjEnemIsolate: 100
+  _adjEnemFriends: 100
+  _threshEngage: 100
+  _threshEnemNear: 30
+  _threshEnemIsolate: 100
+  _threshEnemFriends: 100

@@ -6,9 +6,13 @@ using UnityEngine;
 
 public class ui_commandCon : OptimizedBehaviour
 {
-    private RectTransform cachedRectTransform;
-    private Vector3 animPos;
-    private Vector3 negAnimPos;
+    [SerializeField] private RectTransform cachedRectTransform;
+    [SerializeField] private Vector3 animPos;
+    [SerializeField] private Vector3 negAnimPos;
+
+    [SerializeField] private OptimizedBehaviour _quickMenu;
+    [SerializeField] private OptimizedBehaviour _moveMenu;
+    [SerializeField] private OptimizedBehaviour _attackMenu;
 
     [SerializeField] private float animTime;
 
@@ -23,19 +27,32 @@ public class ui_commandCon : OptimizedBehaviour
     private void Awake()
     {
         cachedRectTransform = GetComponent<RectTransform>();
-        animPos = cachedRectTransform.localPosition;
-        negAnimPos = new Vector3(animPos.x - 400f, animPos.y, animPos.z);
-        cachedRectTransform.DOMove(negAnimPos, animTime);
+        cachedRectTransform.position = negAnimPos;
     }
 
-    private void OnEnable()
+    public void quickMenu()
     {
-        UpdateFields();
-        
+        _quickMenu.CachedGameObject.SetActive(true);
+        _moveMenu.CachedGameObject.SetActive(false);
+        _attackMenu.CachedGameObject.SetActive(false);
     }
-    private void UpdateFields()
+
+    public void moveMenu()
     {
-        cachedRectTransform.DOMove(animPos, animTime);
+        _quickMenu.CachedGameObject.SetActive(false);
+        _moveMenu.CachedGameObject.SetActive(true);
+        _attackMenu.CachedGameObject.SetActive(false);
+    }
+
+    public void attackMenu()
+    {
+        _quickMenu.CachedGameObject.SetActive(false);
+        _moveMenu.CachedGameObject.SetActive(false);
+        _attackMenu.CachedGameObject.SetActive(true);
+    }
+    public void ActIn()
+    {
+        cachedRectTransform.DOLocalMove(animPos, animTime);
         if (SelectionMan.Instance.SelectedUnits.Count > 0)
         {
             _missionName.text = SelectionMan.Instance.SelectedUnits[0]._cMission.ToString();
@@ -62,9 +79,9 @@ public class ui_commandCon : OptimizedBehaviour
 
     }
 
-    private void OnDisable()
+    public void ActOut()
     {
-        cachedRectTransform.DOMove(animPos, animTime);
+        cachedRectTransform.DOLocalMove(negAnimPos, animTime);
 
     }
 }

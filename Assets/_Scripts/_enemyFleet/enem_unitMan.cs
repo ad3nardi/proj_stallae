@@ -48,9 +48,9 @@ public class enem_unitMan : OptimizedBehaviour
     public void Update()
     {
         UpdateOrders();
-        
+        _unitM.ActivateAbility();
     }
-
+   
     public void UpdateOrdersType(OrdersBeh orderBeh)
     {
         _orders = orderBeh;
@@ -104,7 +104,7 @@ public class enem_unitMan : OptimizedBehaviour
         //Choose random sub-system from target's list -ssi- if not designated
         ITargetable iTarget = target.CachedGameObject.GetComponent(typeof(ITargetable)) as ITargetable;
 
-        GetTargetInfo(iTarget, iTarget.GetUnitHealth(), iTarget.GetActive(), iTarget.GetHP());
+        GetTargetInfo(iTarget.GetUnitHealth(), iTarget.GetActive(), iTarget.GetHP());
     }
 
     public void EngageDirect()
@@ -112,7 +112,7 @@ public class enem_unitMan : OptimizedBehaviour
         _unitM.mission_attack(_targetT, _targetUnitSS, _targetP, _id, _count);
     }
 
-    public void GetTargetInfo(ITargetable target, float shipHP, bool[] actSS, float[] ssHP)
+    public void GetTargetInfo(float shipHP, bool[] actSS, float[] ssHP)
     {
         _targetUnitSS = UnityEngine.Random.Range(0, 5);
         if(actSS[_targetUnitSS] != true)
@@ -149,7 +149,7 @@ public class enem_unitMan : OptimizedBehaviour
 
         ITargetable iTarget = (ITargetable)target.CachedGameObject.GetComponent(typeof(ITargetable)) as ITargetable;
 
-        GetTargetInfo(iTarget, iTarget.GetUnitHealth(), iTarget.GetActive(), iTarget.GetHP());
+        GetTargetInfo(iTarget.GetUnitHealth(), iTarget.GetActive(), iTarget.GetHP());
     }
 
     private void EngageFlankMove()

@@ -13,13 +13,15 @@ MonoBehaviour:
   m_Name: 0103_ff_bomber
   m_EditorClassIdentifier: 
   id: 103
+  title: 
   faction: 0
   sizeTag: 1
   canAttack: 1
+  _isSquadron: 0
   hasSubSystems: 0
   hasShields: 0
   unitPointCost: 1
-  unitMaxHitPoints: 5
+  unitMaxHitPoints: 50
   untMaxShields: 0
   unitAttackRange: 3
   unitFireRate: 3.69
@@ -34,7 +36,8 @@ MonoBehaviour:
   unitWallDist: 0.2
   unitEndReachedDistance: 0.1
   unitCheckDistance: 5
-  abCooldownTime: 0
+  _abilityName: Bomb Drop
+  abCooldownTime: 15
   abActiveTime: 0
   abNeedsTarget: 0
   debris: {fileID: 8830631683938474719, guid: 150bf4454b26ef0458ec26be1e6c890f, type: 3}

@@ -191,6 +191,8 @@ Material:
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DirectionalLightIntensity: 0
+    - _DistCamDF: 20
+    - _DitherSize: 0.2
     - _DoubleSidedOutline: 1
     - _DstBlend: 0
     - _DynamicNoisyOutline: 0
@@ -214,6 +216,7 @@ Material:
     - _Glow_Edge_Width: 1
     - _HighlightColorPower: 1
     - _JiggleStrength: 0.05
+    - _LengthCamDF: 10
     - _LigIgnoYNorDir: 0
     - _LightAffectOutlineColor: 0
     - _LightAffectRimLightColor: 0

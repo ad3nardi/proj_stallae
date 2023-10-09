@@ -135,8 +135,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _albedo:
-        m_Texture: {fileID: 2800000, guid: eaeffed0577de7e44ab5ca71d790a7e8, type: 3}
-        m_Scale: {x: 5, y: 5}
+        m_Texture: {fileID: 2800000, guid: aec8e2a9bb13ade4d8a9a968f8b2e951, type: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _circleMask:
         m_Texture: {fileID: 2800000, guid: 2aa13f862ae057c4e83178f37359fdbb, type: 3}
@@ -341,5 +341,5 @@ Material:
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _XYZPosition: {r: 0, g: 0, b: 0, a: 0}
     - _albedoTint: {r: 1, g: 1, b: 1, a: 0}
-    - _tint: {r: 0.020942407, g: 0.49999994, b: 0, a: 0}
+    - _tint: {r: 0.078431375, g: 1.9921569, b: 0, a: 0}
   m_BuildTextureStacks: []

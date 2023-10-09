@@ -211,7 +211,7 @@ MonoBehaviour:
   RaycastDirectionSpace: 0
   Layers:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 8192
   MaxDistance: 500
 --- !u!1 &2070941216722696755
 GameObject:

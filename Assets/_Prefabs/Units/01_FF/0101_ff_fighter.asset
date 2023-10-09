@@ -13,13 +13,15 @@ MonoBehaviour:
   m_Name: 0101_ff_fighter
   m_EditorClassIdentifier: 
   id: 101
+  title: 
   faction: 0
   sizeTag: 1
   canAttack: 1
+  _isSquadron: 0
   hasSubSystems: 0
   hasShields: 0
   unitPointCost: 1
-  unitMaxHitPoints: 5
+  unitMaxHitPoints: 30
   untMaxShields: 0
   unitAttackRange: 3
   unitFireRate: 3.69
@@ -34,8 +36,9 @@ MonoBehaviour:
   unitWallDist: 0.2
   unitEndReachedDistance: 0.1
   unitCheckDistance: 5
-  abCooldownTime: 0
-  abActiveTime: 0
+  _abilityName: Charge Weapons
+  abCooldownTime: 12
+  abActiveTime: 3
   abNeedsTarget: 0
   debris: {fileID: 8830631683938474719, guid: 150bf4454b26ef0458ec26be1e6c890f, type: 3}
   debrisHull: {fileID: 8830631683938474719, guid: 150bf4454b26ef0458ec26be1e6c890f,

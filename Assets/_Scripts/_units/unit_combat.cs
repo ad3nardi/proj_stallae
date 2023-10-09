@@ -44,6 +44,8 @@ public class unit_combat : OptimizedBehaviour
         _fireRate = _unitM._unit.unitFireRate;
         _atkRange = _unitM._unit.unitAttackRange;
         _useAutoTarget = false;
+        
+        
     }
     private void Start()
     {
@@ -151,7 +153,7 @@ public class unit_combat : OptimizedBehaviour
             for (int i = 0; i < _weaponsPos.Count; i++)
             {
                 _weaponsPos[i].LookAt(_target);
-                
+                /*
                 if (_weaponAlign[i].x == 1)
                 {
                     if (_weaponsPos[i].rotation.y > 140f)
@@ -187,6 +189,7 @@ public class unit_combat : OptimizedBehaviour
                     if (_weaponsPos[i].rotation.y < 315f)
                         _weaponsPos[i].rotation = Quaternion.Euler(_weaponsPos[i].rotation.x, 30f, _weaponsPos[i].rotation.z);
                 }
+                */
                 
             }
         }

@@ -135,8 +135,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _albedo:
-        m_Texture: {fileID: 2800000, guid: eaeffed0577de7e44ab5ca71d790a7e8, type: 3}
-        m_Scale: {x: 5, y: 5}
+        m_Texture: {fileID: 2800000, guid: aec8e2a9bb13ade4d8a9a968f8b2e951, type: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _circleMask:
         m_Texture: {fileID: 2800000, guid: 2aa13f862ae057c4e83178f37359fdbb, type: 3}
@@ -318,6 +318,7 @@ Material:
     - _VertexColorRedControlSmoothObjectNormal: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
+    - _alphaClip: 0.5
     - _speed: 0.5
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}

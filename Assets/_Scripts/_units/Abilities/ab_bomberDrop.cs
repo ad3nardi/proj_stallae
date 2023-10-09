@@ -2,17 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ab_bomberDrop : MonoBehaviour
+public class ab_bomberDrop : OptimizedBehaviour, IAbility
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private float _cdTime, _cdTimer;
+    [SerializeField] private GameObject _bomb;
+
+    public void Activate()
     {
-        
+        if(_cdTimer <= 0)
+        {
+            Instantiate(_bomb);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Target()
     {
-        
+
+    }
+
+    public void End()
+    {
+
+    }
+
+    public float GetCooldownTime()
+    {
+        return 0;
+    }
+
+    public float GetCooldownTimer()
+    {
+        return 0;
     }
 }

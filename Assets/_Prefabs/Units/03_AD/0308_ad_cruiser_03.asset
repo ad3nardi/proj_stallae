@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: 0308_ad_cruiser_03
   m_EditorClassIdentifier: 
   id: 307
+  title: 
   faction: 2
   sizeTag: 3
   canAttack: 1
@@ -20,10 +21,10 @@ MonoBehaviour:
   hasSubSystems: 1
   hasShields: 1
   unitPointCost: 1
-  unitMaxHitPoints: 1500
+  unitMaxHitPoints: 150
   untMaxShields: 0
-  unitAttackRange: 100
-  unitFireRate: 3
+  unitAttackRange: 60
+  unitFireRate: 1.5
   unitSubSystems: []
   unitRadius: 7
   unitHeight: 2
@@ -35,7 +36,8 @@ MonoBehaviour:
   unitWallDist: 0.2
   unitEndReachedDistance: 0.1
   unitCheckDistance: 35
-  abCooldownTime: 0
+  _abilityName: Launch Torpedo
+  abCooldownTime: 15
   abActiveTime: 0
   abNeedsTarget: 0
   debris: {fileID: 8830631683938474719, guid: 150bf4454b26ef0458ec26be1e6c890f, type: 3}

@@ -11,6 +11,14 @@ public class ui_unit_manager : OptimizedBehaviour
     {
         _selectionMan = SelectionMan.Instance;
     }
+    public void uiSelectAll()
+    {
+        _selectionMan.SelectAll();
+    }
+    public void uiDeselectAll()
+    {
+        _selectionMan.DeselectAll();
+    }
     public void uiSetStop()
     {
         int count = _selectionMan.SelectedUnits.Count;
@@ -20,8 +28,8 @@ public class ui_unit_manager : OptimizedBehaviour
             for (int i = 0; i < count; i++)
             {
                 _selectionMan.SelectedUnits[i].mission_stop();
-                _selectionMan.DeselectAll();
             }
+                _selectionMan.DeselectAll();
         }
         else
             return;
@@ -72,5 +80,11 @@ public class ui_unit_manager : OptimizedBehaviour
         {
             SelectionMan.Instance.SelectedUnits[0].ActivateAbility();
         }
+    }
+
+    public void uiSelect(unit_Manager um)
+    {
+        _selectionMan.DeselectAll();
+        _selectionMan.Select(um);
     }
 }

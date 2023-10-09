@@ -11,6 +11,7 @@ using UnityEngine.UI;
 
 public class player_manager : OptimizedBehaviour
 {
+    
     [Header("Plugins")]
     [SerializeField] private Camera _cam;
     [SerializeField] private LayerSet _layerSet;
@@ -299,4 +300,5 @@ public class player_manager : OptimizedBehaviour
         }
         SelectionMan.Instance.DeselectAll();
     }
+    
 }

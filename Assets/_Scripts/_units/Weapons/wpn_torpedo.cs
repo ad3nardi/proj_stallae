@@ -25,7 +25,6 @@ public class wpn_torpedo : OptimizedBehaviour
     {
 
         _damageTargets = new List<unit_subsystem>();
-        _parentPool = GetComponentInParent<objectPooling>();
     }
     private void Start()
     {
@@ -65,6 +64,6 @@ public class wpn_torpedo : OptimizedBehaviour
         {
             _damageTargets[i].ModifyHealth(-_damage);
         }
-        _parentPool.ReturnObject(this);
+        Destroy(this);
     }
 }

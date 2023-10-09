@@ -22,6 +22,8 @@ public class SelectionMan
     }
     public List<unit_Manager> SelectedUnits = new List<unit_Manager>();
     public List<unit_Manager> AvaliableUnits = new List<unit_Manager>();
+
+    public unit_Manager valeria;
     private SelectionMan() { }
     public void Select(unit_Manager unit)
     {
@@ -35,11 +37,23 @@ public class SelectionMan
     }
     public void DeselectAll()
     {
-        foreach (unit_Manager unit in SelectedUnits)
+        for (int i = 0; i < SelectedUnits.Count; i++)
         {
-            unit.Deselect();
+            SelectedUnits[i].Deselect();
         }
         SelectedUnits.Clear();
+    }
+    public void SelectAll()
+    {
+        DeselectAll();
+        for (int i = 0; i < AvaliableUnits.Count; i++)
+        {
+            if (AvaliableUnits[i] == valeria)
+            {
+                continue;
+            }
+            Select(AvaliableUnits[i]);
+        }
     }
     public bool IsSelected(unit_Manager unit)
     {

@@ -9,18 +9,22 @@ public class ui_guiCon : OptimizedBehaviour
     [SerializeField] public TagSet tagSet;
 
     [SerializeField] private OptimizedBehaviour _pauseMenu;
+    [SerializeField] private OptimizedBehaviour _winMenu;
+    [SerializeField] private OptimizedBehaviour _loseMenu;
     [SerializeField] private GameObject _objGUI;
     [SerializeField] private GameObject _objSelectionBox;
     [SerializeField] private GameObject _objAttackUI;
     [SerializeField] private GameObject _objTimer;
-    [SerializeField] private GameObject _objCommandCon;
     [SerializeField] private camera_con _cameraController;
 
     private TextMeshProUGUI _tmpTimer;
 
     private GameObject _pauseMenuGO;
 
-    private OptimizedBehaviour _commandCon;
+    [SerializeField] private ui_commandCon _commandCon;
+    [SerializeField] private ui_shipInfo _shipInfo;
+
+    private bool _commandsActive;
     private bool _isPaused;
 
     private void Awake()
@@ -30,7 +34,6 @@ public class ui_guiCon : OptimizedBehaviour
         _isPaused = false;
 
         _tmpTimer = _objTimer.GetComponent<TextMeshProUGUI>();
-        _commandCon = _objCommandCon.GetComponent<OptimizedBehaviour>();
     }
 
     private void Start()
@@ -44,12 +47,25 @@ public class ui_guiCon : OptimizedBehaviour
 
         _pauseMenuGO.gameObject.SetActive(false);
 
-        _commandCon.CachedGameObject.SetActive(false);
+        _commandsActive = false;
     }
     private void Update()
     {
         UpdateTimer();
         UpdateCommandConsole();
+    }
+
+    public void WinScreen()
+    {
+        _winMenu.CachedGameObject.SetActive(true);
+        PauseTime();
+    }
+
+    public void LoseScreen()
+    {
+            _loseMenu.CachedGameObject.SetActive(true);
+            PauseTime();
+
     }
 
     public void UpdateTimer()
@@ -62,19 +78,26 @@ public class ui_guiCon : OptimizedBehaviour
     {
         if (SelectionMan.Instance.SelectedUnits.Count > 0)
         {
-            if (!_commandCon.CachedGameObject.activeSelf)
+            if (!_commandsActive)
             {
-                _commandCon.CachedGameObject.SetActive(true);
+                _commandCon.ActIn();
+                _shipInfo.ActIn();
+                _commandsActive = true;
             }
             else
                 return;
+
         }
-        if (SelectionMan.Instance.SelectedUnits.Count <= 0)
+        else if (SelectionMan.Instance.SelectedUnits.Count <= 0)
         {
-            if (_commandCon.CachedGameObject.activeSelf)
+            if (_commandsActive)
             {
-                _commandCon.CachedGameObject.SetActive(false);
+                _commandCon.ActOut();
+                _shipInfo.ActOut();
+                _commandsActive = false;
             }
+            else
+                return;
         }
     }
 

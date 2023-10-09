@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class ui_menu_Con : MonoBehaviour
 {
     [SerializeField] private int _menuMain;
+    [SerializeField] private int _demoScene;
 
     
 
@@ -14,6 +15,11 @@ public class ui_menu_Con : MonoBehaviour
     public void GoToMenuMain()
     {
         SceneManager.LoadScene(_menuMain);
+    }
+
+    public void LoadGameDemoScene()
+    {
+        SceneManager.LoadScene(_demoScene);
     }
 
     public void Options()

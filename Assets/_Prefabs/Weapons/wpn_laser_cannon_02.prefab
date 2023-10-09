@@ -111,6 +111,8 @@ GameObject:
   - component: {fileID: 1941815680946216270}
   - component: {fileID: 276113316870436829}
   - component: {fileID: 5085782041490475299}
+  - component: {fileID: 9129695233625229303}
+  - component: {fileID: 5723123030557534691}
   m_Layer: 0
   m_Name: barrel.r
   m_TagString: Untagged
@@ -237,6 +239,12 @@ VisualEffect:
       - m_Value: {x: 0, y: 0, z: 2.75}
         m_Name: Pos Offset
         m_Overridden: 1
+      - m_Value: {x: 0, y: 0, z: 0}
+        m_Name: HitPosition_position
+        m_Overridden: 1
+      - m_Value: {x: 0, y: 0, z: 0}
+        m_Name: RayDirection_direction
+        m_Overridden: 1
     m_Vector4f:
       m_Array:
       - m_Value: {x: 0.13056679, y: 4.987652, z: 0, w: 0}
@@ -261,7 +269,10 @@ VisualEffect:
     m_NamedObject:
       m_Array: []
     m_Bool:
-      m_Array: []
+      m_Array:
+      - m_Value: 0
+        m_Name: Hit
+        m_Overridden: 1
 --- !u!73398921 &5085782041490475299
 VFXRenderer:
   serializedVersion: 1
@@ -302,6 +313,47 @@ VFXRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &9129695233625229303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4198551092723270911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdafc37f32b176349b1684c4455b98e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ExecuteInEditor: 1
+  m_Bindings:
+  - {fileID: 5723123030557534691}
+  m_VisualEffect: {fileID: 276113316870436829}
+--- !u!114 &5723123030557534691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4198551092723270911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d51d0c138bfbbe049917ff3ba4ea5221, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TargetPosition:
+    m_Name: HitPosition
+  m_TargetNormal:
+    m_Name: RayDirection
+  m_TargetHit:
+    m_Name: Hit
+  RaycastSource: {fileID: 4198551092723270911}
+  RaycastDirection: {x: 0, y: 0, z: 1}
+  RaycastDirectionSpace: 0
+  Layers:
+    serializedVersion: 2
+    m_Bits: 8192
+  MaxDistance: 500
 --- !u!1 &7171413853128837067
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,6 +367,8 @@ GameObject:
   - component: {fileID: 3786846143494187324}
   - component: {fileID: 866061467245553705}
   - component: {fileID: 297948608271303071}
+  - component: {fileID: 571970790299048843}
+  - component: {fileID: 6988996009209222463}
   m_Layer: 0
   m_Name: barrel.l
   m_TagString: Untagged
@@ -441,6 +495,12 @@ VisualEffect:
       - m_Value: {x: 0, y: 0, z: 2.75}
         m_Name: Pos Offset
         m_Overridden: 1
+      - m_Value: {x: 0, y: 0, z: 0}
+        m_Name: HitPosition_position
+        m_Overridden: 1
+      - m_Value: {x: 0, y: 0, z: 0}
+        m_Name: RayDirection_direction
+        m_Overridden: 1
     m_Vector4f:
       m_Array:
       - m_Value: {x: 0.13056679, y: 4.987652, z: 0, w: 0}
@@ -465,7 +525,10 @@ VisualEffect:
     m_NamedObject:
       m_Array: []
     m_Bool:
-      m_Array: []
+      m_Array:
+      - m_Value: 0
+        m_Name: Hit
+        m_Overridden: 1
 --- !u!73398921 &297948608271303071
 VFXRenderer:
   serializedVersion: 1
@@ -506,3 +569,44 @@ VFXRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &571970790299048843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7171413853128837067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdafc37f32b176349b1684c4455b98e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ExecuteInEditor: 1
+  m_Bindings:
+  - {fileID: 6988996009209222463}
+  m_VisualEffect: {fileID: 866061467245553705}
+--- !u!114 &6988996009209222463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7171413853128837067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d51d0c138bfbbe049917ff3ba4ea5221, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TargetPosition:
+    m_Name: HitPosition
+  m_TargetNormal:
+    m_Name: RayDirection
+  m_TargetHit:
+    m_Name: Hit
+  RaycastSource: {fileID: 7171413853128837067}
+  RaycastDirection: {x: 0, y: 0, z: 1}
+  RaycastDirectionSpace: 0
+  Layers:
+    serializedVersion: 2
+    m_Bits: 8192
+  MaxDistance: 500

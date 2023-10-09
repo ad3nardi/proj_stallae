@@ -2,14 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class ms_capPoints : missionStructure
+public class ms_capPoints : OptimizedBehaviour
 {
     [Header("Plugins")]
     [SerializeField] private TagSet _tagSet;
     [SerializeField] private LayerSet _layerSet;
+
+    [SerializeField] private float _fill;
+    [SerializeField] private Image _img;
     [Header("Settings")]
-    [SerializeField] private bool _taken;
+    [SerializeField] public bool _taken;
     [SerializeField] private float _size;
     [SerializeField] private float _progress;
     [SerializeField] private float _maxTime;
@@ -19,18 +23,26 @@ public class ms_capPoints : missionStructure
     [SerializeField] private float _countBacktimer;
     [SerializeField] private LayerMask _layerMask;
 
+    [SerializeField] private OptimizedBehaviour _valeria;
+
+    public event Action<bool> OnCapturePointTaken = delegate { };
+
+
+    /*
     public static event Action<ms_capPoints> OnPctAdded = delegate { };
     public static event Action<ms_capPoints> OnPctRemoved = delegate { };
     public event Action<float> OnProgressPctChanged = delegate { };
     public event Action<float> OnProgressChanged = delegate { };
     public event Action<bool> OnCapturePointTaken = delegate { };
-
+    */
     private void Start()
     {
+
         _tagSet = Helpers.TagSet;
         _layerSet = Helpers.LayerSet;
 
-        _timer = 0;
+        _img.fillAmount = 0f;
+        _timer = 0f;
         ResetTimer();
     }
 
@@ -43,21 +55,17 @@ public class ms_capPoints : missionStructure
     public void ResetTimer()
     {
         _timer = 0;
-        OnPctAdded(this);
     }
     private void UpdateCheckCollision()
     {
         if (!_taken)
         {
-            bool playerPresent = Physics.OverlapSphere(CachedTransform.position, _size, _layerMask).Length > 0;
-            if (playerPresent)
-            {
-                ModifyProgress();
-            }
-            if (!playerPresent)
-            {
-                UpdateCountBack();
-            }
+
+                if (Vector3.Distance(_valeria.CachedTransform.position, CachedTransform.position) <= _size)
+                {
+                    ModifyProgress();
+                }
+
         }
     }
 
@@ -81,20 +89,25 @@ public class ms_capPoints : missionStructure
             _countBack += Time.deltaTime * _countBackRate;
         }
     }
-
+    
     public void ModifyProgress()
     {
         _timer += Time.deltaTime;
-        float curProgressPct = _timer / _maxTime;
+        _fill = _timer / _maxTime;
+        _img.fillAmount= _fill;
 
-        OnProgressPctChanged(curProgressPct);
-        OnProgressChanged(_timer);
-        if (_timer >= 0)
+
+        if (_fill < 1)
         {
-            OnCapturePointTaken(false);
+            _taken = (false);
+            OnCapturePointTaken(_taken);
         }
-        else
-            OnCapturePointTaken(true);
+        else if (_fill >= 1)
+        {
+            _taken = (true);
+            OnCapturePointTaken(_taken);
+
+        }
     }
 
     private void OnDrawGizmos()

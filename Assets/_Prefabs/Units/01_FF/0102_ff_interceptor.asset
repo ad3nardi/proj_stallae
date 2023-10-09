@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: 0102_ff_interceptor
   m_EditorClassIdentifier: 
   id: 102
+  title: Royal Interceptor Squadron
   faction: 0
   sizeTag: 1
   canAttack: 1
@@ -20,14 +21,14 @@ MonoBehaviour:
   hasSubSystems: 0
   hasShields: 0
   unitPointCost: 1
-  unitMaxHitPoints: 5
+  unitMaxHitPoints: 40
   untMaxShields: 0
   unitAttackRange: 10
-  unitFireRate: 3.69
+  unitFireRate: 0.5
   unitSubSystems: []
   unitRadius: 5
   unitHeight: 2
-  unitMaxSpeed: 10
+  unitMaxSpeed: 50
   unitAcceleration: 5
   unitRotationSpeed: 360
   unitSlowdownTime: 0.2
@@ -35,8 +36,9 @@ MonoBehaviour:
   unitWallDist: 0.2
   unitEndReachedDistance: 0.1
   unitCheckDistance: 5
-  abCooldownTime: 0
-  abActiveTime: 0
+  _abilityName: Boost Engines
+  abCooldownTime: 10
+  abActiveTime: 5
   abNeedsTarget: 0
   debris: {fileID: 8830631683938474719, guid: 150bf4454b26ef0458ec26be1e6c890f, type: 3}
   debrisHull: {fileID: 8830631683938474719, guid: 150bf4454b26ef0458ec26be1e6c890f,

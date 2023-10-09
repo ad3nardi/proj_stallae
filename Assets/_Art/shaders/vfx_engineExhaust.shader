@@ -15,7 +15,9 @@ Shader "vfx_engineExhaust"
 		_EnginePower("EnginePower", Range( 0 , 1)) = 1
 		_Pulses("Pulses", Float) = 4
 		_JiggleStrength("Jiggle Strength", Float) = 2
-		[ASEEnd][Toggle]_ToggleSwitch0("Toggle Switch0", Float) = 0
+		[Toggle]_ToggleSwitch0("Toggle Switch0", Float) = 0
+		_DistCamDF("Dist Cam DF", Float) = 10
+		[ASEEnd]_LengthCamDF("Length Cam DF", Float) = 4
 
 
 		[HideInInspector]_QueueOffset("_QueueOffset", Float) = 0
@@ -174,6 +176,7 @@ Shader "vfx_engineExhaust"
 			#pragma multi_compile_instancing
 			#define _RECEIVE_SHADOWS_OFF 1
 			#define _SURFACE_TYPE_TRANSPARENT 1
+			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 120111
 
 
@@ -203,6 +206,7 @@ Shader "vfx_engineExhaust"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceData.hlsl"
 
 			#define ASE_NEEDS_VERT_NORMAL
+			#define ASE_NEEDS_VERT_POSITION
 
 
 			struct VertexInput
@@ -241,6 +245,8 @@ Shader "vfx_engineExhaust"
 			float _TilingScalar;
 			float _NoiseSpeed;
 			float _EnginePower;
+			float _LengthCamDF;
+			float _DistCamDF;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -297,10 +303,14 @@ Shader "vfx_engineExhaust"
 				float2 texCoord60 = v.ase_texcoord.xy * float2( 1,1 ) + ( _TimeParameters.x * float2( 0,-2 ) );
 				float Thrust37 = _Thrust;
 				
+				float3 objectToViewPos = TransformWorldToView(TransformObjectToWorld(v.vertex.xyz));
+				float eyeDepth = -objectToViewPos.z;
+				o.ase_texcoord3.z = eyeDepth;
+				
 				o.ase_texcoord3.xy = v.ase_texcoord.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
-				o.ase_texcoord3.zw = 0;
+				o.ase_texcoord3.w = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.vertex.xyz;
@@ -465,11 +475,14 @@ Shader "vfx_engineExhaust"
 				float Tex18 = voroi15;
 				float Alpha51 = saturate( ( ( Tex18 + Gradient46 ) * _EnginePower ) );
 				
+				float eyeDepth = IN.ase_texcoord3.z;
+				float cameraDepthFade78 = (( eyeDepth -_ProjectionParams.y - _DistCamDF ) / _LengthCamDF);
+				
 				float3 BakedAlbedo = 0;
 				float3 BakedEmission = 0;
 				float3 Color = EndColour56.rgb;
 				float Alpha = Alpha51;
-				float AlphaClipThreshold = 0.5;
+				float AlphaClipThreshold = ( 1.0 - cameraDepthFade78 );
 				float AlphaClipThresholdShadow = 0.5;
 
 				#ifdef _ALPHATEST_ON
@@ -513,6 +526,7 @@ Shader "vfx_engineExhaust"
 			#pragma multi_compile_instancing
 			#define _RECEIVE_SHADOWS_OFF 1
 			#define _SURFACE_TYPE_TRANSPARENT 1
+			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 120111
 
 
@@ -525,6 +539,7 @@ Shader "vfx_engineExhaust"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
 
 			#define ASE_NEEDS_VERT_NORMAL
+			#define ASE_NEEDS_VERT_POSITION
 
 
 			struct VertexInput
@@ -560,6 +575,8 @@ Shader "vfx_engineExhaust"
 			float _TilingScalar;
 			float _NoiseSpeed;
 			float _EnginePower;
+			float _LengthCamDF;
+			float _DistCamDF;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -616,10 +633,14 @@ Shader "vfx_engineExhaust"
 				float2 texCoord60 = v.ase_texcoord.xy * float2( 1,1 ) + ( _TimeParameters.x * float2( 0,-2 ) );
 				float Thrust37 = _Thrust;
 				
+				float3 objectToViewPos = TransformWorldToView(TransformObjectToWorld(v.vertex.xyz));
+				float eyeDepth = -objectToViewPos.z;
+				o.ase_texcoord2.z = eyeDepth;
+				
 				o.ase_texcoord2.xy = v.ase_texcoord.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
-				o.ase_texcoord2.zw = 0;
+				o.ase_texcoord2.w = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.vertex.xyz;
@@ -775,9 +796,12 @@ Shader "vfx_engineExhaust"
 				float Gradient46 = -( ( texCoord34.y - Thrust37 ) * 2.0 );
 				float Alpha51 = saturate( ( ( Tex18 + Gradient46 ) * _EnginePower ) );
 				
+				float eyeDepth = IN.ase_texcoord2.z;
+				float cameraDepthFade78 = (( eyeDepth -_ProjectionParams.y - _DistCamDF ) / _LengthCamDF);
+				
 
 				float Alpha = Alpha51;
-				float AlphaClipThreshold = 0.5;
+				float AlphaClipThreshold = ( 1.0 - cameraDepthFade78 );
 
 				#ifdef _ALPHATEST_ON
 					clip(Alpha - AlphaClipThreshold);
@@ -805,6 +829,7 @@ Shader "vfx_engineExhaust"
 			#pragma multi_compile_instancing
 			#define _RECEIVE_SHADOWS_OFF 1
 			#define _SURFACE_TYPE_TRANSPARENT 1
+			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 120111
 
 
@@ -824,6 +849,7 @@ Shader "vfx_engineExhaust"
 			#include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
 
 			#define ASE_NEEDS_VERT_NORMAL
+			#define ASE_NEEDS_VERT_POSITION
 
 
 			struct VertexInput
@@ -853,6 +879,8 @@ Shader "vfx_engineExhaust"
 			float _TilingScalar;
 			float _NoiseSpeed;
 			float _EnginePower;
+			float _LengthCamDF;
+			float _DistCamDF;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -920,10 +948,14 @@ Shader "vfx_engineExhaust"
 				float2 texCoord60 = v.ase_texcoord.xy * float2( 1,1 ) + ( _TimeParameters.x * float2( 0,-2 ) );
 				float Thrust37 = _Thrust;
 				
+				float3 objectToViewPos = TransformWorldToView(TransformObjectToWorld(v.vertex.xyz));
+				float eyeDepth = -objectToViewPos.z;
+				o.ase_texcoord.z = eyeDepth;
+				
 				o.ase_texcoord.xy = v.ase_texcoord.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
-				o.ase_texcoord.zw = 0;
+				o.ase_texcoord.w = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.vertex.xyz;
@@ -1053,9 +1085,12 @@ Shader "vfx_engineExhaust"
 				float Gradient46 = -( ( texCoord34.y - Thrust37 ) * 2.0 );
 				float Alpha51 = saturate( ( ( Tex18 + Gradient46 ) * _EnginePower ) );
 				
+				float eyeDepth = IN.ase_texcoord.z;
+				float cameraDepthFade78 = (( eyeDepth -_ProjectionParams.y - _DistCamDF ) / _LengthCamDF);
+				
 
 				surfaceDescription.Alpha = Alpha51;
-				surfaceDescription.AlphaClipThreshold = 0.5;
+				surfaceDescription.AlphaClipThreshold = ( 1.0 - cameraDepthFade78 );
 
 				#if _ALPHATEST_ON
 					float alphaClipThreshold = 0.01f;
@@ -1083,6 +1118,7 @@ Shader "vfx_engineExhaust"
 			#pragma multi_compile_instancing
 			#define _RECEIVE_SHADOWS_OFF 1
 			#define _SURFACE_TYPE_TRANSPARENT 1
+			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 120111
 
 
@@ -1102,6 +1138,7 @@ Shader "vfx_engineExhaust"
 			#include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
 
 			#define ASE_NEEDS_VERT_NORMAL
+			#define ASE_NEEDS_VERT_POSITION
 
 
 			struct VertexInput
@@ -1131,6 +1168,8 @@ Shader "vfx_engineExhaust"
 			float _TilingScalar;
 			float _NoiseSpeed;
 			float _EnginePower;
+			float _LengthCamDF;
+			float _DistCamDF;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -1198,10 +1237,14 @@ Shader "vfx_engineExhaust"
 				float2 texCoord60 = v.ase_texcoord.xy * float2( 1,1 ) + ( _TimeParameters.x * float2( 0,-2 ) );
 				float Thrust37 = _Thrust;
 				
+				float3 objectToViewPos = TransformWorldToView(TransformObjectToWorld(v.vertex.xyz));
+				float eyeDepth = -objectToViewPos.z;
+				o.ase_texcoord.z = eyeDepth;
+				
 				o.ase_texcoord.xy = v.ase_texcoord.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
-				o.ase_texcoord.zw = 0;
+				o.ase_texcoord.w = 0;
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.vertex.xyz;
 				#else
@@ -1326,9 +1369,12 @@ Shader "vfx_engineExhaust"
 				float Gradient46 = -( ( texCoord34.y - Thrust37 ) * 2.0 );
 				float Alpha51 = saturate( ( ( Tex18 + Gradient46 ) * _EnginePower ) );
 				
+				float eyeDepth = IN.ase_texcoord.z;
+				float cameraDepthFade78 = (( eyeDepth -_ProjectionParams.y - _DistCamDF ) / _LengthCamDF);
+				
 
 				surfaceDescription.Alpha = Alpha51;
-				surfaceDescription.AlphaClipThreshold = 0.5;
+				surfaceDescription.AlphaClipThreshold = ( 1.0 - cameraDepthFade78 );
 
 				#if _ALPHATEST_ON
 					float alphaClipThreshold = 0.01f;
@@ -1363,6 +1409,7 @@ Shader "vfx_engineExhaust"
 			#pragma multi_compile_instancing
 			#define _RECEIVE_SHADOWS_OFF 1
 			#define _SURFACE_TYPE_TRANSPARENT 1
+			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 120111
 
 
@@ -1384,6 +1431,7 @@ Shader "vfx_engineExhaust"
 			#include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
 
 			#define ASE_NEEDS_VERT_NORMAL
+			#define ASE_NEEDS_VERT_POSITION
 
 
 			struct VertexInput
@@ -1414,6 +1462,8 @@ Shader "vfx_engineExhaust"
 			float _TilingScalar;
 			float _NoiseSpeed;
 			float _EnginePower;
+			float _LengthCamDF;
+			float _DistCamDF;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -1478,10 +1528,14 @@ Shader "vfx_engineExhaust"
 				float2 texCoord60 = v.ase_texcoord.xy * float2( 1,1 ) + ( _TimeParameters.x * float2( 0,-2 ) );
 				float Thrust37 = _Thrust;
 				
+				float3 objectToViewPos = TransformWorldToView(TransformObjectToWorld(v.vertex.xyz));
+				float eyeDepth = -objectToViewPos.z;
+				o.ase_texcoord1.z = eyeDepth;
+				
 				o.ase_texcoord1.xy = v.ase_texcoord.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
-				o.ase_texcoord1.zw = 0;
+				o.ase_texcoord1.w = 0;
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.vertex.xyz;
 				#else
@@ -1613,9 +1667,12 @@ Shader "vfx_engineExhaust"
 				float Gradient46 = -( ( texCoord34.y - Thrust37 ) * 2.0 );
 				float Alpha51 = saturate( ( ( Tex18 + Gradient46 ) * _EnginePower ) );
 				
+				float eyeDepth = IN.ase_texcoord1.z;
+				float cameraDepthFade78 = (( eyeDepth -_ProjectionParams.y - _DistCamDF ) / _LengthCamDF);
+				
 
 				surfaceDescription.Alpha = Alpha51;
-				surfaceDescription.AlphaClipThreshold = 0.5;
+				surfaceDescription.AlphaClipThreshold = ( 1.0 - cameraDepthFade78 );
 
 				#if _ALPHATEST_ON
 					clip(surfaceDescription.Alpha - surfaceDescription.AlphaClipThreshold);
@@ -1648,6 +1705,7 @@ Shader "vfx_engineExhaust"
 			#pragma multi_compile_instancing
 			#define _RECEIVE_SHADOWS_OFF 1
 			#define _SURFACE_TYPE_TRANSPARENT 1
+			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 120111
 
 
@@ -1672,6 +1730,7 @@ Shader "vfx_engineExhaust"
 			#include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
 
 			#define ASE_NEEDS_VERT_NORMAL
+			#define ASE_NEEDS_VERT_POSITION
 
 
 			struct VertexInput
@@ -1702,6 +1761,8 @@ Shader "vfx_engineExhaust"
 			float _TilingScalar;
 			float _NoiseSpeed;
 			float _EnginePower;
+			float _LengthCamDF;
+			float _DistCamDF;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -1765,10 +1826,14 @@ Shader "vfx_engineExhaust"
 				float2 texCoord60 = v.ase_texcoord.xy * float2( 1,1 ) + ( _TimeParameters.x * float2( 0,-2 ) );
 				float Thrust37 = _Thrust;
 				
+				float3 objectToViewPos = TransformWorldToView(TransformObjectToWorld(v.vertex.xyz));
+				float eyeDepth = -objectToViewPos.z;
+				o.ase_texcoord1.z = eyeDepth;
+				
 				o.ase_texcoord1.xy = v.ase_texcoord.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
-				o.ase_texcoord1.zw = 0;
+				o.ase_texcoord1.w = 0;
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.vertex.xyz;
 				#else
@@ -1900,9 +1965,12 @@ Shader "vfx_engineExhaust"
 				float Gradient46 = -( ( texCoord34.y - Thrust37 ) * 2.0 );
 				float Alpha51 = saturate( ( ( Tex18 + Gradient46 ) * _EnginePower ) );
 				
+				float eyeDepth = IN.ase_texcoord1.z;
+				float cameraDepthFade78 = (( eyeDepth -_ProjectionParams.y - _DistCamDF ) / _LengthCamDF);
+				
 
 				surfaceDescription.Alpha = Alpha51;
-				surfaceDescription.AlphaClipThreshold = 0.5;
+				surfaceDescription.AlphaClipThreshold = ( 1.0 - cameraDepthFade78 );
 
 				#if _ALPHATEST_ON
 					clip(surfaceDescription.Alpha - surfaceDescription.AlphaClipThreshold);
@@ -1938,7 +2006,7 @@ Node;AmplifyShaderEditor.SimpleTimeNode;25;-1214.794,-126.286;Inherit;False;1;0;
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;31;-1216.794,-51.28601;Inherit;False;2;2;0;FLOAT2;0,0;False;1;FLOAT;0;False;1;FLOAT2;0
 Node;AmplifyShaderEditor.Vector2Node;30;-1415.794,-117.286;Inherit;False;Constant;_TimeOffset;TimeOffset;2;0;Create;True;0;0;0;False;0;False;-0.3,-1;0,0;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;43;-1359.783,28.58093;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;32;-1556.794,105.714;Inherit;False;Property;_NoiseSpeed;Noise Speed;4;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;32;-1556.794,105.714;Inherit;False;Property;_NoiseSpeed;Noise Speed;4;0;Create;True;0;0;0;False;0;False;1;1;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;42;-1563.783,24.58093;Inherit;False;37;Thrust;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.TextureCoordinatesNode;34;-1336.806,300.9818;Inherit;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SimpleSubtractOpNode;35;-1039.807,327.9818;Inherit;True;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
@@ -1951,23 +2019,18 @@ Node;AmplifyShaderEditor.RegisterLocalVarNode;46;-503.7522,322.6306;Inherit;Fals
 Node;AmplifyShaderEditor.GetLocalVarNode;55;-248.2198,-451.8154;Inherit;False;46;Gradient;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.LerpOp;54;6.780151,-650.8154;Inherit;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;56;213.4246,-655.8217;Inherit;False;EndColour;-1;True;1;0;COLOR;0,0,0,0;False;1;COLOR;0
-Node;AmplifyShaderEditor.Vector2Node;20;-1225.794,-349.286;Inherit;False;Property;_Tiling;Tiling;2;0;Create;True;0;0;0;False;0;False;1,0.2;1,0.26;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
-Node;AmplifyShaderEditor.RangedFloatNode;28;-1227.794,-221.286;Inherit;False;Property;_TilingScalar;Tiling Scalar;3;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;36;-2109.601,290.8896;Inherit;False;Property;_Thrust;Thrust;5;0;Create;True;0;0;0;False;0;False;0.5;0.15;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.Vector2Node;20;-1225.794,-349.286;Inherit;False;Property;_Tiling;Tiling;2;0;Create;True;0;0;0;False;0;False;1,0.2;1,0.13;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
+Node;AmplifyShaderEditor.RangedFloatNode;28;-1227.794,-221.286;Inherit;False;Property;_TilingScalar;Tiling Scalar;3;0;Create;True;0;0;0;False;0;False;1;5;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;36;-2109.601,290.8896;Inherit;False;Property;_Thrust;Thrust;5;0;Create;True;0;0;0;False;0;False;0.5;0.524;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;37;-1777.601,289.8896;Inherit;False;Thrust;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.ColorNode;53;-288.8405,-640.7014;Inherit;False;Property;_InnerColour;InnerColour;0;1;[HDR];Create;True;0;0;0;False;0;False;2,0,0,0;0,0,0,0;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.ColorNode;52;-296.5883,-845.1152;Inherit;False;Property;_OuterColour;OuterColour;1;1;[HDR];Create;True;0;0;0;False;0;False;2,0.9490196,0,0;0,0,0,0;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.ColorNode;53;-288.8405,-640.7014;Inherit;False;Property;_InnerColour;InnerColour;0;1;[HDR];Create;True;0;0;0;False;0;False;2,0,0,0;1.345234,0.01344605,0,0;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.ColorNode;52;-296.5883,-845.1152;Inherit;False;Property;_OuterColour;OuterColour;1;1;[HDR];Create;True;0;0;0;False;0;False;2,0.9490196,0,0;2.670157,1.815076,0,0;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.GetLocalVarNode;44;-141.3112,316.7892;Inherit;True;18;Tex;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;45;-140.0112,511.789;Inherit;True;46;Gradient;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleAddOpNode;47;103.2132,428.4962;Inherit;True;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;48;35.21318,705.4961;Inherit;False;Property;_EnginePower;EnginePower;6;0;Create;True;0;0;0;False;0;False;1;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;48;35.21318,705.4961;Inherit;False;Property;_EnginePower;EnginePower;6;0;Create;True;0;0;0;False;0;False;1;0.583;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;49;359.2131,574.496;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SaturateNode;50;569.2132,572.496;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RegisterLocalVarNode;51;759.2132,613.496;Inherit;False;Alpha;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;0;1576.907,-115.4901;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;1;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;ExtraPrePass;0;0;ExtraPrePass;5;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;3;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;0;False;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;1;1576.907,-115.4901;Float;False;True;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;vfx_engineExhaust;2992e84f91cbeb14eab234972e07ea9d;True;Forward;0;1;Forward;8;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;1;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;3;RenderPipeline=UniversalPipeline;RenderType=Transparent=RenderType;Queue=Transparent=Queue=0;True;5;True;12;all;0;False;True;1;5;False;;10;False;;1;1;False;;10;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;2;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForwardOnly;False;False;0;;0;0;Standard;23;Surface;1;638299460070769638;  Blend;0;0;Two Sided;2;638299462873638040;Forward Only;0;0;Cast Shadows;0;638299460055459420;  Use Shadow Threshold;0;0;Receive Shadows;0;638299460049946500;GPU Instancing;1;0;LOD CrossFade;0;0;Built-in Fog;0;0;DOTS Instancing;0;0;Meta Pass;0;0;Extra Pre Pass;0;0;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Vertex Position,InvertActionOnDeselection;1;0;0;10;False;True;False;True;False;False;True;True;True;True;False;;False;0
-Node;AmplifyShaderEditor.GetLocalVarNode;19;1369.365,-67.63193;Inherit;False;51;Alpha;1;0;OBJECT;;False;1;FLOAT;0
-Node;AmplifyShaderEditor.GetLocalVarNode;57;1369.375,-144.4595;Inherit;False;56;EndColour;1;0;OBJECT;;False;1;COLOR;0
 Node;AmplifyShaderEditor.TextureCoordinatesNode;60;242.981,-255.1752;Inherit;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;61;541.1681,-146.7936;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;62;316.1631,-128.8691;Inherit;False;Property;_Pulses;Pulses;7;0;Create;True;0;0;0;False;0;False;4;4;0;0;0;1;FLOAT;0
@@ -1989,8 +2052,17 @@ Node;AmplifyShaderEditor.FractNode;63;693.8918,-144.4948;Inherit;False;1;0;FLOAT
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;72;357.2614,135.7029;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;73;160.2614,195.7029;Inherit;False;37;Thrust;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;75;356.2614,247.7029;Inherit;False;Constant;_Float0;Float 0;10;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;67;147.8918,109.5052;Inherit;False;Property;_JiggleStrength;Jiggle Strength;8;0;Create;True;0;0;0;False;0;False;2;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;67;147.8918,109.5052;Inherit;False;Property;_JiggleStrength;Jiggle Strength;8;0;Create;True;0;0;0;False;0;False;2;0.05;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.CameraDepthFade;78;1139.846,55.24672;Inherit;False;3;2;FLOAT3;0,0,0;False;0;FLOAT;1;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.GetLocalVarNode;19;1331.384,-391.9377;Inherit;False;51;Alpha;1;0;OBJECT;;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RegisterLocalVarNode;51;822.2132,552.496;Inherit;False;Alpha;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SaturateNode;50;568.196,572.496;Inherit;True;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;76;893.245,199.7278;Inherit;False;Property;_LengthCamDF;Length Cam DF;11;0;Create;True;0;0;0;False;0;False;4;4;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;77;912.6956,278.2535;Inherit;False;Property;_DistCamDF;Dist Cam DF;10;0;Create;True;0;0;0;False;0;False;10;10;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.OneMinusNode;79;1549.711,55.08237;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.GetLocalVarNode;57;1484.375,-156.4595;Inherit;False;56;EndColour;1;0;OBJECT;;False;1;COLOR;0
 Node;AmplifyShaderEditor.ToggleSwitchNode;74;523.2614,132.7029;Inherit;False;Property;_ToggleSwitch0;Toggle Switch0;9;0;Create;True;0;0;0;False;0;False;0;True;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;1;2128.907,-139.4901;Float;False;True;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;vfx_engineExhaust;2992e84f91cbeb14eab234972e07ea9d;True;Forward;0;1;Forward;8;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;1;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;3;RenderPipeline=UniversalPipeline;RenderType=Transparent=RenderType;Queue=Transparent=Queue=0;True;5;True;12;all;0;False;True;1;5;False;;10;False;;1;1;False;;10;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;2;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForwardOnly;False;False;0;;0;0;Standard;23;Surface;1;638299460070769638;  Blend;0;0;Two Sided;2;638299462873638040;Forward Only;0;0;Cast Shadows;0;638299460055459420;  Use Shadow Threshold;0;0;Receive Shadows;0;638299460049946500;GPU Instancing;1;0;LOD CrossFade;0;0;Built-in Fog;0;0;DOTS Instancing;0;0;Meta Pass;0;0;Extra Pre Pass;0;0;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Vertex Position,InvertActionOnDeselection;1;0;0;10;False;True;False;True;False;False;True;True;True;True;False;;False;0
 WireConnection;22;0;29;0
 WireConnection;22;1;27;0
 WireConnection;29;0;20;0
@@ -2017,11 +2089,6 @@ WireConnection;47;0;44;0
 WireConnection;47;1;45;0
 WireConnection;49;0;47;0
 WireConnection;49;1;48;0
-WireConnection;50;0;49;0
-WireConnection;51;0;50;0
-WireConnection;1;2;57;0
-WireConnection;1;3;19;0
-WireConnection;1;5;65;0
 WireConnection;60;1;71;0
 WireConnection;61;0;60;2
 WireConnection;61;1;62;0
@@ -2034,7 +2101,16 @@ WireConnection;71;1;70;0
 WireConnection;63;0;61;0
 WireConnection;72;0;67;0
 WireConnection;72;1;73;0
+WireConnection;78;0;76;0
+WireConnection;78;1;77;0
+WireConnection;51;0;50;0
+WireConnection;50;0;49;0
+WireConnection;79;0;78;0
 WireConnection;74;0;72;0
 WireConnection;74;1;75;0
+WireConnection;1;2;57;0
+WireConnection;1;3;19;0
+WireConnection;1;4;79;0
+WireConnection;1;5;65;0
 ASEEND*/
-//CHKSM=54CB3CB3949C2B21457A264E2BC40E23AAAB7948
+//CHKSM=84734A7277454E87CF8F1C77A4915CAF1FB3D156

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.VFX;
 
 public class unit_subsystem : OptimizedBehaviour
@@ -12,6 +13,7 @@ public class unit_subsystem : OptimizedBehaviour
     [SerializeField] private bool _isDestroyed;
     [SerializeField] private bool _isDisabled;
     [SerializeField] private bool _isSubscribed;
+    [SerializeField] private Image _img;
     [SerializeField] private GameObject _goExpolosion;
     [SerializeField] private VisualEffect _vfxExpolosion;
 
@@ -23,7 +25,6 @@ public class unit_subsystem : OptimizedBehaviour
     [SerializeField] public float _curHP { get; private set; }
 
     public static event Action<unit_subsystem> OnHealthAdded = delegate { };
-    public static event Action<unit_subsystem> OnHealthRemoved = delegate { };
     public event Action<float> OnHealthPctChanged = delegate { };
     public event Action<float> OnHealthChanged = delegate { };
     public event Action<bool> OnDestroyed = delegate { };
@@ -50,6 +51,10 @@ public class unit_subsystem : OptimizedBehaviour
             _goExpolosion.SetActive(false);
             _vfxExpolosion.Stop();
         }
+        if (!_activeSubsytem)
+        {
+            _img.fillAmount= 0;
+        }
     }
     private void OnEnable()
     {
@@ -71,7 +76,6 @@ public class unit_subsystem : OptimizedBehaviour
         if (_isSubscribed)
         {
             _subsystemM.SetMaxHealth -= SetToMaxHP;
-            OnHealthRemoved(this);
         }
     }
 
@@ -91,7 +95,7 @@ public class unit_subsystem : OptimizedBehaviour
     {
         _curHP += amount;
         float currentHPpct = _curHP / _maxHP;
-        
+        _img.fillAmount = currentHPpct;
         OnHealthPctChanged(currentHPpct);
         OnHealthChanged(_curHP);
         if (_curHP >= 0)

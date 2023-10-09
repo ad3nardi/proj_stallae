@@ -14,15 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _unitsList:
   - {fileID: 5697958403810547942, guid: e2ed3f3fcb0d6744c8c5a89620d20d7a, type: 3}
-  - {fileID: 4617446465913876790, guid: 8aaf2f99ca953e04db93fe8d635b340d, type: 3}
   - {fileID: 625997721258300752, guid: 754c188a634d14741b113ff96dd18254, type: 3}
-  _aggro: 10
-  _spread: 0
+  _aggro: 100
+  _spread: 30
   _enemCountZone: 0
   _zoneOffsetPos: {x: 0, y: 0, z: 170}
   _zonetOffsetRot: {x: 0, y: 0, z: 0}
   _zoneOffsetScale: {x: 50, y: 5, z: 30}
-  _flankCheckSize: 0
+  _flankCheckSize: 150
   _checkLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -43,7 +42,7 @@ MonoBehaviour:
   _adjEnemNear: 100
   _adjEnemIsolate: 100
   _adjEnemFriends: 100
-  _threshEngage: 100
-  _threshEnemNear: 30
-  _threshEnemIsolate: 100
-  _threshEnemFriends: 100
+  _threshEngage: 10
+  _threshEnemNear: 10
+  _threshEnemIsolate: 10
+  _threshEnemFriends: 10

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class unit_squadTarget : OptimizedBehaviour, ITargetable
 {
@@ -12,6 +13,7 @@ public class unit_squadTarget : OptimizedBehaviour, ITargetable
 
     public bool[] _activeSquad = new bool[6];
     public float[] _hpSquad = new float[6];
+    private float _maxSqdMemHp;
 
     public float _activeSquadCount;
     public event Action<bool> SquadMembDestroyed = delegate { };
@@ -22,6 +24,7 @@ public class unit_squadTarget : OptimizedBehaviour, ITargetable
         _unitM = GetComponent<unit_Manager>();
         _unitM._iThisTarget = this;
         _unitM._subSystemMan = null;
+        _unitM._squadMan = this;
         _maxHP = _unitM._unit.unitMaxHitPoints;
         for (int i = 0; i < 6; i++)
         {
@@ -30,6 +33,7 @@ public class unit_squadTarget : OptimizedBehaviour, ITargetable
                 _activeSquadCount++;
             }
         }
+
     }
 
     private void Start()
@@ -47,6 +51,7 @@ public class unit_squadTarget : OptimizedBehaviour, ITargetable
 
             }
         }
+        _maxSqdMemHp = _hpSquad[1];
     }
 
     public void TakeDamage(int i, float dmg)
@@ -93,5 +98,9 @@ public class unit_squadTarget : OptimizedBehaviour, ITargetable
     public float[] GetHP()
     {
         return _hpSquad;
+    }
+    public float GetMaxHP()
+    {
+        return _maxSqdMemHp;
     }
 }

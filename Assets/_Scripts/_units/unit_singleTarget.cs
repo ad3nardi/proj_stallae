@@ -11,6 +11,8 @@ public class unit_singleTarget : OptimizedBehaviour, ITargetable
     public float _maxHP { get; private set; }
     public float _curHP { get; private set; }
 
+    float[] _array = new float[6];
+
     public event Action<bool> SquadMembDestroyed = delegate { };
     public event Action<bool> UnitDestoryed = delegate { };
 
@@ -23,6 +25,7 @@ public class unit_singleTarget : OptimizedBehaviour, ITargetable
     {
         _maxHP = _unit.unitMaxHitPoints;
         _curHP = _maxHP;
+        _array[0] = _maxHP;
     }
 
     public void TakeDamage(int i, float dmg)
@@ -49,5 +52,9 @@ public class unit_singleTarget : OptimizedBehaviour, ITargetable
     public float GetUnitHealth()
     {
         return _curHP;
+    }
+    public float GetMaxHP()
+    {
+        return _maxHP;
     }
 }
